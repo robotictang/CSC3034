@@ -1,0 +1,3041 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="index.html">
+      
+      
+        <link rel="next" href="lab2.html">
+      
+      
+        
+      
+      
+      <link rel="icon" href="img/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Lab 1: Refresh on Python - CSC3034 CI Labs</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="stylesheets/extra.css">
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#lab-1-refresh-on-python" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="CSC3034 CI Labs" class="md-header__button md-logo" aria-label="CSC3034 CI Labs" data-md-component="logo">
+      
+  <img src="img/favicon.ico" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CSC3034 CI Labs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Lab 1: Refresh on Python
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="index.html" class="md-tabs__link">
+          
+  
+  
+  Current
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="archive/202409/lab1.html" class="md-tabs__link">
+          
+  
+  
+  Archive
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="CSC3034 CI Labs" class="md-nav__button md-logo" aria-label="CSC3034 CI Labs" data-md-component="logo">
+      
+  <img src="img/favicon.ico" alt="logo">
+
+    </a>
+    CSC3034 CI Labs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Current
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Current
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 1: Refresh on Python
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="lab1.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 1: Refresh on Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#amoeba-community" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Amoeba community
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fibonacci-and-golden-ratio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fibonacci and Golden Ratio
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#random-selection-based-on-probability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Random selection based on probability
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additional-plot-arc-to-form-golden-spiral" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additional: plot arc to form golden spiral
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additional-deep-reinforcement-learning-for-a-6-legged-walking-robot-in-nvidia-isaac-sim" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additional: Deep Reinforcement Learning for a 6-Legged Walking Robot in NVIDIA Isaac Sim
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Additional: Deep Reinforcement Learning for a 6-Legged Walking Robot in NVIDIA Isaac Sim">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-hexapod-robot-kinematics-joint-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Hexapod Robot Kinematics &amp; Joint Structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-drl-environment-formulation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. DRL Environment Formulation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-complete-isaac-sim-pytorch-ppo-implementation-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Complete Isaac Sim + PyTorch PPO Implementation Code
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="lab2.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 2: Fuzzy Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="lab3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 3: EC (GA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="lab4.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 4: EC (PSO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="lab5.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 5: EC (ACO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="lab6.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 6: ANN (Supervised learning)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="lab7.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 7: ANN (Hyperplane)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="lab8a.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 8a: ANN using Keras
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="lab8b.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 8b: ANN using Keras
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Archive
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Archive
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    202409
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    202409
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202409/lab1.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 1: Refresh on Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202409/lab2.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 2: Fuzzy Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202409/lab3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 3: EC (GA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202409/lab4.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 4: EC (PSO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202409/lab5.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 5: EC (ACO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202409/lab6.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 6: ANN (Supervised learning)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202409/lab7.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 7: ANN (Hyperplane)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202409/lab8a.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 8a: ANN using Keras
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202409/lab8b.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 8b: ANN using Keras
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    202309
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    202309
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202309/lab1.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 1: Refresh on Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202309/lab2.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 2: Fuzzy Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202309/lab3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 3: EC (GA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202309/lab4.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 4: EC (PSO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202309/lab5.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 5: EC (ACO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202309/lab6.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 6: ANN (Supervised learning)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202309/lab7.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 7: ANN (Hyperplane)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    202208
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    202208
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202208/lab1.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 1: Pre-lab
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202208/lab2.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 2: EC (GA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202208/lab3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 3: EC (PSO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202208/lab4.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 4: EC (ACO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202208/lab5.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 5: ANN (Supervised learning)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202208/lab6.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 6: ANN (Hyperplane)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202208/lab7.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 7: Fuzzy Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    202108
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    202108
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202108/lab1.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 1: Pre-lab
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202108/lab2.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 2: EC (GA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202108/lab3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 3: EC (PSO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202108/lab4.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 4: EC (ACO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202108/lab5.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 5: ANN (Supervised learning)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202108/lab6.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 6: ANN (Hyperplane)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202108/lab7.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 7: Fuzzy Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    202008
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    202008
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202008/lab1.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 1: Pre-lab
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202008/lab2.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 2: EC (GA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202008/lab3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 3: EC (PSO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202008/lab4.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 4: EC (ACO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202008/lab5.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 5: ANN (Supervised learning)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202008/lab6.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 6: ANN (Hyperplane)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202008/lab7.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 7: Fuzzy Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    201908
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    201908
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/201908/lab1.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 1: Pre-lab
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/201908/lab2.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 2: EC (GA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/201908/lab3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 3: EC (PSO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/201908/lab4.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 4: EC (ACO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/201908/lab5.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 5: ANN (Supervised learning)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/201908/lab6.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 6: ANN (Hyperplane)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/201908/lab7.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 7: Fuzzy Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="lab-1-refresh-on-python">Lab 1: Refresh on Python<a class="headerlink" href="#lab-1-refresh-on-python" title="Permanent link">&para;</a></h1>
+<h2 id="amoeba-community">Amoeba community<a class="headerlink" href="#amoeba-community" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p>Assuming a new amoeba takes one month to grow, and from the second month onwards, it takes one month to duplicate itself to create a new amoeba. Given that there is one new amoeba at the beginning of the first month, this is the progression of the number of amoeba in different months.</p>
+<ul>
+<li><code>Month 0</code>: 1 (new)</li>
+<li><code>Month 1</code>: 1 (grown)</li>
+<li><code>Month 2</code>: 1 (grown) + 1 (new) = 2</li>
+<li><code>Month 3</code>: 2 (grown) + 1 (new) = 3</li>
+<li><code>Month 4</code>: 3 (grown) + 2 (new) = 5</li>
+<li><code>Month 5</code>: 5 (grown) + 3 (new) = 8</li>
+<li><code>Month 6</code>: 8 (grown) + 5 (new) = 13</li>
+<li><code>Month 7</code>: 13 (grown) + 8 (new) = 21</li>
+<li>...</li>
+</ul>
+</li>
+</ol>
+<pre class="mermaid"><code>graph TD
+    M0["Month 0: 1 Amoeba (New)"] --&gt;|Matures 1 month| M1["Month 1: 1 Amoeba (Grown)"]
+    M1 --&gt;|Duplicates &amp; Matures| M2["Month 2: 2 Amoebas (1 Grown + 1 New)"]
+    M2 --&gt;|Duplicates &amp; Matures| M3["Month 3: 3 Amoebas (2 Grown + 1 New)"]
+    M3 --&gt;|Duplicates &amp; Matures| M4["Month 4: 5 Amoebas (3 Grown + 2 New)"]
+    M4 --&gt;|Duplicates &amp; Matures| M5["Month 5: 8 Amoebas (5 Grown + 3 New)"]</code></pre>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code>!!! note &quot;Hint&quot;
+    Note the pattern of the sequence
+</code></pre></div></td></tr></table></div>
+<ol>
+<li>
+<p>Write a function that takes the month number as input argument and provides the number of amoeba at the beginning of that month as output.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">numberofamoeba</span><span class="p">(</span><span class="n">month</span><span class="p">):</span>
+  <span class="o">...</span>
+  <span class="k">return</span> <span class="n">number_of_amoeba</span>
+</code></pre></div></td></tr></table></div>
+</li>
+<li>
+<p>Write a function to take the same input argument as <code>numberofamoeba</code> but instead of giving the number of amoeba at that month as output, provide the whole sequence of amoeba number starting from the beginning. For example, if <code>month</code> is <code>4</code>, the output of the function should be the list of <code>[1,1,2,3,5]</code></p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">numberofamoebaseq</span><span class="p">(</span><span class="n">month</span><span class="p">):</span>
+  <span class="o">...</span>
+  <span class="k">return</span> <span class="n">number_seq</span>
+</code></pre></div></td></tr></table></div>
+</li>
+<li>
+<p>Create a scatter plot to plot the sequence of amoeba number from month 0 to month 100.</p>
+<div class="admonition note">
+<p class="admonition-title">Hint</p>
+<p><code>import matplotlib.pyplot as plt</code> to use the Python visualisation library Matplotlib. Scatter plot can be produced with <code>plt.scatter(...)</code>.</p>
+</div>
+</li>
+</ol>
+<h2 id="fibonacci-and-golden-ratio">Fibonacci and Golden Ratio<a class="headerlink" href="#fibonacci-and-golden-ratio" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p>The above sequence of number is also known as the Fibonacci sequence.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A Fibonacci sequence may or may not include a 0 as the first element of the series, i.e. <code>0,1,1,2,3,5,8,...</code> instead of <code>1,1,2,3,5,8</code>.</p>
+</div>
+</li>
+<li>
+<p>Plot the ratio between every two consecutive numbers in the Fibonacci sequence. For Fibonacci sequence of <code>1,1,2,3,5,8,13,21</code>, plot the line of <span class="arithmatex">\(\frac{1}{1}\)</span>, <span class="arithmatex">\(\frac{2}{1}\)</span>, <span class="arithmatex">\(\frac{3}{2}\)</span>, <span class="arithmatex">\(\frac{5}{3}\)</span>, <span class="arithmatex">\(\frac{8}{5}\)</span>, <span class="arithmatex">\(\frac{13}{8}\)</span>, <span class="arithmatex">\(\frac{21}{13}\)</span>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The longer the Fibonacci sequence you use, the closer is the value of the ratio between two consecutive numbers to be the golden ratio.</p>
+</div>
+</li>
+<li>
+<p>Generate a series of coordinates following the algorithm:</p>
+<ol>
+<li>Start from <code>(0,0)</code>.</li>
+<li>Get the next Fibonacci number, i.e. <code>1</code>.</li>
+<li>Add <code>(+1,+1)</code> to the previous point <code>(0,0)</code> to get <code>(1,1)</code>.</li>
+<li>Get the next Fibonacci number, i.e. <code>1</code>.</li>
+<li>Add <code>(+1,-1)</code> to the previous point <code>(1,1)</code> to get <code>(2,0)</code>.</li>
+<li>Get the next Fibonacci number, i.e. <code>2</code>.</li>
+<li>Add <code>(-2,-2)</code> to the previous point <code>(2,0)</code> to get <code>(0,-2)</code>.</li>
+<li>Get the next Fibonacci number, i.e. <code>3</code>.</li>
+<li>Add <code>(-3,+3)</code> to the previous point <code>(0,-2)</code> to get <code>(-3,1)</code>.</li>
+<li>Continue with the next Fibonacci number and update the coordinates with the sequence of the signs <code>(+,+), (+,-), (-,-), (-,+)</code>.</li>
+</ol>
+<p>The process will create a spiral in the following manner. The sequence of the signs produce the change in directions, and the fibonacci number provides the distance.
+<div style="text-align:center">
+<svg viewBox="-350 -250 600 500" style="width:50%;max-width:500px">
+<defs>
+<marker
+id="triangle"
+viewBox="0 0 10 10"
+refX="1"
+refY="5"
+markerUnits="strokeWidth"
+markerWidth="10"
+markerHeight="10"
+orient="auto">
+<path d="M 0 0 L 10 5 L 0 10 z" fill="#000" />
+</marker>
+</defs>
+<text x="-10" y="00" text-anchor="end" dominant-baseline="hanging">(0,0)</text>
+<circle cx="0" cy="0" r="5" fill="black" />
+<path d="M 0 0 m 5 -5 l 85 -85" stroke="black" marker-end="url(#triangle)" />
+<text x="100" y="-110" text-anchor="middle" dominant-baseline="auto">(1,1)</text>
+<path d="M 0 0 m 100 -100 m 5 5 l 85 85" stroke="black" marker-end="url(#triangle)" />
+<text x="210" y="0" text-anchor="start" dominant-baseline="middle">(2,0)</text>
+<path d="M 0 0 m 100 -100 m 100 100 m -5 5 l -185 185" stroke="black" marker-end="url(#triangle)" />
+<text x="0" y="210" text-anchor="middle" dominant-baseline="hanging">(0,-2)</text>
+<path d="M 0 0 m 100 -100 m 100 100 m -200 200 m -5 -5 l -285 -285" stroke="black" marker-end="url(#triangle)" />
+<text x="-310" y="-100" text-anchor="end" dominant-baseline="middle">(-3,1)</text>
+<path d="M 0 0 m 100 -100 m 100 100 m -200 200 m -300 -300 m 5 -5 l 45 -45" stroke="black" stroke-dasharray="4" marker-end="url(#triangle)" />
+<!-- <path d="M 0 0 l 100 -100 l 100 100 l -200 200 l -300 -300" stroke="black" fill="transparent" /> -->
+</svg>
+</div></p>
+</li>
+<li>
+<p>Create a line plot of the series of coordinates. If the lines are smoothen, it would form the golden spiral which can be found in pinecorns, seashells, and hurricanes.</p>
+<div class="admonition note">
+<p class="admonition-title">Additional</p>
+<p>If you are interested in how we may plot arc to connect the points instead of using straight lines, you can refer to <a href="#additional-plot-arc-to-form-golden-spiral">Additional: plot arc to form golden spiral</a>.</p>
+</div>
+</li>
+</ol>
+<h2 id="random-selection-based-on-probability">Random selection based on probability<a class="headerlink" href="#random-selection-based-on-probability" title="Permanent link">&para;</a></h2>
+<p>For this section. assume the <code>random.random()</code> function selects the random number with even probability.</p>
+<ol>
+<li>
+<p>Consider a coin tossing event. If the probabilities of getting a head or a tail are even, i.e. 50%. Create a Python function which will simulate the coin tossing event and return the result as <code>head</code> or <code>tail</code>.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">tossCoin</span><span class="p">():</span>
+  <span class="o">...</span>
+  <span class="k">return</span> <span class="n">headOrTail</span>
+</code></pre></div></td></tr></table></div>
+</li>
+<li>
+<p>If the probabilities of getting a head or a tail are not even, with head as 20% and tail as 80%, how would you change the Python function you created previously to adapt to this coin?</p>
+</li>
+<li>
+<p>Consider the event of selecting one option out of three options randomly. The probability of choosing option <code>A</code> is 20%, <code>B</code> is 50%, and  <code>C</code> is 30%. Create a Python function to simulate the random selection of the options.</p>
+</li>
+</ol>
+<pre class="mermaid"><code>graph LR
+    R["random.random() -&gt; r in [0.0, 1.0)"] --&gt; C1{"Range Check"}
+    C1 --&gt;|"0.0 &lt;= r &lt; 0.2 (20%)"| A["Option A"]
+    C1 --&gt;|"0.2 &lt;= r &lt; 0.7 (50%)"| B["Option B"]
+    C1 --&gt;|"0.7 &lt;= r &lt; 1.0 (30%)"| C["Option C"]</code></pre>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code>```python
+def chooseFromThree():
+  ...
+  return selectedOption
+```
+</code></pre></div></td></tr></table></div>
+<h2 id="additional-plot-arc-to-form-golden-spiral">Additional: plot arc to form golden spiral<a class="headerlink" href="#additional-plot-arc-to-form-golden-spiral" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p>The golden spiral can be produced by drawing the arc connecting every consecutive coordinates.
+    <div style="text-align:center">
+    <svg viewBox="-350 -250 600 500" style="width:50%;max-width:500px">
+    <defs>
+    <marker
+    id="triangle"
+    viewBox="0 0 10 10"
+    refX="1"
+    refY="5"
+    markerUnits="strokeWidth"
+    markerWidth="10"
+    markerHeight="10"
+    orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#000" />
+    </marker>
+    </defs>
+    <text x="-10" y="00" text-anchor="end" dominant-baseline="hanging">(0,0)</text>
+    <circle cx="0" cy="0" r="5" fill="black" />
+    <path d="M 0 0 m 5 -5 l 85 -85" stroke="black" marker-end="url(#triangle)" />
+    <text x="100" y="-110" text-anchor="middle" dominant-baseline="auto">(1,1)</text>
+    <path d="M 0 0 m 100 -100 m 5 5 l 85 85" stroke="black" marker-end="url(#triangle)" />
+    <text x="210" y="0" text-anchor="start" dominant-baseline="middle">(2,0)</text>
+    <path d="M 0 0 m 100 -100 m 100 100 m -5 5 l -185 185" stroke="black" marker-end="url(#triangle)" />
+    <text x="0" y="210" text-anchor="middle" dominant-baseline="hanging">(0,-2)</text>
+    <path d="M 0 0 m 100 -100 m 100 100 m -200 200 m -5 -5 l -285 -285" stroke="black" marker-end="url(#triangle)" />
+    <text x="-310" y="-100" text-anchor="end" dominant-baseline="middle">(-3,1)</text>
+    <path d="M 0 0 m 100 -100 m 100 100 m -200 200 m -300 -300 m 5 -5 l 45 -45" stroke="black" stroke-dasharray="4" marker-end="url(#triangle)" />
+    <path d="M 0 0 A 100 100 0 0 1 100 -100" stroke="#B71C1C" fill="transparent"/>
+    <path d="M 0 0 m 100 -100 A 100 100 0 0 1 200 0" stroke="#B71C1C" fill="transparent"/>
+    <circle cx="100" cy="0" r="5" fill="#B71C1C" />
+    <text x="100" y="10" text-anchor="middle" dominant-baseline="hanging">(1,0)</text>
+    <path d="M 0 0 m 100 -100 m 100 100 A 200 200 0 0 1 0 200" stroke="#007517" fill="transparent"/>
+    <circle cx="0" cy="0" r="5" fill="#007517" />
+    <path d="M 0 0 m 100 -100 m 100 100 m -200 200 A 300 300 0 0 1 -300 -100" stroke="#0064eb" fill="transparent"/>
+    <circle cx="0" cy="-100" r="5" fill="#0064eb" />
+    <text x="0" y="-110" text-anchor="middle" dominant-baseline="auto">(1,0)</text>
+    </svg>
+    </div></p>
+</li>
+<li>
+<p>To draw the arc using <code>matplotlib</code> library, we need to identify the center of each arc. The arc and its corresponding center are colored with the same color in the previous figure. 
+    <div class="highlight"><pre><span></span><code><span class="n">matplotlib</span><span class="o">.</span><span class="n">patches</span><span class="o">.</span><span class="n">Arc</span><span class="p">(</span>
+    <span class="n">xy</span><span class="p">,</span> <span class="c1"># center of the arc</span>
+    <span class="n">width</span><span class="p">,</span> <span class="c1"># length of horizontal axis, </span>
+    <span class="n">height</span><span class="p">,</span> <span class="c1"># length of vertical axis, </span>
+    <span class="n">angle</span><span class="p">,</span> <span class="c1"># rotation of the ellipse in degrees (counterclockwise)</span>
+    <span class="n">theta1</span><span class="p">,</span> <span class="c1"># starting angle of the arc in degrees</span>
+    <span class="n">theta2</span> <span class="c1"># end angle of the arc in degrees</span>
+<span class="p">)</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>The centers of every arc can be generated from the sequence of coordinates using the following function:
+    <div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">function generatecenters</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">generatecenters</span><span class="p">(</span><span class="n">coordinates</span><span class="p">):</span>
+    <span class="n">centers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">coord</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coordinates</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># add coordinate to list of center</span>
+        <span class="n">centers</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">coord</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">coord</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+        <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># change x-coordinate of the first center</span>
+        <span class="n">centers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">coord</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+        <span class="n">centers</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">centers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">centers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]])</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># use y-coordinate as y for new center</span>
+            <span class="n">centers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">coord</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># use x-coordinate as x for new center</span>
+            <span class="n">centers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">coord</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">centers</span>
+</code></pre></div></td></tr></table></div>
+    The <code>coordinates</code> is the list of coordinates generated from <a href="#fibonacci-and-golden-ratio">Fibonacci and Golden Ratio</a> step 3.</p>
+</li>
+<li>
+<p>The following function will then use the generated centers of the arc, and the Fibonacci sequence generated from <code>numberofamoebaseq</code> to draw the arc. The handler of the axis needs to be passed into the function as well.
+    <div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">function plotspiral</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">plotspiral</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">series</span><span class="p">,</span> <span class="n">centers</span><span class="p">):</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="mi">90</span>
+    <span class="k">for</span> <span class="n">number</span><span class="p">,</span><span class="n">center</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">series</span><span class="p">,</span><span class="n">centers</span><span class="p">):</span>
+        <span class="n">arc</span> <span class="o">=</span> <span class="n">Arc</span><span class="p">(</span>
+            <span class="n">xy</span><span class="o">=</span><span class="n">center</span><span class="p">,</span> 
+            <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">number</span><span class="p">,</span> 
+            <span class="n">height</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">number</span><span class="p">,</span> 
+            <span class="n">angle</span><span class="o">=</span><span class="n">angle</span><span class="p">,</span>
+            <span class="n">theta1</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> 
+            <span class="n">theta2</span><span class="o">=</span><span class="mi">90</span>
+        <span class="p">)</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">arc</span><span class="p">)</span>
+        <span class="n">angle</span> <span class="o">-=</span> <span class="mi">90</span>
+</code></pre></div></td></tr></table></div></p>
+<p>In your script, you will first generate the Fibonacci sequence, use the sequence to generate coordinates, generate centers of arcs, and plot the arcs to form the spiral.</p>
+<p>```python
+n = 80
+number_seq = numberofamoebaseq(n)
+coordinates = generatecoordinatesfromseries(number_seq)
+centers = generatecenters(coordinates)
+plt.figure()
+plt.scatter(...) # or plt.plot(...) to plot the coordinates as in Fibonacci and Golden Ratio step 4
+plotspiral(plt.gca(), number_seq, centers) # plt.gca() returns handle of the current axis</p>
+<div class="admonition note">
+<p class="admonition-title">Limitation</p>
+<p>Due to the limitation of matplotlib, the spiral plotting only works for the Fibonacci sequence with length less than 93.</p>
+</div>
+</li>
+</ol>
+<hr />
+<p>You can download the full Python script here: <a href="files/lab1.py">lab1.py</a></p>
+<hr />
+<h2 id="additional-deep-reinforcement-learning-for-a-6-legged-walking-robot-in-nvidia-isaac-sim">Additional: Deep Reinforcement Learning for a 6-Legged Walking Robot in NVIDIA Isaac Sim<a class="headerlink" href="#additional-deep-reinforcement-learning-for-a-6-legged-walking-robot-in-nvidia-isaac-sim" title="Permanent link">&para;</a></h2>
+<p>Deep Reinforcement Learning (DRL) enables autonomous multi-legged robots (such as hexapods) to learn complex locomotion gaits in virtual simulation environments without explicit trajectory programming. NVIDIA Isaac Sim provides GPU-accelerated physics simulation to train DRL locomotion policies in parallel.</p>
+<h3 id="1-hexapod-robot-kinematics-joint-structure">1. Hexapod Robot Kinematics &amp; Joint Structure<a class="headerlink" href="#1-hexapod-robot-kinematics-joint-structure" title="Permanent link">&para;</a></h3>
+<p>A 6-legged walking robot (hexapod) typically features <strong>18 Degrees-of-Freedom (DOF)</strong>, with 3 actuated joints per leg:
+- <strong>Coxa Joint (<span class="arithmatex">\(q_{\text{hip}}\)</span>)</strong>: Controls leg swing forward/backward (yaw).
+- <strong>Femur Joint (<span class="arithmatex">\(q_{\text{thigh}}\)</span>)</strong>: Controls leg elevation up/down (pitch).
+- <strong>Tibia Joint (<span class="arithmatex">\(q_{\text{knee}}\)</span>)</strong>: Controls leg extension/flexion (pitch).</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span></pre></div></td><td class="code"><div><pre><span></span><code>          [ Hexapod Base Body ]
+       /         |           \
+  Leg 1        Leg 2        Leg 3
+  (Front-L)   (Mid-L)      (Rear-L)
+  [Coxa]      [Coxa]       [Coxa]
+    |           |            |
+  [Femur]     [Femur]      [Femur]
+    |           |            |
+  [Tibia]     [Tibia]      [Tibia]
+
+  Leg 4        Leg 5        Leg 6
+  (Front-R)   (Mid-R)      (Rear-R)
+</code></pre></div></td></tr></table></div>
+<h3 id="2-drl-environment-formulation">2. DRL Environment Formulation<a class="headerlink" href="#2-drl-environment-formulation" title="Permanent link">&para;</a></h3>
+<p>Reinforcement Learning frames locomotion as a Markov Decision Process (MDP) defined by <span class="arithmatex">\((\mathcal{S}, \mathcal{A}, \mathcal{R}, \mathcal{P}, \gamma)\)</span>:</p>
+<ol>
+<li><strong>Observation Space (<span class="arithmatex">\(\mathcal{S} \in \mathbb{R}^{42}\)</span>)</strong>:</li>
+<li>Base linear velocity (<span class="arithmatex">\(v_x, v_y, v_z\)</span>)</li>
+<li>Base angular velocity (<span class="arithmatex">\(\omega_x, \omega_y, \omega_z\)</span>)</li>
+<li>Gravity vector orientation (<span class="arithmatex">\(g_x, g_y, g_z\)</span>)</li>
+<li>18 joint position angles (<span class="arithmatex">\(q_{1..18}\)</span>)</li>
+<li>
+<p>18 joint angular velocities (<span class="arithmatex">\(\dot{q}_{1..18}\)</span>)</p>
+</li>
+<li>
+<p><strong>Action Space (<span class="arithmatex">\(\mathcal{A} \in \mathbb{R}^{18}\)</span>)</strong>:</p>
+</li>
+<li>
+<p>Target joint position commands <span class="arithmatex">\(a_t \in [-1.0, 1.0]\)</span> scaled to physical joint limits <span class="arithmatex">\([q_{\text{min}}, q_{\text{max}}]\)</span>.</p>
+</li>
+<li>
+<p><strong>Reward Function Design (<span class="arithmatex">\(\mathcal{R}_t\)</span>)</strong>:
+   $<span class="arithmatex">\(\mathcal{R}_t = w_{\text{vel}} \cdot v_x - w_{\text{drift}} \cdot |v_y| - w_{\text{orientation}} \cdot (\|\text{pitch}\| + \|\text{roll}\|) - w_{\text{energy}} \sum_{i=1}^{18} \tau_i \cdot \dot{q}_i\)</span>$</p>
+</li>
+<li><strong>Forward Reward</strong>: Encourages maximum forward linear velocity (<span class="arithmatex">\(v_x\)</span>).</li>
+<li><strong>Stability Penalty</strong>: Penalizes lateral drift (<span class="arithmatex">\(v_y\)</span>) and body tilt (roll &amp; pitch).</li>
+<li><strong>Energy Penalty</strong>: Penalizes excessive motor torques (<span class="arithmatex">\(\tau\)</span>) and joint velocities (<span class="arithmatex">\(\dot{q}\)</span>).</li>
+</ol>
+<pre class="mermaid"><code>graph LR
+    subgraph IsaacSim ["NVIDIA Isaac Sim Stage"]
+        Env["Hexapod Robot Asset (PhysX 5 Engine)"]
+    end
+
+    subgraph DRLAgent ["PPO Deep RL Controller"]
+        Policy["Actor Network (PPO)"]
+        Critic["Critic Network (Value)"]
+    end
+
+    Env --&gt;|"Sensors: Velocity, Joint Pos/Vel (42D State)"| Policy
+    Env --&gt;|"State (42D)"| Critic
+    Policy --&gt;|"Joint Position Targets (18D Action)"| Env
+    Env --&gt;|"Physics Step &amp; Velocity"| Reward["Reward Function R_t"]
+    Reward --&gt;|"Feedback Signal"| DRLAgent</code></pre>
+<hr />
+<h3 id="3-complete-isaac-sim-pytorch-ppo-implementation-code">3. Complete Isaac Sim + PyTorch PPO Implementation Code<a class="headerlink" href="#3-complete-isaac-sim-pytorch-ppo-implementation-code" title="Permanent link">&para;</a></h3>
+<p>You can download the full Python script here: <a href="files/isaac_hexapod_drl.py">isaac_hexapod_drl.py</a></p>
+<p>Below is the complete standalone Python implementation demonstrating how to set up the 6-legged robot environment in NVIDIA Isaac Sim and train/test a PPO Deep Reinforcement Learning policy using PyTorch.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">  1</span>
+<span class="normal">  2</span>
+<span class="normal">  3</span>
+<span class="normal">  4</span>
+<span class="normal">  5</span>
+<span class="normal">  6</span>
+<span class="normal">  7</span>
+<span class="normal">  8</span>
+<span class="normal">  9</span>
+<span class="normal"> 10</span>
+<span class="normal"> 11</span>
+<span class="normal"> 12</span>
+<span class="normal"> 13</span>
+<span class="normal"> 14</span>
+<span class="normal"> 15</span>
+<span class="normal"> 16</span>
+<span class="normal"> 17</span>
+<span class="normal"> 18</span>
+<span class="normal"> 19</span>
+<span class="normal"> 20</span>
+<span class="normal"> 21</span>
+<span class="normal"> 22</span>
+<span class="normal"> 23</span>
+<span class="normal"> 24</span>
+<span class="normal"> 25</span>
+<span class="normal"> 26</span>
+<span class="normal"> 27</span>
+<span class="normal"> 28</span>
+<span class="normal"> 29</span>
+<span class="normal"> 30</span>
+<span class="normal"> 31</span>
+<span class="normal"> 32</span>
+<span class="normal"> 33</span>
+<span class="normal"> 34</span>
+<span class="normal"> 35</span>
+<span class="normal"> 36</span>
+<span class="normal"> 37</span>
+<span class="normal"> 38</span>
+<span class="normal"> 39</span>
+<span class="normal"> 40</span>
+<span class="normal"> 41</span>
+<span class="normal"> 42</span>
+<span class="normal"> 43</span>
+<span class="normal"> 44</span>
+<span class="normal"> 45</span>
+<span class="normal"> 46</span>
+<span class="normal"> 47</span>
+<span class="normal"> 48</span>
+<span class="normal"> 49</span>
+<span class="normal"> 50</span>
+<span class="normal"> 51</span>
+<span class="normal"> 52</span>
+<span class="normal"> 53</span>
+<span class="normal"> 54</span>
+<span class="normal"> 55</span>
+<span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.kit</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationApp</span>
+
+<span class="c1"># Step 1: Initialize NVIDIA Isaac Sim environment</span>
+<span class="n">simulation_app</span> <span class="o">=</span> <span class="n">SimulationApp</span><span class="p">({</span><span class="s2">&quot;headless&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.optim</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">optim</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">World</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core.robots</span><span class="w"> </span><span class="kn">import</span> <span class="n">Robot</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core.utils.nucleus</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_assets_root_path</span>
+
+<span class="c1"># Step 2: Define Actor-Critic Policy Network (PPO) for 6-Legged Locomotion</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HexapodPolicy</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs_dim</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">action_dim</span><span class="o">=</span><span class="mi">18</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">HexapodPolicy</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="c1"># Actor Network (Policy: outputs target joint angles)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actor</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">obs_dim</span><span class="p">,</span> <span class="mi">256</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ELU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ELU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">action_dim</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">()</span>  <span class="c1"># Output normalized actions in range [-1, 1]</span>
+        <span class="p">)</span>
+        <span class="c1"># Critic Network (Value function baseline)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">critic</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">obs_dim</span><span class="p">,</span> <span class="mi">256</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ELU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ELU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_std</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">action_dim</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="n">action_mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="n">state_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">critic</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">action_mean</span><span class="p">,</span> <span class="n">state_value</span>
+
+<span class="c1"># Step 3: Initialize Isaac Sim Simulation World &amp; Robot</span>
+<span class="n">world</span> <span class="o">=</span> <span class="n">World</span><span class="p">()</span>
+<span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">add_default_ground_plane</span><span class="p">()</span>
+
+<span class="c1"># Load Hexapod 6-legged robot USD asset into Isaac Sim stage</span>
+<span class="n">assets_root_path</span> <span class="o">=</span> <span class="n">get_assets_root_path</span><span class="p">()</span>
+<span class="n">hexapod_usd_path</span> <span class="o">=</span> <span class="n">assets_root_path</span> <span class="o">+</span> <span class="s2">&quot;/Isaac/Robots/Ant/ant.usd&quot;</span>  <span class="c1"># Standard multi-legged walking asset</span>
+
+<span class="n">hexapod_robot</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+    <span class="n">Robot</span><span class="p">(</span>
+        <span class="n">prim_path</span><span class="o">=</span><span class="s2">&quot;/World/Hexapod&quot;</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;hexapod_walking_robot&quot;</span><span class="p">,</span>
+        <span class="n">usd_path</span><span class="o">=</span><span class="n">hexapod_usd_path</span><span class="p">,</span>
+        <span class="n">position</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">world</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hexapod Robot initialized with </span><span class="si">{</span><span class="n">hexapod_robot</span><span class="o">.</span><span class="n">num_dof</span><span class="si">}</span><span class="s2"> Degrees of Freedom.&quot;</span><span class="p">)</span>
+
+<span class="c1"># Step 4: Instantiate DRL Policy &amp; Optimizer</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+<span class="n">policy</span> <span class="o">=</span> <span class="n">HexapodPolicy</span><span class="p">(</span><span class="n">obs_dim</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">action_dim</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">policy</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">3e-4</span><span class="p">)</span>
+
+<span class="c1"># Step 5: Reinforcement Learning Execution &amp; Training Loop</span>
+<span class="n">num_episodes</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">max_steps_per_episode</span> <span class="o">=</span> <span class="mi">500</span>
+
+<span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_episodes</span><span class="p">):</span>
+    <span class="n">world</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="n">episode_reward</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_steps_per_episode</span><span class="p">):</span>
+        <span class="c1"># 1. Step simulation physics</span>
+        <span class="n">world</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">render</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># 2. Get state observations from Isaac Sim robot sensors</span>
+        <span class="n">joint_positions</span> <span class="o">=</span> <span class="n">hexapod_robot</span><span class="o">.</span><span class="n">get_joint_positions</span><span class="p">()</span>
+        <span class="n">joint_velocities</span> <span class="o">=</span> <span class="n">hexapod_robot</span><span class="o">.</span><span class="n">get_joint_velocities</span><span class="p">()</span>
+        <span class="n">base_lin_vel</span> <span class="o">=</span> <span class="n">hexapod_robot</span><span class="o">.</span><span class="n">get_linear_velocity</span><span class="p">()</span>
+        <span class="n">base_ang_vel</span> <span class="o">=</span> <span class="n">hexapod_robot</span><span class="o">.</span><span class="n">get_angular_velocity</span><span class="p">()</span>
+
+        <span class="c1"># Construct 42-dimensional state vector</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">base_lin_vel</span><span class="p">,</span> <span class="n">base_ang_vel</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">joint_positions</span><span class="p">,</span> <span class="n">joint_velocities</span><span class="p">])</span>
+        <span class="n">state_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># 3. Predict actions via PPO Policy Network</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="n">action_mean</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">state_tensor</span><span class="p">)</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">action_mean</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+
+        <span class="c1"># 4. Apply joint target position actions to Isaac Sim Hexapod motor drives</span>
+        <span class="n">hexapod_robot</span><span class="o">.</span><span class="n">apply_action</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+        <span class="c1"># 5. Compute Locomotion Reward</span>
+        <span class="n">forward_vel</span> <span class="o">=</span> <span class="n">base_lin_vel</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">drift_penalty</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">base_lin_vel</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">reward</span> <span class="o">=</span> <span class="n">forward_vel</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">-</span> <span class="n">drift_penalty</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">-</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">action</span><span class="p">))</span>
+        <span class="n">episode_reward</span> <span class="o">+=</span> <span class="n">reward</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Episode </span><span class="si">{</span><span class="n">episode</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">num_episodes</span><span class="si">}</span><span class="s2"> - Total DRL Locomotion Reward: </span><span class="si">{</span><span class="n">episode_reward</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Completed 6-Legged Robot DRL Training in NVIDIA Isaac Sim.&quot;</span><span class="p">)</span>
+<span class="n">simulation_app</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+<hr />
+<footer style="text-align: center; margin-top: 2em; opacity: 0.8; font-size: 0.85em;">
+Copyright Author: Dr Tang Tiong Yew
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["toc.integrate", "navigation.tabs", "content.code.copy"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="javascripts/config.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

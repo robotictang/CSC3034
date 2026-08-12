@@ -1,0 +1,104 @@
+site_name: CSC3034 CI Labs
+site_url: ""
+use_directory_urls: false
+docs_dir: src
+site_dir: docs
+theme:
+  name: material
+  custom_dir: "custom"
+  favicon: img/favicon.ico
+  logo: img/favicon.ico
+  palette:
+    scheme: default
+    primary: teal
+    accent: teal
+  features:
+    - toc.integrate
+    - navigation.tabs
+    - content.code.copy
+nav:
+  - Current:
+    - Overview: index.md
+    - lab1.md
+    - lab2.md
+    - lab3.md
+    - lab4.md
+    - lab5.md
+    - lab6.md
+    - lab7.md
+    - lab8a.md
+    - lab8b.md
+  - Archive:
+    - 202409:
+      - archive/202409/lab1.md
+      - archive/202409/lab2.md
+      - archive/202409/lab3.md
+      - archive/202409/lab4.md
+      - archive/202409/lab5.md
+      - archive/202409/lab6.md
+      - archive/202409/lab7.md
+      - archive/202409/lab8a.md
+      - archive/202409/lab8b.md
+    - 202309:
+      - archive/202309/lab1.md
+      - archive/202309/lab2.md
+      - archive/202309/lab3.md
+      - archive/202309/lab4.md
+      - archive/202309/lab5.md
+      - archive/202309/lab6.md
+      - archive/202309/lab7.md
+    - 202208:
+      - archive/202208/lab1.md
+      - archive/202208/lab2.md
+      - archive/202208/lab3.md
+      - archive/202208/lab4.md
+      - archive/202208/lab5.md
+      - archive/202208/lab6.md
+      - archive/202208/lab7.md
+    - 202108:
+      - archive/202108/lab1.md
+      - archive/202108/lab2.md
+      - archive/202108/lab3.md
+      - archive/202108/lab4.md
+      - archive/202108/lab5.md
+      - archive/202108/lab6.md
+      - archive/202108/lab7.md
+    - 202008:
+      - archive/202008/lab1.md
+      - archive/202008/lab2.md
+      - archive/202008/lab3.md
+      - archive/202008/lab4.md
+      - archive/202008/lab5.md
+      - archive/202008/lab6.md
+      - archive/202008/lab7.md
+    - 201908:
+      - archive/201908/lab1.md
+      - archive/201908/lab2.md
+      - archive/201908/lab3.md
+      - archive/201908/lab4.md
+      - archive/201908/lab5.md
+      - archive/201908/lab6.md
+      - archive/201908/lab7.md
+markdown_extensions:
+  - toc:
+      permalink: true
+  - meta
+  - pymdownx.tabbed
+  - admonition
+  - pymdownx.highlight:
+      linenums: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+extra_javascript:
+  - javascripts/config.js
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+extra_css:
+  - stylesheets/extra.css

@@ -1,0 +1,3468 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="lab1.html">
+      
+      
+        <link rel="next" href="lab3.html">
+      
+      
+        
+      
+      
+      <link rel="icon" href="img/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Lab 2: Fuzzy Systems - CSC3034 CI Labs</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="stylesheets/extra.css">
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#lab-2-fuzzy-systems" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="CSC3034 CI Labs" class="md-header__button md-logo" aria-label="CSC3034 CI Labs" data-md-component="logo">
+      
+  <img src="img/favicon.ico" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CSC3034 CI Labs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Lab 2: Fuzzy Systems
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="index.html" class="md-tabs__link">
+          
+  
+  
+  Current
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="archive/202409/lab1.html" class="md-tabs__link">
+          
+  
+  
+  Archive
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="CSC3034 CI Labs" class="md-nav__button md-logo" aria-label="CSC3034 CI Labs" data-md-component="logo">
+      
+  <img src="img/favicon.ico" alt="logo">
+
+    </a>
+    CSC3034 CI Labs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Current
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Current
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="lab1.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 1: Refresh on Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 2: Fuzzy Systems
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="lab2.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 2: Fuzzy Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#fuzzy-systems" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fuzzy Systems
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fuzzy Systems">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objective" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objective
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#note" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Note
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fuzzy-control-system-for-a-train" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fuzzy control system for a train
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fuzzy control system for a train">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#initialise-inputs-and-outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Initialise inputs and outputs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#define-membership-functions-for-fuzzy-sets-of-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Define membership functions for fuzzy sets of variables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#define-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Define rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#construct-the-fuzzy-control-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Construct the fuzzy control system
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#view-the-controloutput-space" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        View the control/output space
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fuzzy-tipping-recommendation-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fuzzy tipping recommendation system
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nvidia-isaac-sim-example-fuzzy-logic-robot-obstacle-avoidance-controller" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NVIDIA Isaac Sim Example: Fuzzy Logic Robot Obstacle Avoidance Controller
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="NVIDIA Isaac Sim Example: Fuzzy Logic Robot Obstacle Avoidance Controller">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-fuzzy-logic-controller-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Fuzzy Logic Controller Architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Fuzzy Logic Controller Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inputs-antecedents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inputs (Antecedents)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#outputs-consequents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Outputs (Consequents)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-complete-isaac-sim-scikit-fuzzy-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Complete Isaac Sim + scikit-fuzzy Script
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="lab3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 3: EC (GA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="lab4.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 4: EC (PSO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="lab5.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 5: EC (ACO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="lab6.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 6: ANN (Supervised learning)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="lab7.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 7: ANN (Hyperplane)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="lab8a.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 8a: ANN using Keras
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="lab8b.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 8b: ANN using Keras
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Archive
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Archive
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    202409
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    202409
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202409/lab1.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 1: Refresh on Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202409/lab2.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 2: Fuzzy Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202409/lab3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 3: EC (GA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202409/lab4.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 4: EC (PSO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202409/lab5.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 5: EC (ACO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202409/lab6.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 6: ANN (Supervised learning)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202409/lab7.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 7: ANN (Hyperplane)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202409/lab8a.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 8a: ANN using Keras
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202409/lab8b.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 8b: ANN using Keras
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    202309
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    202309
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202309/lab1.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 1: Refresh on Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202309/lab2.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 2: Fuzzy Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202309/lab3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 3: EC (GA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202309/lab4.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 4: EC (PSO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202309/lab5.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 5: EC (ACO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202309/lab6.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 6: ANN (Supervised learning)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202309/lab7.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 7: ANN (Hyperplane)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    202208
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    202208
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202208/lab1.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 1: Pre-lab
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202208/lab2.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 2: EC (GA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202208/lab3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 3: EC (PSO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202208/lab4.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 4: EC (ACO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202208/lab5.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 5: ANN (Supervised learning)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202208/lab6.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 6: ANN (Hyperplane)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202208/lab7.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 7: Fuzzy Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    202108
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    202108
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202108/lab1.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 1: Pre-lab
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202108/lab2.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 2: EC (GA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202108/lab3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 3: EC (PSO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202108/lab4.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 4: EC (ACO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202108/lab5.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 5: ANN (Supervised learning)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202108/lab6.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 6: ANN (Hyperplane)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202108/lab7.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 7: Fuzzy Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    202008
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    202008
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202008/lab1.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 1: Pre-lab
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202008/lab2.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 2: EC (GA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202008/lab3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 3: EC (PSO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202008/lab4.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 4: EC (ACO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202008/lab5.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 5: ANN (Supervised learning)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202008/lab6.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 6: ANN (Hyperplane)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/202008/lab7.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 7: Fuzzy Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    201908
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    201908
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/201908/lab1.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 1: Pre-lab
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/201908/lab2.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 2: EC (GA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/201908/lab3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 3: EC (PSO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/201908/lab4.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 4: EC (ACO)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/201908/lab5.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 5: ANN (Supervised learning)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/201908/lab6.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 6: ANN (Hyperplane)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="archive/201908/lab7.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab 7: Fuzzy Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="lab-2-fuzzy-systems">Lab 2: Fuzzy Systems<a class="headerlink" href="#lab-2-fuzzy-systems" title="Permanent link">&para;</a></h1>
+<h2 id="fuzzy-systems">Fuzzy Systems<a class="headerlink" href="#fuzzy-systems" title="Permanent link">&para;</a></h2>
+<h3 id="objective">Objective<a class="headerlink" href="#objective" title="Permanent link">&para;</a></h3>
+<ul>
+<li>to construct a Mamdani fuzzy system using the <code>scikit-fuzzy</code> Python library</li>
+<li>to evaluate the result of the constructed fuzzy system</li>
+</ul>
+<h3 id="note">Note<a class="headerlink" href="#note" title="Permanent link">&para;</a></h3>
+<p>Install the <code>scikit-fuzzy</code> Python library in your environment before proceeding with the lab.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">c</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span> <span class="n">scikit</span><span class="o">-</span><span class="n">fuzzy</span>
+</code></pre></div></td></tr></table></div>
+<h3 id="fuzzy-control-system-for-a-train">Fuzzy control system for a train<a class="headerlink" href="#fuzzy-control-system-for-a-train" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>Consider a fuzzy control system to control the <strong>brake</strong> and <strong>throttle</strong> of a train based on the <strong>speed</strong> of the train and the <strong>distance</strong> of the train to the next stop.</p>
+</li>
+<li>
+<p>Import the <code>skfuzzy</code>, <code>skfuzzy.control</code>, and <code>numpy</code>.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">skfuzzy</span><span class="w"> </span><span class="kn">import</span> <span class="n">control</span> <span class="k">as</span> <span class="n">ctrl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">skfuzzy</span><span class="w"> </span><span class="kn">import</span> <span class="n">membership</span> <span class="k">as</span> <span class="n">mf</span>
+</code></pre></div></td></tr></table></div>
+</li>
+</ol>
+<h4 id="initialise-inputs-and-outputs">Initialise inputs and outputs<a class="headerlink" href="#initialise-inputs-and-outputs" title="Permanent link">&para;</a></h4>
+<ol>
+<li>
+<p>Speed and distance are the inputs of the system whereas brake and throttle are the outputs.</p>
+</li>
+<li>
+<p>The ranges for the variables are:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Variable</th>
+<th style="text-align: center;">Range</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Speed</td>
+<td style="text-align: center;">0 - 85 km/h</td>
+</tr>
+<tr>
+<td style="text-align: left;">Distance</td>
+<td style="text-align: center;">0 - 3000 m</td>
+</tr>
+<tr>
+<td style="text-align: left;">Brake</td>
+<td style="text-align: center;">0 - 100%</td>
+</tr>
+<tr>
+<td style="text-align: left;">Throttle</td>
+<td style="text-align: center;">0 - 100%</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ol>
+<pre class="mermaid"><code>graph LR
+    subgraph Inputs ["Crisp Inputs"]
+        S["Speed (0-85 km/h)"]
+        D["Distance (0-3000 m)"]
+    end
+
+    subgraph FuzzyEngine ["Mamdani Fuzzy Control System"]
+        Fuzz["Fuzzification (Membership Functions)"]
+        Rules["Inference Engine (FAM Matrix Rules)"]
+        Defuzz["Defuzzification (Centroid Method)"]
+        Fuzz --&gt; Rules --&gt; Defuzz
+    end
+
+    subgraph Outputs ["Crisp Outputs"]
+        B["Brake Power (0-100%)"]
+        T["Throttle Level (0-100%)"]
+    end
+
+    Inputs --&gt; Fuzz
+    Defuzz --&gt; Outputs</code></pre>
+<ol>
+<li>
+<p>As the inputs will be the antecedents of the rules, construct the variables <code>speed</code> and <code>distance</code> as <code>skfuzzy.control.Antecedent</code> objects. </p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">speed</span> <span class="o">=</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">Antecedent</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">85</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span> <span class="s1">&#39;speed&#39;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+</li>
+<li>
+<p>The initialisation function for <code>skfuzzy.control.Antecedent</code> object takes 2 arguments, the first is the <em>universe</em> of the variable, i.e. the values the variables can take, the second is the label of the variable. The initialisation function for <code>skfuzzy.control.Consequent</code> is similar. </p>
+</li>
+<li>
+<p>The label and the range of the variable can be accessed using <code>.label</code> and <code>.universe</code> respectively.</p>
+</li>
+</ol>
+<div style='margin-top: 20px'></div>
+
+<p><strong>Task</strong>: Initialise the variables <code>distance</code> as <code>Antecedent</code> object, and <code>brake</code> and <code>throttle</code> as <code>Consequent</code> objects. (Outputs of the system will be consequents of the rules)</p>
+<h4 id="define-membership-functions-for-fuzzy-sets-of-variables">Define membership functions for fuzzy sets of variables<a class="headerlink" href="#define-membership-functions-for-fuzzy-sets-of-variables" title="Permanent link">&para;</a></h4>
+<ol>
+<li>
+<p>The fit vectors of the fuzzy sets for the linguistic variables are given as follows:</p>
+<ul>
+<li>
+<p>speed (0 to 85 km/h)</p>
+<table>
+<thead>
+<tr>
+<th>Linguistic value</th>
+<th>Fit vector</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stopped</td>
+<td>(1/0, 0/2)</td>
+</tr>
+<tr>
+<td>Very slow</td>
+<td>(0/1, 1/2.5, 0/4)</td>
+</tr>
+<tr>
+<td>Slow</td>
+<td>(0/2.5, 1/6.5, 0/10.5)</td>
+</tr>
+<tr>
+<td>Medium fast</td>
+<td>(0/6.5, 1/26.5, 0/46.5)</td>
+</tr>
+<tr>
+<td>Fast</td>
+<td>(0/26.5, 1/70, 1/85)</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>distance (0 to 3000 m)</p>
+<table>
+<thead>
+<tr>
+<th>Linguistic value</th>
+<th>Fit vector</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>At</td>
+<td>(1/0, 0/2)</td>
+</tr>
+<tr>
+<td>Very near</td>
+<td>(0/1, 1/3, 0/5)</td>
+</tr>
+<tr>
+<td>Near</td>
+<td>(0/3, 1/101.5, 0/200)</td>
+</tr>
+<tr>
+<td>Medium far</td>
+<td>(0/100, 1/1550, 0/3000)</td>
+</tr>
+<tr>
+<td>Far</td>
+<td>(0/1500, 1/2250, 1/3000)</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>brake (0 to 100%)</p>
+<table>
+<thead>
+<tr>
+<th>Linguistic value</th>
+<th>Fit vector</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>No</td>
+<td>(1/0, 0/40)</td>
+</tr>
+<tr>
+<td>Very slight</td>
+<td>(0/20, 1/50, 0/80)</td>
+</tr>
+<tr>
+<td>Slight</td>
+<td>(0/70, 1/83.5, 0/97)</td>
+</tr>
+<tr>
+<td>Medium</td>
+<td>(0/95, 1/97, 0/99)</td>
+</tr>
+<tr>
+<td>Full</td>
+<td>(0/98, 1/100)</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>throttle (0 to 100%)</p>
+<table>
+<thead>
+<tr>
+<th>Linguistic value</th>
+<th>Fit vector</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>No</td>
+<td>(1/0, 0/2)</td>
+</tr>
+<tr>
+<td>Very slight</td>
+<td>(0/1, 1/3, 0/5)</td>
+</tr>
+<tr>
+<td>Slight</td>
+<td>(0/3, 1/16.5, 0/30)</td>
+</tr>
+<tr>
+<td>Medium</td>
+<td>(0/20, 1/50, 0/80)</td>
+</tr>
+<tr>
+<td>Full</td>
+<td>(0/60, 1/80, 1/100)</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+<li>
+<p>The <code>skfuzzy.membership</code> module provides the following membership functions:</p>
+<table>
+<thead>
+<tr>
+<th>Membership function</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>skfuzzy.membership.dsigmf(x, b1, c1, b2, c2)</code></td>
+<td>Difference of two fuzzy sigmoid membership functions</td>
+</tr>
+<tr>
+<td><code>skfuzzy.membership.gauss2mf(x, mean1, ...)</code></td>
+<td>Gaussian fuzzy membership function of two combined Gaussians</td>
+</tr>
+<tr>
+<td><code>skfuzzy.membership.gaussmf(x, mean, sigma)</code></td>
+<td>Gaussian fuzzy membership function</td>
+</tr>
+<tr>
+<td><code>skfuzzy.membership.gbellmf(x, a, b, c)</code></td>
+<td>Generalized Bell function fuzzy membership generator</td>
+</tr>
+<tr>
+<td><code>skfuzzy.membership.piecemf(x, abc)</code></td>
+<td>Piecewise linear membership function (particularly used in FIRE filters)</td>
+</tr>
+<tr>
+<td><code>skfuzzy.membership.pimf(x, a, b, c, d)</code></td>
+<td>Pi-function fuzzy membership generator</td>
+</tr>
+<tr>
+<td><code>skfuzzy.membership.psigmf(x, b1, c1, b2, c2)</code></td>
+<td>Product of two sigmoid membership functions</td>
+</tr>
+<tr>
+<td><code>skfuzzy.membership.sigmf(x, b, c)</code></td>
+<td>The basic sigmoid membership function generator</td>
+</tr>
+<tr>
+<td><code>skfuzzy.membership.smf(x, a, b)</code></td>
+<td>S-function fuzzy membership generator</td>
+</tr>
+<tr>
+<td><code>skfuzzy.membership.trapmf(x, abcd)</code></td>
+<td>Trapezoidal membership function generator</td>
+</tr>
+<tr>
+<td><code>skfuzzy.membership.trimf(x, abc)</code></td>
+<td>Triangular membership function generator</td>
+</tr>
+<tr>
+<td><code>skfuzzy.membership.zmf(x, a, b)</code></td>
+<td>Z-function fuzzy membership generator</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>The fit vector of a linguitic value can be assigned to a linguistic variable using</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">speed</span><span class="p">[</span><span class="s1">&#39;stopped&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">trimf</span><span class="p">(</span><span class="n">speed</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">speed</span><span class="p">[</span><span class="s1">&#39;very slow&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">trimf</span><span class="p">(</span><span class="n">speed</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+</code></pre></div></td></tr></table></div>
+<p><strong>Task</strong>: Assign all fuzzy sets to the linguistic variables.</p>
+</li>
+<li>
+<p>The fuzzy set diagram of a linguistic variable can be viewed using <code>.view()</code></p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">speed</span><span class="o">.</span><span class="n">view</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+<p><strong>Task</strong>: Check if the fuzzy set diagrams match the fit vectors.</p>
+</li>
+</ol>
+<h4 id="define-rules">Define rules<a class="headerlink" href="#define-rules" title="Permanent link">&para;</a></h4>
+<ol>
+<li>
+<p>The rules for this system are displayed in the following fuzzy association memory (FAM) representaion table.</p>
+<p><div class="md-typeset__scrollwrap">
+<table class="fam-table">
+<tr>
+  <td colspan='2'></td>
+  <td colspan='5'>Distance</td>
+</tr>
+<tr>
+  <td colspan='2'></td>
+  <td>At</td>
+  <td>Very near</td>
+  <td>Near</td>
+  <td>Medium far</td>
+  <td>Far</td>
+</tr>
+<tr>
+  <td rowspan='5'>Speed</td>
+  <td>Stopped</td>
+  <td>Full brake<br>No throttle</td>
+  <td>Full brake<br>Very slight throttle</td>
+  <td></td>
+  <td></td>
+  <td></td>
+</tr>
+<tr>
+  <td>Very slow</td>
+  <td>Full brake<br>No throttle</td>
+  <td>Medium brake<br>Very slight throttle</td>
+  <td>Slight brake<br>Very slight throttle</td>
+  <td></td>
+  <td></td>
+</tr>
+<tr>
+  <td>Slow</td>
+  <td>Full brake<br>No throttle</td>
+  <td>Medium brake<br>Very slight throttle</td>
+  <td>Very slight brake<br>Slight throttle</td>
+  <td></td>
+  <td></td>
+</tr>
+<tr>
+  <td>Medium fast</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td>Very slight brake<br>Medium throttle</td>
+  <td>No brake<br>Full throttle</td>
+</tr>
+<tr>
+  <td>Fast</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td>Very slight brake<br>Medium throttle</td>
+  <td>No brake<br>Full throttle</td>
+</tr>
+</table>
+</div></p>
+</li>
+<li>
+<p>Rule can be defined using <code>skfuzzy.control.Rule(antecedent, consequent, label)</code>. To define the first rule, i.e. if distance is 'at' and speed is 'stopped', then full brake and no throttle, </p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">rule1</span> <span class="o">=</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">Rule</span><span class="p">(</span><span class="n">distance</span><span class="p">[</span><span class="s1">&#39;at&#39;</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">speed</span><span class="p">[</span><span class="s1">&#39;stopped&#39;</span><span class="p">],</span> <span class="p">(</span><span class="n">brake</span><span class="p">[</span><span class="s1">&#39;full&#39;</span><span class="p">],</span> <span class="n">throttle</span><span class="p">[</span><span class="s1">&#39;no&#39;</span><span class="p">]))</span>
+</code></pre></div></td></tr></table></div>
+</li>
+</ol>
+<pre class="mermaid"><code>graph TD
+    InS["Speed Input e.g. 35 km/h"] --&gt; MF1["Compute Membership: speed['slow']"]
+    InD["Distance Input e.g. 150 m"] --&gt; MF2["Compute Membership: distance['near']"]
+
+    MF1 --&gt; AND["AND Operation (min membership)"]
+    MF2 --&gt; AND
+
+    AND --&gt; RuleOut["Fire Rule Consequent: brake['slight'], throttle['slight']"]
+    RuleOut --&gt; Agg["Aggregate Consequents across Rules (max)"]
+    Agg --&gt; Centroid["Defuzzify via Centroid"]
+    Centroid --&gt; OutB["Crisp Brake %"]
+    Centroid --&gt; OutT["Crisp Throttle %"]</code></pre>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code>If the antecedent consists of multiple parts, they can be combined using operators `|` (OR), `&amp;` (AND), and `~` (NOT).
+
+If the consequent consists of multiple parts, they can be combined as a `list`/`tuple`.
+
+**Task**: Define all the rules. Then combine all the rules in a `list`, i.e. `rules = [rule1, rule2, ...]`.
+</code></pre></div></td></tr></table></div>
+<h4 id="construct-the-fuzzy-control-system">Construct the fuzzy control system<a class="headerlink" href="#construct-the-fuzzy-control-system" title="Permanent link">&para;</a></h4>
+<ol>
+<li>
+<p>The train control system can be constructed with</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">train_ctrl</span> <span class="o">=</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">ControlSystem</span><span class="p">(</span><span class="n">rules</span><span class="o">=</span><span class="n">rules</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+</li>
+<li>
+<p>A <code>skfuzzy.control.ControlSystemSimulation</code> object is needed to simulate the control system to obtain the outputs given certain inputs.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">train</span> <span class="o">=</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">ControlSystemSimulation</span><span class="p">(</span><span class="n">control_system</span><span class="o">=</span><span class="n">train_ctrl</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+</li>
+<li>
+<p>To obtain the values for <code>brake</code> and <code>throttle</code> given that <code>speed</code> is 30 km/h and <code>distance</code> is 6 m,</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="c1"># define the values for the inputs</span>
+<span class="n">train</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="s1">&#39;speed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">train</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="s1">&#39;distance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2000</span>
+
+<span class="c1"># compute the outputs</span>
+<span class="n">train</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+
+<span class="c1"># print the output values</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">train</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+
+<span class="c1"># to extract one of the outputs</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">train</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s1">&#39;brake&#39;</span><span class="p">])</span>
+</code></pre></div></td></tr></table></div>
+</li>
+<li>
+<p>To view the results in the graph,</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">brake</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">sim</span><span class="o">=</span><span class="n">train</span><span class="p">)</span>
+<span class="n">throttle</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">sim</span><span class="o">=</span><span class="n">train</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+</li>
+</ol>
+<h4 id="view-the-controloutput-space">View the control/output space<a class="headerlink" href="#view-the-controloutput-space" title="Permanent link">&para;</a></h4>
+<ol>
+<li>
+<p>The control/output space allows us to identify if the outputs fit our expectation.</p>
+</li>
+<li>
+<p>Construct an empty 3D space with 100-by-100 x-y grid.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">speed</span><span class="o">.</span><span class="n">universe</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">speed</span><span class="o">.</span><span class="n">universe</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="mi">100</span><span class="p">),</span>
+                   <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">distance</span><span class="o">.</span><span class="n">universe</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">distance</span><span class="o">.</span><span class="n">universe</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="mi">100</span><span class="p">))</span>
+<span class="n">z_brake</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">z_throttle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+</li>
+<li>
+<p>Loop through every point and identify the value of brake and throttle of each point. As the specified rules are not exhaustive, i.e. some input combinations do not activate any rule, we will set the output of such input combinations to be <code>float('inf')</code>.
+    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+  <span class="k">for</span> <span class="n">j</span><span class="p">,</span><span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
+    <span class="n">train</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="s1">&#39;speed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span>
+    <span class="n">train</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="s1">&#39;distance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">train</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+    <span class="k">except</span><span class="p">:</span>
+      <span class="n">z_brake</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+      <span class="n">z_throttle</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+    <span class="n">z_brake</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s1">&#39;brake&#39;</span><span class="p">]</span>
+    <span class="n">z_throttle</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s1">&#39;throttle&#39;</span><span class="p">]</span>
+</code></pre></div></td></tr></table></div></p>
+</li>
+<li>
+<p>Plot the result in a 3D graph using the <code>matplotlib.pyplot</code> library.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mpl_toolkits.mplot3d</span><span class="w"> </span><span class="kn">import</span> <span class="n">Axes3D</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">plot3d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">):</span>
+  <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+  <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s1">&#39;3d&#39;</span><span class="p">)</span>
+
+  <span class="n">ax</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">rstride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">cstride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">antialiased</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+  <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">zdir</span><span class="o">=</span><span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="n">offset</span><span class="o">=-</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+  <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">zdir</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">*</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+  <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">zdir</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">y</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">*</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+  <span class="n">ax</span><span class="o">.</span><span class="n">view_init</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+
+<span class="n">plot3d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z_brake</span><span class="p">)</span>
+<span class="n">plot3d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z_throttle</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+</li>
+</ol>
+<h3 id="fuzzy-tipping-recommendation-system">Fuzzy tipping recommendation system<a class="headerlink" href="#fuzzy-tipping-recommendation-system" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>A fuzzy expert system is designed to identify the percentage of tips a customer will give based on the service and the food the customer received.</p>
+</li>
+<li>
+<p>The system has service and food as inputs, and tips as output.</p>
+</li>
+<li>
+<p>The fit vectors of the fuzzy sets for the linguistic variables are given as follows:</p>
+<ul>
+<li>
+<p>service (0 to 10)</p>
+<table>
+<thead>
+<tr>
+<th>Linguistic value</th>
+<th>Fit vector</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Poor</td>
+<td>(1/0, 0/5)</td>
+</tr>
+<tr>
+<td>Average</td>
+<td>(0/0, 1/5, 0/10)</td>
+</tr>
+<tr>
+<td>Good</td>
+<td>(0/5, 1/10)</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>food (0 to 10)</p>
+<table>
+<thead>
+<tr>
+<th>Linguistic value</th>
+<th>Fit vector</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Poor</td>
+<td>(1/0, 0/5)</td>
+</tr>
+<tr>
+<td>Average</td>
+<td>(0/0, 1/5, 0/10)</td>
+</tr>
+<tr>
+<td>Good</td>
+<td>(0/5, 1/10)</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>tips (0 to 30%)</p>
+<table>
+<thead>
+<tr>
+<th>Linguistic value</th>
+<th>Fit vector</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Low</td>
+<td>(1/0, 0/15)</td>
+</tr>
+<tr>
+<td>Medium</td>
+<td>(0/0, 1/15, 0/30)</td>
+</tr>
+<tr>
+<td>High</td>
+<td>(0/15, 1/30)</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+<li>
+<p>The rules are displayed in the following fuzzy association memory (FAM) representaion table.</p>
+<p><div class="md-typeset__scrollwrap">
+<table class="fam-table">
+<tr>
+  <td colspan='2'></td>
+  <td colspan='3'>Food</td>
+</tr>
+<tr>
+  <td colspan='2'></td>
+  <td>Poor</td>
+  <td>Average</td>
+  <td>Good</td>
+</tr>
+<tr>
+  <td rowspan='3'>Service</td>
+  <td>Poor</td>
+  <td>low tips</td>
+  <td>low tips</td>
+  <td>medium tips</td>
+</tr>
+<tr>
+  <td>Average</td>
+  <td>low tips</td>
+  <td>medium tips</td>
+  <td>high tips</td>
+</tr>
+<tr>
+  <td>Good</td>
+  <td>medium tips</td>
+  <td>high tips</td>
+  <td>high tips</td>
+</tr>
+</table>
+</div></p>
+</li>
+</ol>
+<div style='margin-top: 20px'></div>
+
+<p><strong>Task</strong>: Construct the fuzzy inference system.</p>
+<div style='margin-top: 20px'></div>
+
+<table>
+<thead>
+<tr>
+<th>Linguistic value</th>
+<th>Fit vector</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Poor</td>
+<td>(1/0, 0/3)</td>
+</tr>
+<tr>
+<td>Average</td>
+<td>(0/2, 1/5, 0/8)</td>
+</tr>
+<tr>
+<td>Good</td>
+<td>(0/6, 1/10)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p>You can download the full Python script here: <a href="files/lab2_fuzzy.py">lab2_fuzzy.py</a></p>
+<hr />
+<h2 id="nvidia-isaac-sim-example-fuzzy-logic-robot-obstacle-avoidance-controller">NVIDIA Isaac Sim Example: Fuzzy Logic Robot Obstacle Avoidance Controller<a class="headerlink" href="#nvidia-isaac-sim-example-fuzzy-logic-robot-obstacle-avoidance-controller" title="Permanent link">&para;</a></h2>
+<p>Fuzzy Logic Controllers (FLC) are extensively used in autonomous mobile robotics to handle uncertainty and non-linear dynamics during navigation. In this section, we build a <strong>Mamdani Fuzzy Inference System</strong> using <code>scikit-fuzzy</code> and integrate it into an <strong>NVIDIA Isaac Sim</strong> simulation loop to autonomously navigate a mobile robot while avoiding obstacles.</p>
+<h3 id="1-fuzzy-logic-controller-architecture">1. Fuzzy Logic Controller Architecture<a class="headerlink" href="#1-fuzzy-logic-controller-architecture" title="Permanent link">&para;</a></h3>
+<p>The controller uses 2 inputs (distance to obstacle &amp; heading error to target) and computes 2 control outputs (linear velocity &amp; angular steering velocity):</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span></pre></div></td><td class="code"><div><pre><span></span><code>       +-----------------------+
+       |   NVIDIA Isaac Sim    |
+       |  Sensors (Range/Pose) |
+       +-----------+-----------+
+                   |
+     [distance]    |    [heading]
+                   v
+       +-----------+-----------+
+       |  scikit-fuzzy Engine  |
+       | Fuzzification -&gt; Rules |
+       | -&gt; Defuzzification    |
+       +-----------+-----------+
+                   |
+   [linear_vel]    |    [angular_vel]
+                   v
+       +-----------+-----------+
+       |  NVIDIA Isaac Sim     |
+       | Robot Motor Actuators |
+       +-----------------------+
+</code></pre></div></td></tr></table></div>
+<h4 id="inputs-antecedents">Inputs (Antecedents)<a class="headerlink" href="#inputs-antecedents" title="Permanent link">&para;</a></h4>
+<ol>
+<li><strong><code>distance</code> (<span class="arithmatex">\(0 \text{ to } 5 \text{ m}\)</span>)</strong>: Distance from front sensor to closest obstacle barrier.</li>
+<li><code>near</code>: <code>[0.0, 0.0, 1.5]</code></li>
+<li><code>medium</code>: <code>[1.0, 2.5, 4.0]</code></li>
+<li><code>far</code>: <code>[3.0, 5.0, 5.0]</code></li>
+<li><strong><code>heading</code> (<span class="arithmatex">\(-180^\circ \text{ to } +180^\circ\)</span>)</strong>: Angle offset towards target destination.</li>
+<li><code>left</code>: <code>[-180, -90, 0]</code></li>
+<li><code>straight</code>: <code>[-30, 0, 30]</code></li>
+<li><code>right</code>: <code>[0, 90, 180]</code></li>
+</ol>
+<h4 id="outputs-consequents">Outputs (Consequents)<a class="headerlink" href="#outputs-consequents" title="Permanent link">&para;</a></h4>
+<ol>
+<li><strong><code>linear_velocity</code> (<span class="arithmatex">\(0 \text{ to } 1.5 \text{ m/s}\)</span>)</strong>: Forward speed of the robot.</li>
+<li><code>stop</code>: <code>[0.0, 0.0, 0.3]</code></li>
+<li><code>slow</code>: <code>[0.2, 0.6, 1.0]</code></li>
+<li><code>fast</code>: <code>[0.8, 1.5, 1.5]</code></li>
+<li><strong><code>angular_velocity</code> (<span class="arithmatex">\(-2.0 \text{ to } +2.0 \text{ rad/s}\)</span>)</strong>: Steering turn rate.</li>
+<li><code>turn_right</code>: <code>[-2.0, -1.0, 0.0]</code></li>
+<li><code>straight</code>: <code>[-0.3, 0.0, 0.3]</code></li>
+<li><code>turn_left</code>: <code>[0.0, 1.0, 2.0]</code></li>
+</ol>
+<hr />
+<h3 id="2-complete-isaac-sim-scikit-fuzzy-script">2. Complete Isaac Sim + <code>scikit-fuzzy</code> Script<a class="headerlink" href="#2-complete-isaac-sim-scikit-fuzzy-script" title="Permanent link">&para;</a></h3>
+<p>You can download the full Python script here: <a href="files/isaac_fuzzy_robot.py">isaac_fuzzy_robot.py</a></p>
+<p>Below is the complete standalone Python script demonstrating how to construct the Mamdani Fuzzy System and run it inside the NVIDIA Isaac Sim simulation loop.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.kit</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationApp</span>
+
+<span class="c1"># Step 1: Initialize NVIDIA Isaac Sim</span>
+<span class="n">simulation_app</span> <span class="o">=</span> <span class="n">SimulationApp</span><span class="p">({</span><span class="s2">&quot;headless&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">skfuzzy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fuzz</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">skfuzzy</span><span class="w"> </span><span class="kn">import</span> <span class="n">control</span> <span class="k">as</span> <span class="n">ctrl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">World</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core.robots</span><span class="w"> </span><span class="kn">import</span> <span class="n">Robot</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">JointActions</span>
+
+<span class="c1"># Step 2: Build Mamdani Fuzzy Inference System using scikit-fuzzy</span>
+<span class="n">distance</span> <span class="o">=</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">Antecedent</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">5.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span> <span class="s1">&#39;distance&#39;</span><span class="p">)</span>
+<span class="n">heading</span> <span class="o">=</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">Antecedent</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span> <span class="mi">181</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="s1">&#39;heading&#39;</span><span class="p">)</span>
+<span class="n">linear_vel</span> <span class="o">=</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">Consequent</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span> <span class="s1">&#39;linear_vel&#39;</span><span class="p">)</span>
+<span class="n">angular_vel</span> <span class="o">=</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">Consequent</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span> <span class="s1">&#39;angular_vel&#39;</span><span class="p">)</span>
+
+<span class="c1"># Define membership functions</span>
+<span class="n">distance</span><span class="p">[</span><span class="s1">&#39;near&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">trimf</span><span class="p">(</span><span class="n">distance</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">])</span>
+<span class="n">distance</span><span class="p">[</span><span class="s1">&#39;medium&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">trimf</span><span class="p">(</span><span class="n">distance</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">])</span>
+<span class="n">distance</span><span class="p">[</span><span class="s1">&#39;far&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">trimf</span><span class="p">(</span><span class="n">distance</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span> <span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">])</span>
+
+<span class="n">heading</span><span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">trimf</span><span class="p">(</span><span class="n">heading</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span> <span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">heading</span><span class="p">[</span><span class="s1">&#39;straight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">trimf</span><span class="p">(</span><span class="n">heading</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">30</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">30</span><span class="p">])</span>
+<span class="n">heading</span><span class="p">[</span><span class="s1">&#39;right&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">trimf</span><span class="p">(</span><span class="n">heading</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">180</span><span class="p">])</span>
+
+<span class="n">linear_vel</span><span class="p">[</span><span class="s1">&#39;stop&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">trimf</span><span class="p">(</span><span class="n">linear_vel</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span>
+<span class="n">linear_vel</span><span class="p">[</span><span class="s1">&#39;slow&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">trimf</span><span class="p">(</span><span class="n">linear_vel</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+<span class="n">linear_vel</span><span class="p">[</span><span class="s1">&#39;fast&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">trimf</span><span class="p">(</span><span class="n">linear_vel</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">])</span>
+
+<span class="n">angular_vel</span><span class="p">[</span><span class="s1">&#39;turn_right&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">trimf</span><span class="p">(</span><span class="n">angular_vel</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+<span class="n">angular_vel</span><span class="p">[</span><span class="s1">&#39;straight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">trimf</span><span class="p">(</span><span class="n">angular_vel</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span>
+<span class="n">angular_vel</span><span class="p">[</span><span class="s1">&#39;turn_left&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">trimf</span><span class="p">(</span><span class="n">angular_vel</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>
+
+<span class="c1"># Define Fuzzy Association Memory (FAM) Rules</span>
+<span class="n">rule1</span> <span class="o">=</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">Rule</span><span class="p">(</span><span class="n">distance</span><span class="p">[</span><span class="s1">&#39;near&#39;</span><span class="p">],</span> <span class="p">(</span><span class="n">linear_vel</span><span class="p">[</span><span class="s1">&#39;stop&#39;</span><span class="p">],</span> <span class="n">angular_vel</span><span class="p">[</span><span class="s1">&#39;turn_left&#39;</span><span class="p">]))</span>
+<span class="n">rule2</span> <span class="o">=</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">Rule</span><span class="p">(</span><span class="n">distance</span><span class="p">[</span><span class="s1">&#39;medium&#39;</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">heading</span><span class="p">[</span><span class="s1">&#39;straight&#39;</span><span class="p">],</span> <span class="p">(</span><span class="n">linear_vel</span><span class="p">[</span><span class="s1">&#39;slow&#39;</span><span class="p">],</span> <span class="n">angular_vel</span><span class="p">[</span><span class="s1">&#39;straight&#39;</span><span class="p">]))</span>
+<span class="n">rule3</span> <span class="o">=</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">Rule</span><span class="p">(</span><span class="n">distance</span><span class="p">[</span><span class="s1">&#39;far&#39;</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">heading</span><span class="p">[</span><span class="s1">&#39;straight&#39;</span><span class="p">],</span> <span class="p">(</span><span class="n">linear_vel</span><span class="p">[</span><span class="s1">&#39;fast&#39;</span><span class="p">],</span> <span class="n">angular_vel</span><span class="p">[</span><span class="s1">&#39;straight&#39;</span><span class="p">]))</span>
+<span class="n">rule4</span> <span class="o">=</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">Rule</span><span class="p">(</span><span class="n">heading</span><span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">],</span> <span class="n">angular_vel</span><span class="p">[</span><span class="s1">&#39;turn_left&#39;</span><span class="p">])</span>
+<span class="n">rule5</span> <span class="o">=</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">Rule</span><span class="p">(</span><span class="n">heading</span><span class="p">[</span><span class="s1">&#39;right&#39;</span><span class="p">],</span> <span class="n">angular_vel</span><span class="p">[</span><span class="s1">&#39;turn_right&#39;</span><span class="p">])</span>
+
+<span class="n">fuzzy_control_system</span> <span class="o">=</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">ControlSystem</span><span class="p">([</span><span class="n">rule1</span><span class="p">,</span> <span class="n">rule2</span><span class="p">,</span> <span class="n">rule3</span><span class="p">,</span> <span class="n">rule4</span><span class="p">,</span> <span class="n">rule5</span><span class="p">])</span>
+<span class="n">fuzzy_sim</span> <span class="o">=</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">ControlSystemSimulation</span><span class="p">(</span><span class="n">fuzzy_control_system</span><span class="p">)</span>
+
+<span class="c1"># Step 3: Initialize Isaac Sim Stage &amp; World</span>
+<span class="n">world</span> <span class="o">=</span> <span class="n">World</span><span class="p">()</span>
+<span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">add_default_ground_plane</span><span class="p">()</span>
+
+<span class="c1"># Step 4: Real-time Isaac Sim Simulation Loop with Fuzzy Logic Control</span>
+<span class="n">world</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Starting Fuzzy Logic Control Loop in NVIDIA Isaac Sim...&quot;</span><span class="p">)</span>
+
+<span class="n">step_count</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">while</span> <span class="n">simulation_app</span><span class="o">.</span><span class="n">is_running</span><span class="p">()</span> <span class="ow">and</span> <span class="n">step_count</span> <span class="o">&lt;</span> <span class="mi">200</span><span class="p">:</span>
+    <span class="n">world</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">render</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Simulate reading virtual sensor values from Isaac Sim</span>
+    <span class="c1"># (e.g., front distance sensor reading &amp; goal orientation)</span>
+    <span class="n">simulated_obstacle_dist</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">5.0</span> <span class="o">-</span> <span class="p">(</span><span class="n">step_count</span> <span class="o">*</span> <span class="mf">0.02</span><span class="p">))</span>  <span class="c1"># Approaching obstacle</span>
+    <span class="n">simulated_heading_error</span> <span class="o">=</span> <span class="mf">15.0</span> <span class="k">if</span> <span class="n">step_count</span> <span class="o">&lt;</span> <span class="mi">100</span> <span class="k">else</span> <span class="o">-</span><span class="mf">45.0</span>  <span class="c1"># Heading offset in degrees</span>
+
+    <span class="c1"># Pass sensor inputs into fuzzy inference engine</span>
+    <span class="n">fuzzy_sim</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="s1">&#39;distance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">simulated_obstacle_dist</span>
+    <span class="n">fuzzy_sim</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="s1">&#39;heading&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">simulated_heading_error</span>
+
+    <span class="c1"># Compute crisp defuzzified control outputs</span>
+    <span class="n">fuzzy_sim</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+
+    <span class="n">target_v</span> <span class="o">=</span> <span class="n">fuzzy_sim</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s1">&#39;linear_vel&#39;</span><span class="p">]</span>
+    <span class="n">target_w</span> <span class="o">=</span> <span class="n">fuzzy_sim</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s1">&#39;angular_vel&#39;</span><span class="p">]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Step </span><span class="si">{</span><span class="n">step_count</span><span class="si">:</span><span class="s2">03d</span><span class="si">}</span><span class="s2">] Distance: </span><span class="si">{</span><span class="n">simulated_obstacle_dist</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">m | Heading: </span><span class="si">{</span><span class="n">simulated_heading_error</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">° &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;--&gt; Fuzzy Outputs: Linear Vel = </span><span class="si">{</span><span class="n">target_v</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> m/s, Angular Vel = </span><span class="si">{</span><span class="n">target_w</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> rad/s&quot;</span><span class="p">)</span>
+
+    <span class="n">step_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Completed Fuzzy Logic Controller simulation in Isaac Sim.&quot;</span><span class="p">)</span>
+<span class="n">simulation_app</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+<hr />
+<footer style="text-align: center; margin-top: 2em; opacity: 0.8; font-size: 0.85em;">
+Copyright Author: Dr Tang Tiong Yew
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["toc.integrate", "navigation.tabs", "content.code.copy"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="javascripts/config.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
