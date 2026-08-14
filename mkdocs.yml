@@ -3,6 +3,8 @@ site_url: ""
 use_directory_urls: false
 docs_dir: src
 site_dir: docs
+hooks:
+  - hooks/offline_search.py
 theme:
   name: material
   custom_dir: "custom"
