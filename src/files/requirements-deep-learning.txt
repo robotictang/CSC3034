@@ -1,0 +1,5 @@
+# Optional dependencies for Labs 8a/8b and the policy demonstration in Lab 1.
+-r requirements.txt
+opencv-python>=4.10,<5
+tensorflow>=2.18,<3
+torch>=2.5,<3

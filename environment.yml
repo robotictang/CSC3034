@@ -1,7 +1,11 @@
-name: labs
+name: csc3034-labs
 channels:
+  - conda-forge
   - defaults
 dependencies:
+  - python=3.12
+  - pip
   - mkdocs-material
   - mkdocs
-prefix: D:\applications\Anaconda3\envs\labs
+  - pip:
+      - -r src/files/requirements.txt
