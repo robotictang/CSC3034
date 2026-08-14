@@ -477,85 +477,259 @@ You can download the full Python script here: [isaac_fuzzy_robot.py](files/isaac
 Below is the complete standalone Python script demonstrating how to construct the Mamdani Fuzzy System and run it inside the NVIDIA Isaac Sim simulation loop.
 
 ```python
-from omni.isaac.kit import SimulationApp
+# Copyright Author: Dr Tang Tiong Yew
+"""
+Fuzzy Logic Robot Obstacle Avoidance Controller in NVIDIA Isaac Sim
+===================================================================
+This script demonstrates Mamdani Fuzzy Logic Control for autonomous mobile robot navigation
+and obstacle avoidance inside NVIDIA Isaac Sim using `scikit-fuzzy`.
 
-# Step 1: Initialize NVIDIA Isaac Sim
-simulation_app = SimulationApp({"headless": False})
+Execution Modes:
+1. NVIDIA Isaac Sim Mode (Full 3D GPU physics & visual simulation):
+   Run with Isaac Sim's standalone python:
+   `isaac-sim.standalone.bat python src/files/isaac_fuzzy_robot.py`
+   OR `python.bat src/files/isaac_fuzzy_robot.py`
 
+2. Standalone Fallback Mode (scikit-fuzzy controller simulation):
+   `python src/files/isaac_fuzzy_robot.py`
+"""
+
+import sys
+import time
 import numpy as np
-import skfuzzy as fuzz
-from skfuzzy import control as ctrl
-from omni.isaac.core import World
-from omni.isaac.core.robots import Robot
-from omni.isaac.core.utils.types import JointActions
 
-# Step 2: Build Mamdani Fuzzy Inference System using scikit-fuzzy
-distance = ctrl.Antecedent(np.arange(0, 5.1, 0.1), 'distance')
-heading = ctrl.Antecedent(np.arange(-180, 181, 1), 'heading')
-linear_vel = ctrl.Consequent(np.arange(0, 1.6, 0.1), 'linear_vel')
-angular_vel = ctrl.Consequent(np.arange(-2.0, 2.1, 0.1), 'angular_vel')
+HAS_SKFUZZY = False
+try:
+    import skfuzzy as fuzz
+    from skfuzzy import control as ctrl
+    HAS_SKFUZZY = True
+except ImportError:
+    HAS_SKFUZZY = False
 
-# Define membership functions
-distance['near'] = fuzz.trimf(distance.universe, [0.0, 0.0, 1.5])
-distance['medium'] = fuzz.trimf(distance.universe, [1.0, 2.5, 4.0])
-distance['far'] = fuzz.trimf(distance.universe, [3.0, 5.0, 5.0])
+# Try importing NVIDIA Isaac Sim modules
+HAS_ISAAC_SIM = False
+try:
+    from isaacsim import SimulationApp
+    HAS_ISAAC_SIM = True
+except ImportError:
+    try:
+        from omni.isaac.kit import SimulationApp
+        HAS_ISAAC_SIM = True
+    except ImportError:
+        HAS_ISAAC_SIM = False
 
-heading['left'] = fuzz.trimf(heading.universe, [-180, -90, 0])
-heading['straight'] = fuzz.trimf(heading.universe, [-30, 0, 30])
-heading['right'] = fuzz.trimf(heading.universe, [0, 90, 180])
 
-linear_vel['stop'] = fuzz.trimf(linear_vel.universe, [0.0, 0.0, 0.3])
-linear_vel['slow'] = fuzz.trimf(linear_vel.universe, [0.2, 0.6, 1.0])
-linear_vel['fast'] = fuzz.trimf(linear_vel.universe, [0.8, 1.5, 1.5])
+# =====================================================================
+# Build Mamdani Fuzzy Inference System Architecture
+# =====================================================================
+def build_fuzzy_controller():
+    """Constructs scikit-fuzzy Antecedents, Consequents, and Rules."""
+    distance = ctrl.Antecedent(np.arange(0, 5.1, 0.1), 'distance')
+    heading = ctrl.Antecedent(np.arange(-180, 181, 1), 'heading')
+    linear_vel = ctrl.Consequent(np.arange(0, 1.6, 0.1), 'linear_vel')
+    angular_vel = ctrl.Consequent(np.arange(-2.0, 2.1, 0.1), 'angular_vel')
 
-angular_vel['turn_right'] = fuzz.trimf(angular_vel.universe, [-2.0, -1.0, 0.0])
-angular_vel['straight'] = fuzz.trimf(angular_vel.universe, [-0.3, 0.0, 0.3])
-angular_vel['turn_left'] = fuzz.trimf(angular_vel.universe, [0.0, 1.0, 2.0])
+    # Define membership functions
+    distance['near'] = fuzz.trimf(distance.universe, [0.0, 0.0, 1.5])
+    distance['medium'] = fuzz.trimf(distance.universe, [1.0, 2.5, 4.0])
+    distance['far'] = fuzz.trimf(distance.universe, [3.0, 5.0, 5.0])
 
-# Define Fuzzy Association Memory (FAM) Rules
-rule1 = ctrl.Rule(distance['near'], (linear_vel['stop'], angular_vel['turn_left']))
-rule2 = ctrl.Rule(distance['medium'] & heading['straight'], (linear_vel['slow'], angular_vel['straight']))
-rule3 = ctrl.Rule(distance['far'] & heading['straight'], (linear_vel['fast'], angular_vel['straight']))
-rule4 = ctrl.Rule(heading['left'], angular_vel['turn_left'])
-rule5 = ctrl.Rule(heading['right'], angular_vel['turn_right'])
+    heading['left'] = fuzz.trimf(heading.universe, [-180, -90, 0])
+    heading['straight'] = fuzz.trimf(heading.universe, [-30, 0, 30])
+    heading['right'] = fuzz.trimf(heading.universe, [0, 90, 180])
 
-fuzzy_control_system = ctrl.ControlSystem([rule1, rule2, rule3, rule4, rule5])
-fuzzy_sim = ctrl.ControlSystemSimulation(fuzzy_control_system)
+    linear_vel['stop'] = fuzz.trimf(linear_vel.universe, [0.0, 0.0, 0.3])
+    linear_vel['slow'] = fuzz.trimf(linear_vel.universe, [0.2, 0.6, 1.0])
+    linear_vel['fast'] = fuzz.trimf(linear_vel.universe, [0.8, 1.5, 1.5])
 
-# Step 3: Initialize Isaac Sim Stage & World
-world = World()
-world.scene.add_default_ground_plane()
+    angular_vel['turn_right'] = fuzz.trimf(angular_vel.universe, [-2.0, -1.0, 0.0])
+    angular_vel['straight'] = fuzz.trimf(angular_vel.universe, [-0.3, 0.0, 0.3])
+    angular_vel['turn_left'] = fuzz.trimf(angular_vel.universe, [0.0, 1.0, 2.0])
 
-# Step 4: Real-time Isaac Sim Simulation Loop with Fuzzy Logic Control
-world.reset()
-print("Starting Fuzzy Logic Control Loop in NVIDIA Isaac Sim...")
+    # Define Fuzzy Association Memory (FAM) Rules
+    rule1 = ctrl.Rule(distance['near'], (linear_vel['stop'], angular_vel['turn_left']))
+    rule2 = ctrl.Rule(distance['medium'] & heading['straight'], (linear_vel['slow'], angular_vel['straight']))
+    rule3 = ctrl.Rule(distance['far'] & heading['straight'], (linear_vel['fast'], angular_vel['straight']))
+    rule4 = ctrl.Rule(heading['left'], (linear_vel['slow'], angular_vel['turn_left']))
+    rule5 = ctrl.Rule(heading['right'], (linear_vel['slow'], angular_vel['turn_right']))
 
-step_count = 0
-while simulation_app.is_running() and step_count < 200:
-    world.step(render=True)
-    
-    # Simulate reading virtual sensor values from Isaac Sim
-    # (e.g., front distance sensor reading & goal orientation)
-    simulated_obstacle_dist = max(0.5, 5.0 - (step_count * 0.02))  # Approaching obstacle
-    simulated_heading_error = 15.0 if step_count < 100 else -45.0  # Heading offset in degrees
-    
-    # Pass sensor inputs into fuzzy inference engine
-    fuzzy_sim.input['distance'] = simulated_obstacle_dist
-    fuzzy_sim.input['heading'] = simulated_heading_error
-    
-    # Compute crisp defuzzified control outputs
-    fuzzy_sim.compute()
-    
-    target_v = fuzzy_sim.output['linear_vel']
-    target_w = fuzzy_sim.output['angular_vel']
-    
-    print(f"[Step {step_count:03d}] Distance: {simulated_obstacle_dist:.2f}m | Heading: {simulated_heading_error:.1f}° "
-          f"--> Fuzzy Outputs: Linear Vel = {target_v:.2f} m/s, Angular Vel = {target_w:.2f} rad/s")
-    
-    step_count += 1
+    fuzzy_control_system = ctrl.ControlSystem([rule1, rule2, rule3, rule4, rule5])
+    return ctrl.ControlSystemSimulation(fuzzy_control_system)
 
-print("Completed Fuzzy Logic Controller simulation in Isaac Sim.")
-simulation_app.close()
+
+# =====================================================================
+# 1. NVIDIA Isaac Sim Implementation
+# =====================================================================
+def run_isaac_sim_fuzzy(max_steps=200, step_delay_seconds=1.0):
+    """Executes Fuzzy Logic Robot Controller inside NVIDIA Isaac Sim stage."""
+    try:
+        from isaacsim import SimulationApp
+        simulation_app = SimulationApp({"headless": False})
+    except ImportError:
+        from omni.isaac.kit import SimulationApp
+        simulation_app = SimulationApp({"headless": False})
+
+    # Isaac Sim 5.0+ moved the core API from ``omni.isaac`` to ``isaacsim``.
+    # Retain the legacy import so this example also works with older releases.
+    try:
+        from isaacsim.core.api import World
+    except ImportError:
+        from omni.isaac.core import World
+
+    from pxr import Gf, UsdGeom, UsdLux
+    import omni.usd
+    from omni.kit.viewport.utility import get_active_viewport
+
+    world = World()
+    stage = omni.usd.get_context().get_stage()
+
+    # Build the entire demonstration from local USD primitives, avoiding the
+    # online Isaac asset normally used by ``add_default_ground_plane``.
+    ground = UsdGeom.Cube.Define(stage, "/World/Ground")
+    ground.CreateSizeAttr(1.0)
+    ground.AddTranslateOp().Set(Gf.Vec3d(0.0, 0.0, -0.12))
+    ground.AddScaleOp().Set(Gf.Vec3f(12.0, 12.0, 0.12))
+    ground.CreateDisplayColorAttr([Gf.Vec3f(0.18, 0.20, 0.24)])
+
+    dome_light = UsdLux.DomeLight.Define(stage, "/World/DomeLight")
+    dome_light.CreateIntensityAttr(500.0)
+    dome_light.CreateColorAttr(Gf.Vec3f(1.0, 1.0, 1.0))
+
+    obstacle = UsdGeom.Cube.Define(stage, "/World/Obstacle")
+    obstacle.CreateSizeAttr(1.0)
+    obstacle.AddTranslateOp().Set(Gf.Vec3d(2.0, 0.0, 0.5))
+    obstacle.AddScaleOp().Set(Gf.Vec3f(0.6, 0.6, 0.5))
+    obstacle.CreateDisplayColorAttr([Gf.Vec3f(0.9, 0.12, 0.10)])
+
+    robot = UsdGeom.Xform.Define(stage, "/World/FuzzyRobot")
+    robot_translate = robot.AddTranslateOp()
+    robot_rotate = robot.AddRotateZOp()
+    robot_translate.Set(Gf.Vec3d(-4.0, 0.0, 0.25))
+    robot_rotate.Set(0.0)
+
+    robot_body = UsdGeom.Cube.Define(stage, "/World/FuzzyRobot/Body")
+    robot_body.CreateSizeAttr(1.0)
+    robot_body.AddScaleOp().Set(Gf.Vec3f(0.55, 0.38, 0.25))
+    robot_body.CreateDisplayColorAttr([Gf.Vec3f(0.05, 0.35, 0.95)])
+
+    direction_marker = UsdGeom.Cube.Define(stage, "/World/FuzzyRobot/DirectionMarker")
+    direction_marker.CreateSizeAttr(1.0)
+    direction_marker.AddTranslateOp().Set(Gf.Vec3d(0.62, 0.0, 0.20))
+    direction_marker.AddScaleOp().Set(Gf.Vec3f(0.35, 0.10, 0.08))
+    direction_marker.CreateDisplayColorAttr([Gf.Vec3f(1.0, 0.85, 0.05)])
+
+    camera_path = "/World/FuzzyCamera"
+    camera = stage.DefinePrim(camera_path, "Camera")
+    camera_xform = UsdGeom.Xformable(camera)
+    camera_xform.AddTranslateOp().Set(Gf.Vec3d(-11.0, 0.0, 11.0))
+    # This view looks from the start of the route towards its centre.
+    camera_xform.AddRotateXYZOp().Set(Gf.Vec3f(45.0, 0.0, -90.0))
+    viewport = get_active_viewport()
+    if viewport:
+        viewport.camera_path = camera_path
+
+    fuzzy_sim = build_fuzzy_controller()
+
+    world.reset()
+    print("[INFO] Starting Fuzzy Logic Control Loop in NVIDIA Isaac Sim...")
+
+    step_count = 0
+    robot_position = np.array([-4.0, 0.0], dtype=float)
+    robot_heading = 0.0
+    visual_time_step = 0.10
+    while simulation_app.is_running() and step_count < max_steps:
+        world.step(render=True)
+
+        simulated_obstacle_dist = max(0.5, 5.0 - (step_count * 0.02))
+        simulated_heading_error = 15.0 if step_count < 100 else -45.0
+
+        fuzzy_sim.input['distance'] = simulated_obstacle_dist
+        fuzzy_sim.input['heading'] = simulated_heading_error
+
+        try:
+            fuzzy_sim.compute()
+            target_v = fuzzy_sim.output.get('linear_vel', 0.5)
+            target_w = fuzzy_sim.output.get('angular_vel', 0.0)
+        except Exception:
+            target_v = 0.5
+            target_w = 0.0
+
+        # Animate the local robot directly from the fuzzy velocity outputs.
+        robot_heading += target_w * visual_time_step
+        robot_position += target_v * visual_time_step * np.array(
+            [np.cos(robot_heading), np.sin(robot_heading)]
+        )
+        robot_translate.Set(Gf.Vec3d(float(robot_position[0]), float(robot_position[1]), 0.25))
+        robot_rotate.Set(float(np.degrees(robot_heading)))
+
+        if step_count % 20 == 0:
+            print(f"[Step {step_count:03d}] Distance: {simulated_obstacle_dist:.2f}m | Heading: {simulated_heading_error:.1f}° "
+                  f"--> Fuzzy Outputs: Linear Vel = {target_v:.2f} m/s, Angular Vel = {target_w:.2f} rad/s")
+
+        step_count += 1
+        # Keep each rendered state visible in the Isaac Sim GUI.  With the
+        # default 200 steps and one-second delay, the demo lasts ~200 seconds.
+        if step_delay_seconds > 0:
+            time.sleep(step_delay_seconds)
+
+    print("[SUCCESS] Completed Fuzzy Logic Controller simulation in Isaac Sim.")
+    simulation_app.close()
+
+
+# =====================================================================
+# 2. Standalone Fallback Execution
+# =====================================================================
+def run_fallback_fuzzy(max_steps=100):
+    """Fallback simulation running scikit-fuzzy controller without Isaac Sim GUI."""
+    print("===============================================================")
+    print(" Running Standalone Fuzzy Logic Controller (No Isaac Sim GUI)  ")
+    print("===============================================================")
+
+    if not HAS_SKFUZZY:
+        print("[!] scikit-fuzzy library ('skfuzzy') is required to run the Fuzzy controller.")
+        print("    Install it via: pip install scikit-fuzzy")
+        print("\n[INFO] Demonstrating heuristic navigation rule fallback:")
+        for step in range(0, max_steps, 20):
+            simulated_obstacle_dist = max(0.5, 5.0 - (step * 0.04))
+            simulated_heading_error = 20.0 if step < 50 else -30.0
+            target_v = 0.2 if simulated_obstacle_dist < 1.5 else 1.2
+            target_w = 0.8 if simulated_heading_error > 0 else -0.8
+            print(f"[Step {step:03d}] Dist: {simulated_obstacle_dist:.2f}m | Heading: {simulated_heading_error:+.1f}° "
+                  f"--> Linear Vel = {target_v:.2f} m/s | Angular Vel = {target_w:+.2f} rad/s")
+        return
+
+    fuzzy_sim = build_fuzzy_controller()
+
+    for step in range(max_steps):
+        simulated_obstacle_dist = max(0.5, 5.0 - (step * 0.04))
+        simulated_heading_error = 20.0 if step < 50 else -30.0
+
+        fuzzy_sim.input['distance'] = simulated_obstacle_dist
+        fuzzy_sim.input['heading'] = simulated_heading_error
+
+        try:
+            fuzzy_sim.compute()
+            target_v = fuzzy_sim.output.get('linear_vel', 0.5)
+            target_w = fuzzy_sim.output.get('angular_vel', 0.0)
+        except Exception:
+            target_v = 0.5
+            target_w = 0.0
+
+        if step % 10 == 0:
+            print(f"[Step {step:03d}] Dist: {simulated_obstacle_dist:.2f}m | Heading: {simulated_heading_error:+.1f}° "
+                  f"--> Linear Vel = {target_v:.2f} m/s | Angular Vel = {target_w:+.2f} rad/s")
+
+    print("[SUCCESS] Standalone Fuzzy Logic controller simulation finished cleanly.")
+
+
+if __name__ == '__main__':
+    if HAS_ISAAC_SIM and HAS_SKFUZZY:
+        print("[INFO] NVIDIA Isaac Sim detected. Launching stage...")
+        run_isaac_sim_fuzzy()
+    else:
+        print("[INFO] Running Standalone Mode.")
+        run_fallback_fuzzy()
+
 ```
 
 ---

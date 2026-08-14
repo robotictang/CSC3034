@@ -14,6 +14,7 @@ Execution Modes:
    `python src/files/isaac_pso_swarm.py`
 """
 
+import os
 import sys
 import time
 import numpy as np
@@ -34,17 +35,33 @@ except ImportError:
 # =====================================================================
 # 1. NVIDIA Isaac Sim Implementation
 # =====================================================================
-def run_isaac_sim_pso(n_robots=10, max_iterations=200):
+def run_isaac_sim_pso(n_robots=10, max_iterations=200, seconds_per_iteration=0.5):
     """Executes the Robot Swarm PSO inside NVIDIA Isaac Sim photorealistic environment."""
+    # Isaac Sim 6 retains this API in its deprecated-extension bundle.  Add the
+    # bundle when present so the same script also works with earlier releases.
+    launch_config = {"headless": False}
+    isaac_path = os.environ.get("ISAAC_PATH")
+    if isaac_path:
+        deprecated_extensions = os.path.join(isaac_path, "extsDeprecated")
+        if os.path.isdir(deprecated_extensions):
+            launch_config["extra_args"] = [
+                "--ext-folder", deprecated_extensions,
+                "--enable", "isaacsim.core.api",
+            ]
+
     try:
         from isaacsim import SimulationApp
-        simulation_app = SimulationApp({"headless": False})
+        simulation_app = SimulationApp(launch_config)
     except ImportError:
         from omni.isaac.kit import SimulationApp
-        simulation_app = SimulationApp({"headless": False})
+        simulation_app = SimulationApp(launch_config)
 
-    from omni.isaac.core import World
-    from omni.isaac.core.objects import DynamicSphere, VisualCuboid
+    try:
+        from isaacsim.core.api import World
+        from isaacsim.core.api.objects import DynamicSphere, FixedCuboid, VisualCuboid
+    except ModuleNotFoundError:
+        from omni.isaac.core import World
+        from omni.isaac.core.objects import DynamicSphere, FixedCuboid, VisualCuboid
 
     class RobotParticleIsaac:
         def __init__(self, robot_id, initial_pos, world):
@@ -87,7 +104,17 @@ def run_isaac_sim_pso(n_robots=10, max_iterations=200):
             self.prim.set_linear_velocity(linear_velocity)
 
     world = World(stage_units_in_meters=1.0)
-    world.scene.add_default_ground_plane()
+    # Use a local collision ground instead of add_default_ground_plane(), which
+    # downloads a USD asset and can fail on offline lab machines.
+    world.scene.add(
+        FixedCuboid(
+            prim_path="/World/GroundPlane",
+            name="ground_plane",
+            position=np.array([0.0, 0.0, -0.05]),
+            scale=np.array([40.0, 40.0, 0.1]),
+            color=np.array([0.35, 0.35, 0.35]),
+        )
+    )
 
     target_pos = np.array([10.0, 10.0, 0.5])
     world.scene.add(
@@ -120,6 +147,7 @@ def run_isaac_sim_pso(n_robots=10, max_iterations=200):
 
     iteration = 0
     while simulation_app.is_running() and iteration < max_iterations:
+        iteration_start = time.perf_counter()
         world.step(render=True)
 
         for robot in robots:
@@ -135,6 +163,12 @@ def run_isaac_sim_pso(n_robots=10, max_iterations=200):
 
         if iteration % 10 == 0:
             print(f"Iteration {iteration:03d} | Global Best Distance to Target: {global_best_fitness:.3f} m")
+
+        # Keep 200 iterations visible for approximately 100 seconds by pacing
+        # each step to 0.5 seconds (rather than running as fast as possible).
+        remaining_time = seconds_per_iteration - (time.perf_counter() - iteration_start)
+        if remaining_time > 0:
+            time.sleep(remaining_time)
 
         iteration += 1
 

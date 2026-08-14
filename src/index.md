@@ -123,9 +123,13 @@ Ensure you can access this wrapper executable from your terminal or add the Isaa
 
 The repository includes standalone scripts designed for Isaac Sim under the `src/files/` directory:
 
+*   `src/files/isaac_hexapod_drl.py` (Lab 1)
+*   `src/files/isaac_fuzzy_robot.py` (Lab 2)
 *   `src/files/isaac_ga_robot.py` (Lab 3)
 *   `src/files/isaac_pso_swarm.py` (Lab 4)
 *   `src/files/isaac_aco_route.py` (Lab 5)
+*   `src/files/isaac_vision_classifier.py` (Lab 8a)
+*   `src/files/isaac_vision_detection.py` (Lab 8b)
 
 Run the scripts using the Isaac Sim standalone Python launcher:
 
@@ -140,6 +144,12 @@ Run the scripts using the Isaac Sim standalone Python launcher:
     Execute the desired practical script using `isaac-sim.standalone.bat`:
 
     ```cmd
+    :: Lab 1: Hexapod DRL Locomotion
+    "%LOCALAPPDATA%\ov\pkg\isaac-sim-4.2.0\isaac-sim.standalone.bat" python src/files/isaac_hexapod_drl.py
+
+    :: Lab 2: Fuzzy Logic Robot Controller
+    "%LOCALAPPDATA%\ov\pkg\isaac-sim-4.2.0\isaac-sim.standalone.bat" python src/files/isaac_fuzzy_robot.py
+
     :: Lab 3: GA Trajectory Evolution
     "%LOCALAPPDATA%\ov\pkg\isaac-sim-4.2.0\isaac-sim.standalone.bat" python src/files/isaac_ga_robot.py
 
@@ -148,6 +158,12 @@ Run the scripts using the Isaac Sim standalone Python launcher:
 
     :: Lab 5: ACO Swarm Route Finding
     "%LOCALAPPDATA%\ov\pkg\isaac-sim-4.2.0\isaac-sim.standalone.bat" python src/files/isaac_aco_route.py
+
+    :: Lab 8a: Vision Classifier
+    "%LOCALAPPDATA%\ov\pkg\isaac-sim-4.2.0\isaac-sim.standalone.bat" python src/files/isaac_vision_classifier.py
+
+    :: Lab 8b: Vision Object Detector
+    "%LOCALAPPDATA%\ov\pkg\isaac-sim-4.2.0\isaac-sim.standalone.bat" python src/files/isaac_vision_detection.py
     ```
 
 === "Linux (Terminal)"
@@ -161,6 +177,12 @@ Run the scripts using the Isaac Sim standalone Python launcher:
     Execute the desired practical script using `python.sh`:
 
     ```bash
+    # Lab 1: Hexapod DRL Locomotion
+    ~/.local/share/ov/pkg/isaac-sim-4.2.0/python.sh src/files/isaac_hexapod_drl.py
+
+    # Lab 2: Fuzzy Logic Robot Controller
+    ~/.local/share/ov/pkg/isaac-sim-4.2.0/python.sh src/files/isaac_fuzzy_robot.py
+
     # Lab 3: GA Trajectory Evolution
     ~/.local/share/ov/pkg/isaac-sim-4.2.0/python.sh src/files/isaac_ga_robot.py
 
@@ -169,6 +191,12 @@ Run the scripts using the Isaac Sim standalone Python launcher:
 
     # Lab 5: ACO Swarm Route Finding
     ~/.local/share/ov/pkg/isaac-sim-4.2.0/python.sh src/files/isaac_aco_route.py
+
+    # Lab 8a: Vision Classifier
+    ~/.local/share/ov/pkg/isaac-sim-4.2.0/python.sh src/files/isaac_vision_classifier.py
+
+    # Lab 8b: Vision Object Detector
+    ~/.local/share/ov/pkg/isaac-sim-4.2.0/python.sh src/files/isaac_vision_detection.py
     ```
 
 ---
@@ -180,10 +208,14 @@ If Isaac Sim is not installed or your system lacks an NVIDIA RTX GPU, all practi
 Simply run the script with your standard Python interpreter:
 
 ```bash
-# Run using standard Python (Matplotlib 2D visualization)
+# Run using standard Python (Matplotlib 2D visualization / Standalone Mode)
+python src/files/isaac_hexapod_drl.py
+python src/files/isaac_fuzzy_robot.py
 python src/files/isaac_ga_robot.py
 python src/files/isaac_pso_swarm.py
 python src/files/isaac_aco_route.py
+python src/files/isaac_vision_classifier.py
+python src/files/isaac_vision_detection.py
 ```
 
 This ensures that all students can complete the practical exercises and observe the algorithmic behavior regardless of hardware availability.

@@ -3259,7 +3259,40 @@ if __name__ == "__main__":
 <span class="normal">312</span>
 <span class="normal">313</span>
 <span class="normal">314</span>
-<span class="normal">315</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="sd">&quot;&quot;&quot;</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="c1"># Copyright Author: Dr Tang Tiong Yew</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">NVIDIA Isaac Sim &amp; Standalone Python Script:</span>
 <span class="sd">Genetic Algorithm (GA) for Mobile Robot Trajectory &amp; Obstacle Avoidance Optimisation</span>
 
@@ -3466,11 +3499,30 @@ if __name__ == "__main__":
         <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.kit</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationApp</span>
         <span class="n">simulation_app</span> <span class="o">=</span> <span class="n">SimulationApp</span><span class="p">({</span><span class="s1">&#39;headless&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
 
-    <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">World</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core.objects</span><span class="w"> </span><span class="kn">import</span> <span class="n">DynamicSphere</span><span class="p">,</span> <span class="n">VisualSphere</span><span class="p">,</span> <span class="n">VisualCuboid</span>
+    <span class="c1"># Isaac Sim 5+ renamed the legacy ``omni.isaac.core`` package.</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">isaacsim.core.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">World</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">isaacsim.core.api.objects</span><span class="w"> </span><span class="kn">import</span> <span class="n">VisualSphere</span><span class="p">,</span> <span class="n">VisualCuboid</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">isaacsim.core.utils.viewports</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_camera_view</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">World</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core.objects</span><span class="w"> </span><span class="kn">import</span> <span class="n">VisualSphere</span><span class="p">,</span> <span class="n">VisualCuboid</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core.utils.viewports</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_camera_view</span>
 
     <span class="n">world</span> <span class="o">=</span> <span class="n">World</span><span class="p">(</span><span class="n">stage_units_in_meters</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
-    <span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">add_default_ground_plane</span><span class="p">()</span>
+    <span class="c1"># Create a local ground plane.  ``add_default_ground_plane`` fetches an</span>
+    <span class="c1"># Isaac sample USD from the internet, which is unavailable on this host.</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">omni.usd</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">omni.physx.scripts</span><span class="w"> </span><span class="kn">import</span> <span class="n">physicsUtils</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pxr</span><span class="w"> </span><span class="kn">import</span> <span class="n">Gf</span>
+    <span class="n">physicsUtils</span><span class="o">.</span><span class="n">add_ground_plane</span><span class="p">(</span>
+        <span class="n">omni</span><span class="o">.</span><span class="n">usd</span><span class="o">.</span><span class="n">get_context</span><span class="p">()</span><span class="o">.</span><span class="n">get_stage</span><span class="p">(),</span>
+        <span class="s2">&quot;/World/GroundPlane&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Z&quot;</span><span class="p">,</span>
+        <span class="mf">20.0</span><span class="p">,</span>
+        <span class="n">Gf</span><span class="o">.</span><span class="n">Vec3f</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+        <span class="n">Gf</span><span class="o">.</span><span class="n">Vec3f</span><span class="p">(</span><span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">),</span>
+    <span class="p">)</span>
 
     <span class="c1"># Spawn Start &amp; Goal Markers</span>
     <span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">VisualSphere</span><span class="p">(</span>
@@ -3503,8 +3555,9 @@ if __name__ == "__main__":
             <span class="n">color</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">])</span>
         <span class="p">))</span>
 
-    <span class="c1"># Spawn Evolved Robot Agent</span>
-    <span class="n">robot_prim</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">DynamicSphere</span><span class="p">(</span>
+    <span class="c1"># Spawn the animated robot.  A visual (kinematic) sphere gives a smooth,</span>
+    <span class="c1"># deterministic path rather than relying on rigid-body friction settings.</span>
+    <span class="n">robot_prim</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">VisualSphere</span><span class="p">(</span>
         <span class="n">prim_path</span><span class="o">=</span><span class="s1">&#39;/World/Robot/GA_Robot&#39;</span><span class="p">,</span>
         <span class="n">name</span><span class="o">=</span><span class="s1">&#39;ga_robot&#39;</span><span class="p">,</span>
         <span class="n">position</span><span class="o">=</span><span class="n">START_POS</span><span class="p">,</span>
@@ -3513,22 +3566,33 @@ if __name__ == "__main__":
     <span class="p">))</span>
 
     <span class="n">world</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="n">set_camera_view</span><span class="p">(</span>
+        <span class="n">eye</span><span class="o">=</span><span class="p">[</span><span class="mf">18.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">22.0</span><span class="p">,</span> <span class="mf">22.0</span><span class="p">],</span>
+        <span class="n">target</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+        <span class="n">camera_prim_path</span><span class="o">=</span><span class="s2">&quot;/OmniverseKit_Persp&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
 
-    <span class="c1"># Drive Robot along Evolved GA Waypoints</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[INFO] Executing GA Trajectory in NVIDIA Isaac Sim Stage...&#39;</span><span class="p">)</span>
-    <span class="n">wp_idx</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># Animate the robot along the evolved route.  Repeating the route makes</span>
+    <span class="c1"># the movement easy to observe in the Isaac Sim viewport.</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[INFO] Executing visible GA trajectory in NVIDIA Isaac Sim Stage...&#39;</span><span class="p">)</span>
+    <span class="n">robot_position</span> <span class="o">=</span> <span class="n">START_POS</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">wp_idx</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">speed_mps</span> <span class="o">=</span> <span class="mf">2.0</span>
+    <span class="n">physics_dt</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">60.0</span>
     <span class="k">while</span> <span class="n">simulation_app</span><span class="o">.</span><span class="n">is_running</span><span class="p">():</span>
         <span class="n">world</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">render</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">wp_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">best_waypoints</span><span class="p">):</span>
-            <span class="n">target_wp</span> <span class="o">=</span> <span class="n">best_waypoints</span><span class="p">[</span><span class="n">wp_idx</span><span class="p">]</span>
-            <span class="n">curr_pos</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">robot_prim</span><span class="o">.</span><span class="n">get_world_pose</span><span class="p">()</span>
-            <span class="n">dir_vec</span> <span class="o">=</span> <span class="n">target_wp</span> <span class="o">-</span> <span class="n">curr_pos</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
-            <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dir_vec</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">dist</span> <span class="o">&lt;</span> <span class="mf">0.3</span><span class="p">:</span>
-                <span class="n">wp_idx</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">vel</span> <span class="o">=</span> <span class="p">(</span><span class="n">dir_vec</span> <span class="o">/</span> <span class="n">dist</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.5</span>
-                <span class="n">robot_prim</span><span class="o">.</span><span class="n">set_linear_velocity</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">vel</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">vel</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mf">0.0</span><span class="p">]))</span>
+        <span class="n">target_wp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">*</span><span class="n">best_waypoints</span><span class="p">[</span><span class="n">wp_idx</span><span class="p">],</span> <span class="n">START_POS</span><span class="p">[</span><span class="mi">2</span><span class="p">]])</span>
+        <span class="n">direction</span> <span class="o">=</span> <span class="n">target_wp</span> <span class="o">-</span> <span class="n">robot_position</span>
+        <span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">direction</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">distance</span> <span class="o">&lt;=</span> <span class="n">speed_mps</span> <span class="o">*</span> <span class="n">physics_dt</span><span class="p">:</span>
+            <span class="n">robot_position</span> <span class="o">=</span> <span class="n">target_wp</span>
+            <span class="n">wp_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">wp_idx</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">best_waypoints</span><span class="p">):</span>
+                <span class="n">wp_idx</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">robot_position</span> <span class="o">=</span> <span class="n">START_POS</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">robot_position</span> <span class="o">+=</span> <span class="n">direction</span> <span class="o">/</span> <span class="n">distance</span> <span class="o">*</span> <span class="n">speed_mps</span> <span class="o">*</span> <span class="n">physics_dt</span>
+        <span class="n">robot_prim</span><span class="o">.</span><span class="n">set_world_pose</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="n">robot_position</span><span class="p">)</span>
 
     <span class="n">simulation_app</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 

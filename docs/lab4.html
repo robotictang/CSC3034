@@ -3302,77 +3302,267 @@ alpha = [0.1, 0.1]
 <span class="normal">129</span>
 <span class="normal">130</span>
 <span class="normal">131</span>
-<span class="normal">132</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="c1"># Copyright Author: Dr Tang Tiong Yew</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Particle Swarm Optimisation (PSO) for Robot Swarm Simulation</span>
+<span class="sd">============================================================</span>
+<span class="sd">This script demonstrates multi-robot target localization using Particle Swarm Optimisation.</span>
 
-<span class="c1"># 1. Initialize NVIDIA Isaac Sim application</span>
+<span class="sd">Execution Modes:</span>
+<span class="sd">1. NVIDIA Isaac Sim Mode (Full 3D GPU physics simulation):</span>
+<span class="sd">   Run with Isaac Sim&#39;s standalone python:</span>
+<span class="sd">   `isaac-sim.standalone.bat python src/files/isaac_pso_swarm.py`</span>
+<span class="sd">   OR `python.bat src/files/isaac_pso_swarm.py`</span>
+
+<span class="sd">2. Matplotlib Swarm Fallback Mode (Standard Python 2D/3D simulation):</span>
+<span class="sd">   `python src/files/isaac_pso_swarm.py`</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Try importing NVIDIA Isaac Sim modules</span>
+<span class="n">HAS_ISAAC_SIM</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">isaacsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationApp</span>
-    <span class="n">simulation_app</span> <span class="o">=</span> <span class="n">SimulationApp</span><span class="p">({</span><span class="s2">&quot;headless&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
+    <span class="n">HAS_ISAAC_SIM</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.kit</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationApp</span>
-    <span class="n">simulation_app</span> <span class="o">=</span> <span class="n">SimulationApp</span><span class="p">({</span><span class="s2">&quot;headless&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.kit</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationApp</span>
+        <span class="n">HAS_ISAAC_SIM</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="n">HAS_ISAAC_SIM</span> <span class="o">=</span> <span class="kc">False</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">World</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core.objects</span><span class="w"> </span><span class="kn">import</span> <span class="n">DynamicSphere</span><span class="p">,</span> <span class="n">VisualCuboid</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">RobotParticle</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class representing a physical robot particle in NVIDIA Isaac Sim.&quot;&quot;&quot;</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">robot_id</span><span class="p">,</span> <span class="n">initial_pos</span><span class="p">,</span> <span class="n">world</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">robot_id</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">initial_pos</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="c1"># [x, y, z]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">velocity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>           <span class="c1"># [vx, vy]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">best_position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">best_fitness</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+<span class="c1"># =====================================================================</span>
+<span class="c1"># 1. NVIDIA Isaac Sim Implementation</span>
+<span class="c1"># =====================================================================</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_isaac_sim_pso</span><span class="p">(</span><span class="n">n_robots</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">max_iterations</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">seconds_per_iteration</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Executes the Robot Swarm PSO inside NVIDIA Isaac Sim photorealistic environment.&quot;&quot;&quot;</span>
+    <span class="c1"># Isaac Sim 6 retains this API in its deprecated-extension bundle.  Add the</span>
+    <span class="c1"># bundle when present so the same script also works with earlier releases.</span>
+    <span class="n">launch_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;headless&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
+    <span class="n">isaac_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ISAAC_PATH&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">isaac_path</span><span class="p">:</span>
+        <span class="n">deprecated_extensions</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">isaac_path</span><span class="p">,</span> <span class="s2">&quot;extsDeprecated&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">deprecated_extensions</span><span class="p">):</span>
+            <span class="n">launch_config</span><span class="p">[</span><span class="s2">&quot;extra_args&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="s2">&quot;--ext-folder&quot;</span><span class="p">,</span> <span class="n">deprecated_extensions</span><span class="p">,</span>
+                <span class="s2">&quot;--enable&quot;</span><span class="p">,</span> <span class="s2">&quot;isaacsim.core.api&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
 
-        <span class="c1"># Spawn visual robot sphere in Isaac Sim arena</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">prim</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
-            <span class="n">DynamicSphere</span><span class="p">(</span>
-                <span class="n">prim_path</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;/World/Robot_</span><span class="si">{</span><span class="n">robot_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;robot_</span><span class="si">{</span><span class="n">robot_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="n">position</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">,</span>
-                <span class="n">radius</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
-                <span class="n">color</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">])</span>
-            <span class="p">)</span>
-        <span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">isaacsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationApp</span>
+        <span class="n">simulation_app</span> <span class="o">=</span> <span class="n">SimulationApp</span><span class="p">(</span><span class="n">launch_config</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.kit</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationApp</span>
+        <span class="n">simulation_app</span> <span class="o">=</span> <span class="n">SimulationApp</span><span class="p">(</span><span class="n">launch_config</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_fitness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_pos</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Measure Euclidean distance to target beacon (fitness function).&quot;&quot;&quot;</span>
-        <span class="n">current_pos</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prim</span><span class="o">.</span><span class="n">get_world_pose</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_pos</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">isaacsim.core.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">World</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">isaacsim.core.api.objects</span><span class="w"> </span><span class="kn">import</span> <span class="n">DynamicSphere</span><span class="p">,</span> <span class="n">FixedCuboid</span><span class="p">,</span> <span class="n">VisualCuboid</span>
+    <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">World</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core.objects</span><span class="w"> </span><span class="kn">import</span> <span class="n">DynamicSphere</span><span class="p">,</span> <span class="n">FixedCuboid</span><span class="p">,</span> <span class="n">VisualCuboid</span>
 
-        <span class="n">fitness</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">target_pos</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
-        <span class="k">if</span> <span class="n">fitness</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_fitness</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">best_fitness</span> <span class="o">=</span> <span class="n">fitness</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">RobotParticleIsaac</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">robot_id</span><span class="p">,</span> <span class="n">initial_pos</span><span class="p">,</span> <span class="n">world</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">robot_id</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">initial_pos</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">velocity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">best_position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">best_fitness</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">fitness</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">prim</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+                <span class="n">DynamicSphere</span><span class="p">(</span>
+                    <span class="n">prim_path</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;/World/Robot_</span><span class="si">{</span><span class="n">robot_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;robot_</span><span class="si">{</span><span class="n">robot_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">position</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">,</span>
+                    <span class="n">radius</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">])</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">update_motion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">global_best_pos</span><span class="p">,</span> <span class="n">max_speed</span><span class="o">=</span><span class="mf">1.5</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update PSO velocity and drive robot body in Isaac Sim.&quot;&quot;&quot;</span>
-        <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span> <span class="o">=</span> <span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">beta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_fitness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_pos</span><span class="p">):</span>
+            <span class="n">current_pos</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prim</span><span class="o">.</span><span class="n">get_world_pose</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_pos</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">fitness</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">target_pos</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">fitness</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_fitness</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">best_fitness</span> <span class="o">=</span> <span class="n">fitness</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">best_position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">fitness</span>
 
-        <span class="c1"># 2D PSO velocity formula</span>
-        <span class="n">cognitive</span> <span class="o">=</span> <span class="n">alpha</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">r1</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">best_position</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
-        <span class="n">social</span> <span class="o">=</span> <span class="n">alpha</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">r2</span> <span class="o">*</span> <span class="p">(</span><span class="n">global_best_pos</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">update_motion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">global_best_pos</span><span class="p">,</span> <span class="n">max_speed</span><span class="o">=</span><span class="mf">1.5</span><span class="p">):</span>
+            <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span> <span class="o">=</span> <span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">beta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">cognitive</span> <span class="o">=</span> <span class="n">alpha</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">r1</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">best_position</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">social</span> <span class="o">=</span> <span class="n">alpha</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">r2</span> <span class="o">*</span> <span class="p">(</span><span class="n">global_best_pos</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">velocity</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">velocity</span> <span class="o">+</span> <span class="n">cognitive</span> <span class="o">+</span> <span class="n">social</span>
 
-        <span class="c1"># Velocity update with inertia weight w=0.5</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">velocity</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">velocity</span> <span class="o">+</span> <span class="n">cognitive</span> <span class="o">+</span> <span class="n">social</span>
+            <span class="n">speed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">velocity</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">speed</span> <span class="o">&gt;</span> <span class="n">max_speed</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">velocity</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">velocity</span> <span class="o">/</span> <span class="n">speed</span><span class="p">)</span> <span class="o">*</span> <span class="n">max_speed</span>
 
-        <span class="c1"># Speed limit constraint</span>
-        <span class="n">speed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">velocity</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">speed</span> <span class="o">&gt;</span> <span class="n">max_speed</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">velocity</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">velocity</span> <span class="o">/</span> <span class="n">speed</span><span class="p">)</span> <span class="o">*</span> <span class="n">max_speed</span>
+            <span class="n">linear_velocity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">velocity</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">velocity</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mf">0.0</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">prim</span><span class="o">.</span><span class="n">set_linear_velocity</span><span class="p">(</span><span class="n">linear_velocity</span><span class="p">)</span>
 
-        <span class="c1"># Apply linear velocity to physical robot body in Isaac Sim</span>
-        <span class="n">linear_velocity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">velocity</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">velocity</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mf">0.0</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">prim</span><span class="o">.</span><span class="n">set_linear_velocity</span><span class="p">(</span><span class="n">linear_velocity</span><span class="p">)</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">run_isaac_pso</span><span class="p">():</span>
-    <span class="c1"># 2. Create Isaac Sim World</span>
     <span class="n">world</span> <span class="o">=</span> <span class="n">World</span><span class="p">(</span><span class="n">stage_units_in_meters</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
-    <span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">add_default_ground_plane</span><span class="p">()</span>
+    <span class="c1"># Use a local collision ground instead of add_default_ground_plane(), which</span>
+    <span class="c1"># downloads a USD asset and can fail on offline lab machines.</span>
+    <span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+        <span class="n">FixedCuboid</span><span class="p">(</span>
+            <span class="n">prim_path</span><span class="o">=</span><span class="s2">&quot;/World/GroundPlane&quot;</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ground_plane&quot;</span><span class="p">,</span>
+            <span class="n">position</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.05</span><span class="p">]),</span>
+            <span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">40.0</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]),</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">]),</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
 
-    <span class="c1"># Target beacon location (Global Best Goal)</span>
     <span class="n">target_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
     <span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
         <span class="n">VisualCuboid</span><span class="p">(</span>
@@ -3380,60 +3570,156 @@ alpha = [0.1, 0.1]
             <span class="n">name</span><span class="o">=</span><span class="s2">&quot;target_beacon&quot;</span><span class="p">,</span>
             <span class="n">position</span><span class="o">=</span><span class="n">target_pos</span><span class="p">,</span>
             <span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]),</span>
-            <span class="n">color</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span> <span class="c1"># Red beacon</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
         <span class="p">)</span>
     <span class="p">)</span>
 
-    <span class="c1"># 3. Parameters Initialization</span>
-    <span class="n">n_robots</span> <span class="o">=</span> <span class="mi">10</span>
     <span class="n">alpha</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]</span>
     <span class="n">position_bounds</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">15.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">]</span>
 
-    <span class="c1"># Initialize robot swarm randomly within position bounds</span>
     <span class="n">robots</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_robots</span><span class="p">):</span>
         <span class="n">init_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">position_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">position_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="n">init_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">position_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">position_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="n">init_pos</span> <span class="o">=</span> <span class="p">[</span><span class="n">init_x</span><span class="p">,</span> <span class="n">init_y</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]</span>
-        <span class="n">robots</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">RobotParticle</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">init_pos</span><span class="p">,</span> <span class="n">world</span><span class="p">))</span>
+        <span class="n">robots</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">RobotParticleIsaac</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">init_pos</span><span class="p">,</span> <span class="n">world</span><span class="p">))</span>
 
     <span class="n">world</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
     <span class="n">global_best_pos</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">global_best_fitness</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;--- Starting NVIDIA Isaac Sim Robot Swarm PSO Simulation ---&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=======================================================&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; Running NVIDIA Isaac Sim Robot Swarm PSO Simulation   &quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=======================================================&quot;</span><span class="p">)</span>
 
-    <span class="c1"># 4. Main Simulation &amp; Optimisation Loop</span>
     <span class="n">iteration</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">max_iterations</span> <span class="o">=</span> <span class="mi">200</span>
-
     <span class="k">while</span> <span class="n">simulation_app</span><span class="o">.</span><span class="n">is_running</span><span class="p">()</span> <span class="ow">and</span> <span class="n">iteration</span> <span class="o">&lt;</span> <span class="n">max_iterations</span><span class="p">:</span>
+        <span class="n">iteration_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
         <span class="n">world</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">render</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="c1"># Step A: Evaluate fitness for each robot</span>
         <span class="k">for</span> <span class="n">robot</span> <span class="ow">in</span> <span class="n">robots</span><span class="p">:</span>
             <span class="n">fitness</span> <span class="o">=</span> <span class="n">robot</span><span class="o">.</span><span class="n">evaluate_fitness</span><span class="p">(</span><span class="n">target_pos</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">fitness</span> <span class="o">&lt;</span> <span class="n">global_best_fitness</span><span class="p">:</span>
                 <span class="n">global_best_fitness</span> <span class="o">=</span> <span class="n">fitness</span>
                 <span class="n">global_best_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">robot</span><span class="o">.</span><span class="n">position</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
 
-        <span class="c1"># Step B: Generate random beta for current iteration</span>
         <span class="n">beta</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()]</span>
 
-        <span class="c1"># Step C: Update velocities and move robots</span>
         <span class="k">for</span> <span class="n">robot</span> <span class="ow">in</span> <span class="n">robots</span><span class="p">:</span>
             <span class="n">robot</span><span class="o">.</span><span class="n">update_motion</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">global_best_pos</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">iteration</span> <span class="o">%</span> <span class="mi">20</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">iteration</span><span class="si">}</span><span class="s2">: Swarm Global Best Distance = </span><span class="si">{</span><span class="n">global_best_fitness</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> m&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">iteration</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">iteration</span><span class="si">:</span><span class="s2">03d</span><span class="si">}</span><span class="s2"> | Global Best Distance to Target: </span><span class="si">{</span><span class="n">global_best_fitness</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> m&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Keep 200 iterations visible for approximately 100 seconds by pacing</span>
+        <span class="c1"># each step to 0.5 seconds (rather than running as fast as possible).</span>
+        <span class="n">remaining_time</span> <span class="o">=</span> <span class="n">seconds_per_iteration</span> <span class="o">-</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">iteration_start</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">remaining_time</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">remaining_time</span><span class="p">)</span>
 
         <span class="n">iteration</span> <span class="o">+=</span> <span class="mi">1</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Convergence achieved! Target reached at </span><span class="si">{</span><span class="n">global_best_pos</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Target Beacon Reached at </span><span class="si">{</span><span class="n">global_best_pos</span><span class="si">}</span><span class="s2"> with distance </span><span class="si">{</span><span class="n">global_best_fitness</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">m&quot;</span><span class="p">)</span>
     <span class="n">simulation_app</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
+
+<span class="c1"># =====================================================================</span>
+<span class="c1"># 2. Standalone Matplotlib Swarm Fallback Simulator</span>
+<span class="c1"># =====================================================================</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_matplotlib_fallback_pso</span><span class="p">(</span><span class="n">n_robots</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">max_iterations</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fallback visualizer for standard Python environments without NVIDIA Isaac Sim.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[!] Matplotlib is required to run the fallback visualization.&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    Install it via: pip install matplotlib&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=======================================================&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; [Fallback Mode] Standard 2D Swarm Robotics PSO        &quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; (NVIDIA Isaac Sim module not detected in current Python)&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=======================================================&quot;</span><span class="p">)</span>
+
+    <span class="n">target_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">])</span>
+    <span class="n">position_bounds</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">15.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">]</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]</span>
+
+    <span class="c1"># Initialize robot particles</span>
+    <span class="n">positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">position_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">position_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n_robots</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">velocities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_robots</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">personal_bests</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span>
+    <span class="n">personal_best_fitness</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="n">target_pos</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">positions</span><span class="p">])</span>
+
+    <span class="n">global_best_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">personal_best_fitness</span><span class="p">)</span>
+    <span class="n">global_best_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">personal_bests</span><span class="p">[</span><span class="n">global_best_idx</span><span class="p">])</span>
+    <span class="n">global_best_fitness</span> <span class="o">=</span> <span class="n">personal_best_fitness</span><span class="p">[</span><span class="n">global_best_idx</span><span class="p">]</span>
+
+    <span class="c1"># Setup animation plot</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ion</span><span class="p">()</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">position_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="n">position_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">position_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="n">position_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Robot Swarm PSO Target Localization (Isaac Sim Logic Simulation)&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;X Position (m)&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Y Position (m)&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Plot target beacon</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">target_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">target_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;r*&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Target Beacon&#39;</span><span class="p">)</span>
+    <span class="c1"># Plot robot particles</span>
+    <span class="n">robot_dots</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">positions</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">positions</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;bo&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Robots (Particles)&#39;</span><span class="p">)</span>
+    <span class="n">gbest_dot</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">global_best_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">global_best_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;gx&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">markeredgewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Global Best&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">iteration</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iterations</span><span class="p">):</span>
+        <span class="c1"># 1. Fitness evaluation</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_robots</span><span class="p">):</span>
+            <span class="n">fitness</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">positions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">target_pos</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">fitness</span> <span class="o">&lt;</span> <span class="n">personal_best_fitness</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">personal_best_fitness</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">fitness</span>
+                <span class="n">personal_bests</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">positions</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+                <span class="k">if</span> <span class="n">fitness</span> <span class="o">&lt;</span> <span class="n">global_best_fitness</span><span class="p">:</span>
+                    <span class="n">global_best_fitness</span> <span class="o">=</span> <span class="n">fitness</span>
+                    <span class="n">global_best_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">positions</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+        <span class="c1"># 2. Velocity &amp; position updates</span>
+        <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_robots</span><span class="p">):</span>
+            <span class="n">cognitive</span> <span class="o">=</span> <span class="n">alpha</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">r1</span> <span class="o">*</span> <span class="p">(</span><span class="n">personal_bests</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">positions</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">social</span> <span class="o">=</span> <span class="n">alpha</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">r2</span> <span class="o">*</span> <span class="p">(</span><span class="n">global_best_pos</span> <span class="o">-</span> <span class="n">positions</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">velocities</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">velocities</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">cognitive</span> <span class="o">+</span> <span class="n">social</span>
+
+            <span class="c1"># Speed constraint</span>
+            <span class="n">speed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">velocities</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">speed</span> <span class="o">&gt;</span> <span class="mf">1.5</span><span class="p">:</span>
+                <span class="n">velocities</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">velocities</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">speed</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.5</span>
+
+            <span class="n">positions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">velocities</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="c1"># Update visualization</span>
+        <span class="n">robot_dots</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">positions</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">positions</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">gbest_dot</span><span class="o">.</span><span class="n">set_data</span><span class="p">([</span><span class="n">global_best_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">global_best_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Robot Swarm PSO | Iteration </span><span class="si">{</span><span class="n">iteration</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">max_iterations</span><span class="si">}</span><span class="s2"> | Best Distance: </span><span class="si">{</span><span class="n">global_best_fitness</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">m&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">pause</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">global_best_fitness</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Target reached at iteration </span><span class="si">{</span><span class="n">iteration</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span>
+            <span class="k">break</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">ioff</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">run_isaac_pso</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">HAS_ISAAC_SIM</span><span class="p">:</span>
+        <span class="n">run_isaac_sim_pso</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">run_matplotlib_fallback_pso</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
 <h3 id="key-differences-mathematical-vs-physical-swarm-pso">Key Differences: Mathematical vs Physical Swarm PSO<a class="headerlink" href="#key-differences-mathematical-vs-physical-swarm-pso" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>graph LR

@@ -50,7 +50,7 @@ CLASSES = [
 # =====================================================================
 # 1. NVIDIA Isaac Sim Implementation
 # =====================================================================
-def run_isaac_sim_detection(max_frames=100):
+def run_isaac_sim_detection(max_frames=100, visualization_fps=2):
     """Continuous camera stream capture & object detection in NVIDIA Isaac Sim."""
     try:
         from isaacsim import SimulationApp
@@ -59,16 +59,26 @@ def run_isaac_sim_detection(max_frames=100):
         from omni.isaac.kit import SimulationApp
         simulation_app = SimulationApp({"headless": False})
 
-    from omni.isaac.core import World
-    from omni.isaac.sensor import Camera
+    # Isaac Sim 6 moved the legacy ``omni.isaac`` modules under
+    # ``isaacsim``.  These APIs remain supported by the installed version.
+    from isaacsim.core.api import World
+    from isaacsim.sensors.camera import Camera
 
     world = World()
-    world.scene.add_default_ground_plane()
+
+    # Avoid ``add_default_ground_plane()``, which references a remote Isaac
+    # asset.  A native USD plane keeps this example self-contained when the
+    # asset server is unavailable.
+    from pxr import UsdGeom
+
+    ground_plane = UsdGeom.Plane.Define(world.stage, "/World/GroundPlane")
+    ground_plane.CreateAxisAttr("Z")
+    ground_plane.CreateWidthAttr(20.0)
+    ground_plane.CreateLengthAttr(20.0)
 
     camera = Camera(
         prim_path="/World/RobotCamera",
         position=np.array([3.0, 3.0, 2.0]),
-        target=np.array([0.0, 0.0, 0.0]),
         resolution=(640, 480)
     )
     camera.initialize()
@@ -86,6 +96,7 @@ def run_isaac_sim_detection(max_frames=100):
     print("[INFO] Starting real-time Isaac Sim image capture & detection loop...")
 
     frame_count = 0
+    frame_delay = 1.0 / visualization_fps if visualization_fps > 0 else 0.0
     while simulation_app.is_running() and frame_count < max_frames:
         world.step(render=True)
 
@@ -118,6 +129,11 @@ def run_isaac_sim_detection(max_frames=100):
                 print(f"[Frame {frame_count:03d}] Detected {CLASSES[dummy_idx]}: {conf*100:.1f}% at bbox={bbox}")
 
         frame_count += 1
+
+        # Let the viewport render at a human-observable pace instead of
+        # completing the demonstration as fast as the hardware allows.
+        if frame_delay:
+            time.sleep(frame_delay)
 
     print("[SUCCESS] Completed real-time simulation object detection loop.")
     simulation_app.close()

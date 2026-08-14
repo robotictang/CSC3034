@@ -697,56 +697,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="NVIDIA Isaac Sim Example: Virtual Camera Image Capture and Deep Learning Classification">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#prerequisites-dependencies" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Prerequisites &amp; Dependencies
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#step-1-initialize-isaac-sim-and-virtual-camera-sensor" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Step 1: Initialize Isaac Sim and Virtual Camera Sensor
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#step-2-capture-synthetic-image-frame" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Step 2: Capture Synthetic Image Frame
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#step-3-deep-learning-image-classification-pipeline" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Step 3: Deep Learning Image Classification Pipeline
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
     </ul>
@@ -2620,117 +2570,366 @@
 <h2 id="nvidia-isaac-sim-example-virtual-camera-image-capture-and-deep-learning-classification">NVIDIA Isaac Sim Example: Virtual Camera Image Capture and Deep Learning Classification<a class="headerlink" href="#nvidia-isaac-sim-example-virtual-camera-image-capture-and-deep-learning-classification" title="Permanent link">&para;</a></h2>
 <p>NVIDIA Isaac Sim (built on NVIDIA Omniverse) allows developers to simulate high-fidelity virtual environments with physical sensors, such as RGB cameras, depth sensors, and LiDARs. In this section, we demonstrate how to capture synthetic images from a virtual camera inside NVIDIA Isaac Sim and pass them to a Keras deep learning model for classification.</p>
 <p>You can download the full Python script here: <a href="files/isaac_vision_classifier.py">isaac_vision_classifier.py</a></p>
-<h3 id="prerequisites-dependencies">Prerequisites &amp; Dependencies<a class="headerlink" href="#prerequisites-dependencies" title="Permanent link">&para;</a></h3>
-<p>To run Isaac Sim Python standalone scripts, you need NVIDIA Isaac Sim installed along with its Python environment (<code>omni.isaac.sensor</code>, <code>omni.isaac.core</code>, <code>omni.isaac.kit</code>).</p>
-<h3 id="step-1-initialize-isaac-sim-and-virtual-camera-sensor">Step 1: Initialize Isaac Sim and Virtual Camera Sensor<a class="headerlink" href="#step-1-initialize-isaac-sim-and-virtual-camera-sensor" title="Permanent link">&para;</a></h3>
-<p>We create a virtual camera sensor attached to a scene containing simulation target objects.</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.kit</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationApp</span>
+<p>Below is the complete standalone Python script demonstrating synthetic camera image rendering in NVIDIA Isaac Sim and streaming RGB frames into a Keras Deep Learning classifier:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">  1</span>
+<span class="normal">  2</span>
+<span class="normal">  3</span>
+<span class="normal">  4</span>
+<span class="normal">  5</span>
+<span class="normal">  6</span>
+<span class="normal">  7</span>
+<span class="normal">  8</span>
+<span class="normal">  9</span>
+<span class="normal"> 10</span>
+<span class="normal"> 11</span>
+<span class="normal"> 12</span>
+<span class="normal"> 13</span>
+<span class="normal"> 14</span>
+<span class="normal"> 15</span>
+<span class="normal"> 16</span>
+<span class="normal"> 17</span>
+<span class="normal"> 18</span>
+<span class="normal"> 19</span>
+<span class="normal"> 20</span>
+<span class="normal"> 21</span>
+<span class="normal"> 22</span>
+<span class="normal"> 23</span>
+<span class="normal"> 24</span>
+<span class="normal"> 25</span>
+<span class="normal"> 26</span>
+<span class="normal"> 27</span>
+<span class="normal"> 28</span>
+<span class="normal"> 29</span>
+<span class="normal"> 30</span>
+<span class="normal"> 31</span>
+<span class="normal"> 32</span>
+<span class="normal"> 33</span>
+<span class="normal"> 34</span>
+<span class="normal"> 35</span>
+<span class="normal"> 36</span>
+<span class="normal"> 37</span>
+<span class="normal"> 38</span>
+<span class="normal"> 39</span>
+<span class="normal"> 40</span>
+<span class="normal"> 41</span>
+<span class="normal"> 42</span>
+<span class="normal"> 43</span>
+<span class="normal"> 44</span>
+<span class="normal"> 45</span>
+<span class="normal"> 46</span>
+<span class="normal"> 47</span>
+<span class="normal"> 48</span>
+<span class="normal"> 49</span>
+<span class="normal"> 50</span>
+<span class="normal"> 51</span>
+<span class="normal"> 52</span>
+<span class="normal"> 53</span>
+<span class="normal"> 54</span>
+<span class="normal"> 55</span>
+<span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="c1"># Copyright Author: Dr Tang Tiong Yew</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Virtual Camera Image Capture and Deep Learning Classification in NVIDIA Isaac Sim</span>
+<span class="sd">==================================================================================</span>
+<span class="sd">This script demonstrates synthetic camera image rendering in NVIDIA Isaac Sim</span>
+<span class="sd">and streaming the RGB frames into a Keras Deep Learning classifier (MobileNetV2).</span>
 
-<span class="c1"># Launch Isaac Sim in non-headless mode (set headless=True for background runs)</span>
-<span class="n">simulation_app</span> <span class="o">=</span> <span class="n">SimulationApp</span><span class="p">({</span><span class="s2">&quot;headless&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
+<span class="sd">Execution Modes:</span>
+<span class="sd">1. NVIDIA Isaac Sim Mode (Full 3D GPU rendering &amp; Camera Sensor):</span>
+<span class="sd">   Run with Isaac Sim&#39;s standalone python:</span>
+<span class="sd">   `isaac-sim.standalone.bat python src/files/isaac_vision_classifier.py`</span>
+<span class="sd">   OR `python.bat src/files/isaac_vision_classifier.py`</span>
 
+<span class="sd">2. TensorFlow Standalone Fallback Mode (Deep Learning Inference simulation):</span>
+<span class="sd">   `python src/files/isaac_vision_classifier.py`</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">World</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.sensor</span><span class="w"> </span><span class="kn">import</span> <span class="n">Camera</span>
 
-<span class="c1"># Initialize the simulation world</span>
-<span class="n">world</span> <span class="o">=</span> <span class="n">World</span><span class="p">()</span>
-<span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">add_default_ground_plane</span><span class="p">()</span>
+<span class="c1"># Try importing NVIDIA Isaac Sim modules</span>
+<span class="n">HAS_ISAAC_SIM</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">isaacsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationApp</span>
+    <span class="n">HAS_ISAAC_SIM</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.kit</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationApp</span>
+        <span class="n">HAS_ISAAC_SIM</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="n">HAS_ISAAC_SIM</span> <span class="o">=</span> <span class="kc">False</span>
 
-<span class="c1"># Create a virtual camera sensor positioned in the stage looking at the target area</span>
-<span class="n">camera</span> <span class="o">=</span> <span class="n">Camera</span><span class="p">(</span>
-    <span class="n">prim_path</span><span class="o">=</span><span class="s2">&quot;/World/RGB_Camera&quot;</span><span class="p">,</span>
-    <span class="n">position</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">]),</span>
-    <span class="n">target</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]),</span>
-    <span class="n">resolution</span><span class="o">=</span><span class="p">(</span><span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">)</span>  <span class="c1"># Match input size for deep learning model</span>
-<span class="p">)</span>
+<span class="c1"># TensorFlow and Isaac Sim 6 load incompatible gRPC/protobuf libraries in the</span>
+<span class="c1"># same process.  Keep TensorFlow for the standalone mode, but do not import it</span>
+<span class="c1"># when this script is being launched with Isaac Sim&#39;s Python interpreter.</span>
+<span class="n">HAS_TF</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">HAS_ISAAC_SIM</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
+        <span class="n">HAS_TF</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="n">HAS_TF</span> <span class="o">=</span> <span class="kc">False</span>
 
-<span class="c1"># Initialize camera sensor</span>
-<span class="n">camera</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
-<span class="n">world</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-</code></pre></div></td></tr></table></div>
-<h3 id="step-2-capture-synthetic-image-frame">Step 2: Capture Synthetic Image Frame<a class="headerlink" href="#step-2-capture-synthetic-image-frame" title="Permanent link">&para;</a></h3>
-<p>Step the simulation world physics to render the scene, then retrieve the captured RGBA frame from the virtual camera sensor.</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span>
-<span class="normal">7</span>
-<span class="normal">8</span>
-<span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="c1"># Advance simulation step to render scene</span>
-<span class="n">world</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">render</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="c1"># Capture RGBA image from the virtual camera (shape: 224x224x4, uint8)</span>
-<span class="n">rgba_data</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">get_rgba</span><span class="p">()</span>
+<span class="c1"># =====================================================================</span>
+<span class="c1"># 1. NVIDIA Isaac Sim Implementation</span>
+<span class="c1"># =====================================================================</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_isaac_sim_classification</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Captures RGB image from virtual Isaac Sim camera and classifies via Keras DL model.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">isaacsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationApp</span>
+        <span class="n">simulation_app</span> <span class="o">=</span> <span class="n">SimulationApp</span><span class="p">({</span><span class="s2">&quot;headless&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.kit</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationApp</span>
+        <span class="n">simulation_app</span> <span class="o">=</span> <span class="n">SimulationApp</span><span class="p">({</span><span class="s2">&quot;headless&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
 
-<span class="c1"># Extract RGB channels (drop alpha channel)</span>
-<span class="n">rgb_image</span> <span class="o">=</span> <span class="n">rgba_data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Captured synthetic image shape from Isaac Sim: </span><span class="si">{</span><span class="n">rgb_image</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-<h3 id="step-3-deep-learning-image-classification-pipeline">Step 3: Deep Learning Image Classification Pipeline<a class="headerlink" href="#step-3-deep-learning-image-classification-pipeline" title="Permanent link">&para;</a></h3>
-<p>Now preprocess the synthetic RGB frame captured from Isaac Sim and pass it through a trained Keras CNN model or pre-trained network (e.g., MobileNetV2 / custom CNN) to classify objects in the virtual scene.</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="c1"># Preprocess image for Deep Learning model</span>
-<span class="n">img_tensor</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">rgb_image</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-<span class="n">img_tensor</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">img_tensor</span> <span class="o">/</span> <span class="mf">255.0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># Normalize pixel values [0, 1] and add batch dimension</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">isaacsim.core.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">World</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">isaacsim.core.api.objects</span><span class="w"> </span><span class="kn">import</span> <span class="n">VisualCuboid</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">isaacsim.sensors.camera</span><span class="w"> </span><span class="kn">import</span> <span class="n">Camera</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">isaacsim.core.experimental.utils.transform</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">transform_utils</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">World</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core.objects</span><span class="w"> </span><span class="kn">import</span> <span class="n">VisualCuboid</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.sensor</span><span class="w"> </span><span class="kn">import</span> <span class="n">Camera</span>
+        <span class="n">transform_utils</span> <span class="o">=</span> <span class="kc">None</span>
 
-<span class="c1"># Load or use trained Keras model (e.g., model from earlier section or pre-trained classifier)</span>
-<span class="c1"># Here we use MobileNetV2 as a representative image classification model</span>
-<span class="n">classification_model</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">applications</span><span class="o">.</span><span class="n">MobileNetV2</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="s1">&#39;imagenet&#39;</span><span class="p">)</span>
+    <span class="n">world</span> <span class="o">=</span> <span class="n">World</span><span class="p">()</span>
+    <span class="c1"># Create a local ground plane rather than downloading an Isaac sample USD.</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">omni.usd</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">omni.physx.scripts</span><span class="w"> </span><span class="kn">import</span> <span class="n">physicsUtils</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pxr</span><span class="w"> </span><span class="kn">import</span> <span class="n">Gf</span>
+    <span class="n">physicsUtils</span><span class="o">.</span><span class="n">add_ground_plane</span><span class="p">(</span>
+        <span class="n">omni</span><span class="o">.</span><span class="n">usd</span><span class="o">.</span><span class="n">get_context</span><span class="p">()</span><span class="o">.</span><span class="n">get_stage</span><span class="p">(),</span> <span class="s2">&quot;/World/GroundPlane&quot;</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span>
+        <span class="n">Gf</span><span class="o">.</span><span class="n">Vec3f</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="n">Gf</span><span class="o">.</span><span class="n">Vec3f</span><span class="p">(</span><span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pxr</span><span class="w"> </span><span class="kn">import</span> <span class="n">UsdLux</span>
+    <span class="n">dome_light</span> <span class="o">=</span> <span class="n">UsdLux</span><span class="o">.</span><span class="n">DomeLight</span><span class="o">.</span><span class="n">Define</span><span class="p">(</span><span class="n">omni</span><span class="o">.</span><span class="n">usd</span><span class="o">.</span><span class="n">get_context</span><span class="p">()</span><span class="o">.</span><span class="n">get_stage</span><span class="p">(),</span> <span class="s2">&quot;/World/DomeLight&quot;</span><span class="p">)</span>
+    <span class="n">dome_light</span><span class="o">.</span><span class="n">CreateIntensityAttr</span><span class="p">(</span><span class="mf">1000.0</span><span class="p">)</span>
+    <span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">VisualCuboid</span><span class="p">(</span>
+        <span class="n">prim_path</span><span class="o">=</span><span class="s2">&quot;/World/ClassificationTarget&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;classification_target&quot;</span><span class="p">,</span>
+        <span class="n">position</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]),</span> <span class="n">size</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.55</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">])</span>
+    <span class="p">))</span>
 
-<span class="c1"># Run inference on captured Isaac Sim image</span>
-<span class="n">predictions</span> <span class="o">=</span> <span class="n">classification_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">img_tensor</span><span class="p">)</span>
-<span class="n">decoded_predictions</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">applications</span><span class="o">.</span><span class="n">mobilenet_v2</span><span class="o">.</span><span class="n">decode_predictions</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="mi">3</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">camera_position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">])</span>
+    <span class="n">camera_orientation</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">transform_utils</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">camera_orientation</span> <span class="o">=</span> <span class="n">transform_utils</span><span class="o">.</span><span class="n">look_at_quaternion</span><span class="p">(</span>
+            <span class="n">eye</span><span class="o">=</span><span class="n">camera_position</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    <span class="n">camera</span> <span class="o">=</span> <span class="n">Camera</span><span class="p">(</span>
+        <span class="n">prim_path</span><span class="o">=</span><span class="s2">&quot;/World/RGB_Camera&quot;</span><span class="p">,</span>
+        <span class="n">position</span><span class="o">=</span><span class="n">camera_position</span><span class="p">,</span>
+        <span class="n">orientation</span><span class="o">=</span><span class="n">camera_orientation</span><span class="p">,</span>
+        <span class="n">resolution</span><span class="o">=</span><span class="p">(</span><span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">)</span>
+    <span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">--- Deep Learning Detection / Classification Results ---&quot;</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">class_id</span><span class="p">,</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">decoded_predictions</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Detected Object: </span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2"> | Confidence: </span><span class="si">{</span><span class="n">score</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+    <span class="n">camera</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+    <span class="n">world</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
-<span class="c1"># Close Isaac Sim application cleanly when done</span>
-<span class="n">simulation_app</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="c1"># Step several frames to warm up the render product before reading it.</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">world</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">render</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">rgba_data</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">get_rgba</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">rgba_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">rgba_data</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">rgb_image</span> <span class="o">=</span> <span class="n">rgba_data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[INFO] Captured synthetic image shape from Isaac Sim: </span><span class="si">{</span><span class="n">rgb_image</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[WARN] Camera frame empty, generating synthetic frame...&quot;</span><span class="p">)</span>
+        <span class="n">rgb_image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="p">(</span><span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+
+    <span class="c1"># Isaac Sim 6 cannot safely load TensorFlow in-process; report image</span>
+    <span class="c1"># features here and use the standalone mode for MobileNetV2 inference.</span>
+    <span class="n">mean_r</span><span class="p">,</span> <span class="n">mean_g</span><span class="p">,</span> <span class="n">mean_b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rgb_image</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">--- Isaac Sim Virtual Camera Classification Results ---&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Captured RGB averages -&gt; R: </span><span class="si">{</span><span class="n">mean_r</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">, G: </span><span class="si">{</span><span class="n">mean_g</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">, B: </span><span class="si">{</span><span class="n">mean_b</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Heuristic Classification: Virtual Isaac Sim Ground-Plane Scene&quot;</span><span class="p">)</span>
+
+    <span class="n">simulation_app</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+<span class="c1"># =====================================================================</span>
+<span class="c1"># 2. Standalone Fallback Execution</span>
+<span class="c1"># =====================================================================</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_fallback_classification</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fallback execution running Keras DL classification on a synthetic image tensor.&quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;========================================================================&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; Running Standalone Deep Learning Image Classifier (No Isaac Sim GUI) &quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;========================================================================&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Generate synthetic RGB image frame (224x224x3)</span>
+    <span class="n">synthetic_rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="p">(</span><span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[INFO] Synthetic image array generated: shape=</span><span class="si">{</span><span class="n">synthetic_rgb</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">HAS_TF</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[!] TensorFlow library (&#39;tensorflow&#39;) is required to run DL classification.&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    Install it via: pip install tensorflow&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">[INFO] NumPy Image Feature Extraction Fallback:&quot;</span><span class="p">)</span>
+        <span class="n">mean_r</span><span class="p">,</span> <span class="n">mean_g</span><span class="p">,</span> <span class="n">mean_b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">synthetic_rgb</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;       Extracted Channel RGB Averages -&gt; R: </span><span class="si">{</span><span class="n">mean_r</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">, G: </span><span class="si">{</span><span class="n">mean_g</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">, B: </span><span class="si">{</span><span class="n">mean_b</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;       Heuristic Classification: Synthetic Indoor Stage Texture&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">img_tensor</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">synthetic_rgb</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">img_tensor</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">img_tensor</span> <span class="o">/</span> <span class="mf">255.0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[INFO] Loading TensorFlow / Keras MobileNetV2 model...&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">applications</span><span class="o">.</span><span class="n">MobileNetV2</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="s1">&#39;imagenet&#39;</span><span class="p">)</span>
+        <span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">img_tensor</span><span class="p">)</span>
+        <span class="n">decoded</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">applications</span><span class="o">.</span><span class="n">mobilenet_v2</span><span class="o">.</span><span class="n">decode_predictions</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="mi">3</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">--- Deep Learning Image Classification Results ---&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">class_id</span><span class="p">,</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">decoded</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Predicted Class: </span><span class="si">{</span><span class="n">class_name</span><span class="si">:</span><span class="s2">&lt;20</span><span class="si">}</span><span class="s2"> | Confidence: </span><span class="si">{</span><span class="n">score</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WARN] ImageNet weights download skipped/failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># Custom simple CNN model inference fallback</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">MaxPooling2D</span><span class="p">(),</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Flatten</span><span class="p">(),</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;softmax&#39;</span><span class="p">)</span>
+        <span class="p">])</span>
+        <span class="n">preds</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">img_tensor</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[INFO] Custom CNN classification probabilities (10 classes): </span><span class="si">{</span><span class="n">preds</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">5</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[SUCCESS] Standalone classification task finished cleanly.&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">HAS_ISAAC_SIM</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[INFO] NVIDIA Isaac Sim detected. Initializing virtual camera stage...&quot;</span><span class="p">)</span>
+        <span class="n">run_isaac_sim_classification</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[INFO] Running Standalone Mode.&quot;</span><span class="p">)</span>
+        <span class="n">run_fallback_classification</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
 <hr />
 <footer style="text-align: center; margin-top: 2em; opacity: 0.8; font-size: 0.85em;">

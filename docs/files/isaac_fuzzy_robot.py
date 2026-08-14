@@ -81,7 +81,7 @@ def build_fuzzy_controller():
 # =====================================================================
 # 1. NVIDIA Isaac Sim Implementation
 # =====================================================================
-def run_isaac_sim_fuzzy(max_steps=200):
+def run_isaac_sim_fuzzy(max_steps=200, step_delay_seconds=1.0):
     """Executes Fuzzy Logic Robot Controller inside NVIDIA Isaac Sim stage."""
     try:
         from isaacsim import SimulationApp
@@ -90,10 +90,64 @@ def run_isaac_sim_fuzzy(max_steps=200):
         from omni.isaac.kit import SimulationApp
         simulation_app = SimulationApp({"headless": False})
 
-    from omni.isaac.core import World
+    # Isaac Sim 5.0+ moved the core API from ``omni.isaac`` to ``isaacsim``.
+    # Retain the legacy import so this example also works with older releases.
+    try:
+        from isaacsim.core.api import World
+    except ImportError:
+        from omni.isaac.core import World
+
+    from pxr import Gf, UsdGeom, UsdLux
+    import omni.usd
+    from omni.kit.viewport.utility import get_active_viewport
 
     world = World()
-    world.scene.add_default_ground_plane()
+    stage = omni.usd.get_context().get_stage()
+
+    # Build the entire demonstration from local USD primitives, avoiding the
+    # online Isaac asset normally used by ``add_default_ground_plane``.
+    ground = UsdGeom.Cube.Define(stage, "/World/Ground")
+    ground.CreateSizeAttr(1.0)
+    ground.AddTranslateOp().Set(Gf.Vec3d(0.0, 0.0, -0.12))
+    ground.AddScaleOp().Set(Gf.Vec3f(12.0, 12.0, 0.12))
+    ground.CreateDisplayColorAttr([Gf.Vec3f(0.18, 0.20, 0.24)])
+
+    dome_light = UsdLux.DomeLight.Define(stage, "/World/DomeLight")
+    dome_light.CreateIntensityAttr(500.0)
+    dome_light.CreateColorAttr(Gf.Vec3f(1.0, 1.0, 1.0))
+
+    obstacle = UsdGeom.Cube.Define(stage, "/World/Obstacle")
+    obstacle.CreateSizeAttr(1.0)
+    obstacle.AddTranslateOp().Set(Gf.Vec3d(2.0, 0.0, 0.5))
+    obstacle.AddScaleOp().Set(Gf.Vec3f(0.6, 0.6, 0.5))
+    obstacle.CreateDisplayColorAttr([Gf.Vec3f(0.9, 0.12, 0.10)])
+
+    robot = UsdGeom.Xform.Define(stage, "/World/FuzzyRobot")
+    robot_translate = robot.AddTranslateOp()
+    robot_rotate = robot.AddRotateZOp()
+    robot_translate.Set(Gf.Vec3d(-4.0, 0.0, 0.25))
+    robot_rotate.Set(0.0)
+
+    robot_body = UsdGeom.Cube.Define(stage, "/World/FuzzyRobot/Body")
+    robot_body.CreateSizeAttr(1.0)
+    robot_body.AddScaleOp().Set(Gf.Vec3f(0.55, 0.38, 0.25))
+    robot_body.CreateDisplayColorAttr([Gf.Vec3f(0.05, 0.35, 0.95)])
+
+    direction_marker = UsdGeom.Cube.Define(stage, "/World/FuzzyRobot/DirectionMarker")
+    direction_marker.CreateSizeAttr(1.0)
+    direction_marker.AddTranslateOp().Set(Gf.Vec3d(0.62, 0.0, 0.20))
+    direction_marker.AddScaleOp().Set(Gf.Vec3f(0.35, 0.10, 0.08))
+    direction_marker.CreateDisplayColorAttr([Gf.Vec3f(1.0, 0.85, 0.05)])
+
+    camera_path = "/World/FuzzyCamera"
+    camera = stage.DefinePrim(camera_path, "Camera")
+    camera_xform = UsdGeom.Xformable(camera)
+    camera_xform.AddTranslateOp().Set(Gf.Vec3d(-11.0, 0.0, 11.0))
+    # This view looks from the start of the route towards its centre.
+    camera_xform.AddRotateXYZOp().Set(Gf.Vec3f(45.0, 0.0, -90.0))
+    viewport = get_active_viewport()
+    if viewport:
+        viewport.camera_path = camera_path
 
     fuzzy_sim = build_fuzzy_controller()
 
@@ -101,6 +155,9 @@ def run_isaac_sim_fuzzy(max_steps=200):
     print("[INFO] Starting Fuzzy Logic Control Loop in NVIDIA Isaac Sim...")
 
     step_count = 0
+    robot_position = np.array([-4.0, 0.0], dtype=float)
+    robot_heading = 0.0
+    visual_time_step = 0.10
     while simulation_app.is_running() and step_count < max_steps:
         world.step(render=True)
 
@@ -118,11 +175,23 @@ def run_isaac_sim_fuzzy(max_steps=200):
             target_v = 0.5
             target_w = 0.0
 
+        # Animate the local robot directly from the fuzzy velocity outputs.
+        robot_heading += target_w * visual_time_step
+        robot_position += target_v * visual_time_step * np.array(
+            [np.cos(robot_heading), np.sin(robot_heading)]
+        )
+        robot_translate.Set(Gf.Vec3d(float(robot_position[0]), float(robot_position[1]), 0.25))
+        robot_rotate.Set(float(np.degrees(robot_heading)))
+
         if step_count % 20 == 0:
             print(f"[Step {step_count:03d}] Distance: {simulated_obstacle_dist:.2f}m | Heading: {simulated_heading_error:.1f}° "
                   f"--> Fuzzy Outputs: Linear Vel = {target_v:.2f} m/s, Angular Vel = {target_w:.2f} rad/s")
 
         step_count += 1
+        # Keep each rendered state visible in the Isaac Sim GUI.  With the
+        # default 200 steps and one-second delay, the demo lasts ~200 seconds.
+        if step_delay_seconds > 0:
+            time.sleep(step_delay_seconds)
 
     print("[SUCCESS] Completed Fuzzy Logic Controller simulation in Isaac Sim.")
     simulation_app.close()

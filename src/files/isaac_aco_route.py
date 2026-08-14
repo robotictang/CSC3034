@@ -192,7 +192,15 @@ def build_network():
 # =====================================================================
 # 1. NVIDIA Isaac Sim Implementation
 # =====================================================================
-def run_isaac_sim_aco(n_ants=10, max_iterations=50, alpha=1.0, beta=2.0, rho=0.1):
+def run_isaac_sim_aco(
+    n_ants=10,
+    max_iterations=50,
+    alpha=1.0,
+    beta=2.0,
+    rho=0.1,
+    visualization_seconds=300.0,
+    animation_fps=30,
+):
     """Executes ACO Swarm Route Finding inside NVIDIA Isaac Sim photorealistic environment."""
     try:
         from isaacsim import SimulationApp
@@ -201,11 +209,25 @@ def run_isaac_sim_aco(n_ants=10, max_iterations=50, alpha=1.0, beta=2.0, rho=0.1
         from omni.isaac.kit import SimulationApp
         simulation_app = SimulationApp({"headless": False})
 
-    from omni.isaac.core import World
-    from omni.isaac.core.objects import DynamicSphere, VisualSphere, VisualCuboid
+    # Isaac Sim 4.x exposed these modules under ``omni.isaac``; Isaac Sim
+    # 5.x/6.x renamed them to ``isaacsim``.  The fallback preserves support
+    # for installations that still use the older package layout.
+    try:
+        from isaacsim.core.api import World
+        from isaacsim.core.api.objects import VisualSphere
+    except ImportError:
+        from omni.isaac.core import World
+        from omni.isaac.core.objects import VisualSphere
 
     world = World(stage_units_in_meters=1.0)
-    world.scene.add_default_ground_plane()
+    # Do not use ``add_default_ground_plane`` here: it references a USD asset
+    # hosted online, which prevents this standalone visualisation from starting
+    # on installations without access to NVIDIA's content server.
+    # Isaac Sim 6 starts with an empty stage, so create the scene root before
+    # adding prims beneath /World (older releases did this implicitly).
+    from omni.usd import get_context
+    from pxr import UsdGeom
+    UsdGeom.Xform.Define(get_context().get_stage(), "/World")
 
     cities, roads = build_network()
     origin = cities['Arad']
@@ -219,7 +241,10 @@ def run_isaac_sim_aco(n_ants=10, max_iterations=50, alpha=1.0, beta=2.0, rho=0.1
         return np.array([x_m, y_m, 0.2])
 
     # Spawn city node markers in Isaac Sim
-    for name, city in cities.items():
+    for city_index, (name, city) in enumerate(cities.items()):
+        # Keep USD paths independent of display labels; this also avoids any
+        # unsupported path characters should the map labels be changed later.
+        city_prim_path = f"/World/Cities/City_{city_index}"
         pos = to_isaac_coord(city)
         color = np.array([0.1, 0.8, 0.1]) if name == 'Arad' else (
             np.array([0.9, 0.1, 0.1]) if name == 'Bucharest' else np.array([0.6, 0.6, 0.6])
@@ -227,7 +252,7 @@ def run_isaac_sim_aco(n_ants=10, max_iterations=50, alpha=1.0, beta=2.0, rho=0.1
         radius = 0.5 if name in ['Arad', 'Bucharest'] else 0.35
         world.scene.add(
             VisualSphere(
-                prim_path=f"/World/Cities/{name}",
+                prim_path=city_prim_path,
                 name=f"city_{name}",
                 position=pos,
                 radius=radius,
@@ -235,13 +260,14 @@ def run_isaac_sim_aco(n_ants=10, max_iterations=50, alpha=1.0, beta=2.0, rho=0.1
             )
         )
 
-    # Create physical ant robots
+    # Create visual ant robots.  Their positions are updated directly below,
+    # avoiding physics/gravity because this is a waypoint-graph simulation.
     ant_prims = []
     for i in range(n_ants):
         start_pos = to_isaac_coord(origin) + np.random.uniform(-0.2, 0.2, size=3)
         start_pos[2] = 0.25
         ant_prim = world.scene.add(
-            DynamicSphere(
+            VisualSphere(
                 prim_path=f"/World/Ants/Ant_{i}",
                 name=f"ant_robot_{i}",
                 position=start_pos,
@@ -261,6 +287,34 @@ def run_isaac_sim_aco(n_ants=10, max_iterations=50, alpha=1.0, beta=2.0, rho=0.1
 
     best_route_names = None
     best_route_cost = float('inf')
+
+    def advance_ants(step_distance=0.02):
+        """Move the ant markers one small, visible step along the best route."""
+        if not best_route_names or len(best_route_names) <= 1:
+            return
+
+        for idx, ant_prim in enumerate(ant_prims):
+            wp_idx = ant_wp_indices[idx]
+            target_city_name = best_route_names[min(wp_idx, len(best_route_names) - 1)]
+            target_city = cities[target_city_name]
+            target_pos = to_isaac_coord(target_city)
+            current_pos, _ = ant_prim.get_world_pose()
+            direction = target_pos[:2] - current_pos[:2]
+            dist = np.linalg.norm(direction)
+
+            if dist < 0.3:
+                if wp_idx + 1 < len(best_route_names):
+                    ant_wp_indices[idx] += 1
+                else:
+                    # Reached destination city: return to the origin and loop.
+                    reset_pos = to_isaac_coord(origin) + np.random.uniform(-0.2, 0.2, size=3)
+                    reset_pos[2] = 0.25
+                    ant_prim.set_world_pose(position=reset_pos)
+                    ant_wp_indices[idx] = 1
+            else:
+                new_pos = current_pos.copy()
+                new_pos[:2] += (direction / dist) * step_distance
+                ant_prim.set_world_pose(position=new_pos)
 
     for iteration in range(max_iterations):
         if not simulation_app.is_running():
@@ -290,29 +344,8 @@ def run_isaac_sim_aco(n_ants=10, max_iterations=50, alpha=1.0, beta=2.0, rho=0.1
             for road in ant.path_roads:
                 road.deposit(delta_tau)
 
-        # 4. Move Isaac Sim Robot Prims along the best path for visualization
-        if best_route_names and len(best_route_names) > 1:
-            for idx, ant_prim in enumerate(ant_prims):
-                wp_idx = ant_wp_indices[idx]
-                target_city_name = best_route_names[min(wp_idx, len(best_route_names) - 1)]
-                target_city = cities[target_city_name]
-                target_pos = to_isaac_coord(target_city)
-                current_pos, _ = ant_prim.get_world_pose()
-                direction = target_pos[:2] - current_pos[:2]
-                dist = np.linalg.norm(direction)
-
-                if dist < 0.3:
-                    if wp_idx + 1 < len(best_route_names):
-                        ant_wp_indices[idx] += 1
-                    else:
-                        # Reached destination city! Reset position back to origin to loop route
-                        reset_pos = to_isaac_coord(origin) + np.random.uniform(-0.2, 0.2, size=3)
-                        reset_pos[2] = 0.25
-                        ant_prim.set_world_pose(position=reset_pos)
-                        ant_wp_indices[idx] = 1
-                else:
-                    vel = (direction / dist) * 1.5
-                    ant_prim.set_linear_velocity(np.array([vel[0], vel[1], 0.0]))
+        # 4. Move Isaac Sim robot prims along the best path for visualization.
+        advance_ants()
 
         if iteration % 5 == 0 or iteration == max_iterations - 1:
             print(f"Iteration {iteration:02d} | Successful Ants: {len(successful_ants)}/{n_ants} | "
@@ -323,6 +356,17 @@ def run_isaac_sim_aco(n_ants=10, max_iterations=50, alpha=1.0, beta=2.0, rho=0.1
     print(f" Optimal Route Cost: {best_route_cost:.1f} km")
     print(f" Optimal Path: {' -> '.join(best_route_names or [])}")
     print("=======================================================")
+
+    # Keep the viewport active at a human-readable speed after optimisation.
+    # The original 50 simulation frames completed in only a few seconds.
+    print(f"Showing the ant swarm for {visualization_seconds:.0f} seconds. Close the Isaac Sim window to stop early.")
+    frame_interval = 1.0 / animation_fps
+    playback_end = time.monotonic() + visualization_seconds
+    while simulation_app.is_running() and time.monotonic() < playback_end:
+        frame_start = time.monotonic()
+        world.step(render=True)
+        advance_ants()
+        time.sleep(max(0.0, frame_interval - (time.monotonic() - frame_start)))
 
     simulation_app.close()
 

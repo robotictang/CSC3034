@@ -434,6 +434,7 @@ You can download the full Python script here: [isaac_ga_robot.py](files/isaac_ga
 Below is the complete standalone Python implementation using Isaac Sim's Python Standalone API (`omni.isaac.core` / `isaacsim`). If NVIDIA Isaac Sim is not present in your local environment, the script gracefully falls back to a 2D trajectory generator.
 
 ```python
+# Copyright Author: Dr Tang Tiong Yew
 """
 NVIDIA Isaac Sim & Standalone Python Script:
 Genetic Algorithm (GA) for Mobile Robot Trajectory & Obstacle Avoidance Optimisation
@@ -641,11 +642,30 @@ def run_isaac_sim(best_chrom):
         from omni.isaac.kit import SimulationApp
         simulation_app = SimulationApp({'headless': False})
 
-    from omni.isaac.core import World
-    from omni.isaac.core.objects import DynamicSphere, VisualSphere, VisualCuboid
+    # Isaac Sim 5+ renamed the legacy ``omni.isaac.core`` package.
+    try:
+        from isaacsim.core.api import World
+        from isaacsim.core.api.objects import VisualSphere, VisualCuboid
+        from isaacsim.core.utils.viewports import set_camera_view
+    except ImportError:
+        from omni.isaac.core import World
+        from omni.isaac.core.objects import VisualSphere, VisualCuboid
+        from omni.isaac.core.utils.viewports import set_camera_view
 
     world = World(stage_units_in_meters=1.0)
-    world.scene.add_default_ground_plane()
+    # Create a local ground plane.  ``add_default_ground_plane`` fetches an
+    # Isaac sample USD from the internet, which is unavailable on this host.
+    import omni.usd
+    from omni.physx.scripts import physicsUtils
+    from pxr import Gf
+    physicsUtils.add_ground_plane(
+        omni.usd.get_context().get_stage(),
+        "/World/GroundPlane",
+        "Z",
+        20.0,
+        Gf.Vec3f(0.0, 0.0, 0.0),
+        Gf.Vec3f(0.35, 0.35, 0.35),
+    )
 
     # Spawn Start & Goal Markers
     world.scene.add(VisualSphere(
@@ -678,8 +698,9 @@ def run_isaac_sim(best_chrom):
             color=np.array([0.1, 0.6, 0.9])
         ))
 
-    # Spawn Evolved Robot Agent
-    robot_prim = world.scene.add(DynamicSphere(
+    # Spawn the animated robot.  A visual (kinematic) sphere gives a smooth,
+    # deterministic path rather than relying on rigid-body friction settings.
+    robot_prim = world.scene.add(VisualSphere(
         prim_path='/World/Robot/GA_Robot',
         name='ga_robot',
         position=START_POS,
@@ -688,22 +709,33 @@ def run_isaac_sim(best_chrom):
     ))
 
     world.reset()
+    set_camera_view(
+        eye=[18.0, -22.0, 22.0],
+        target=[0.0, 0.0, 0.0],
+        camera_prim_path="/OmniverseKit_Persp",
+    )
 
-    # Drive Robot along Evolved GA Waypoints
-    print('[INFO] Executing GA Trajectory in NVIDIA Isaac Sim Stage...')
-    wp_idx = 0
+    # Animate the robot along the evolved route.  Repeating the route makes
+    # the movement easy to observe in the Isaac Sim viewport.
+    print('[INFO] Executing visible GA trajectory in NVIDIA Isaac Sim Stage...')
+    robot_position = START_POS.copy()
+    wp_idx = 1
+    speed_mps = 2.0
+    physics_dt = 1.0 / 60.0
     while simulation_app.is_running():
         world.step(render=True)
-        if wp_idx < len(best_waypoints):
-            target_wp = best_waypoints[wp_idx]
-            curr_pos, _ = robot_prim.get_world_pose()
-            dir_vec = target_wp - curr_pos[:2]
-            dist = np.linalg.norm(dir_vec)
-            if dist < 0.3:
-                wp_idx += 1
-            else:
-                vel = (dir_vec / dist) * 1.5
-                robot_prim.set_linear_velocity(np.array([vel[0], vel[1], 0.0]))
+        target_wp = np.array([*best_waypoints[wp_idx], START_POS[2]])
+        direction = target_wp - robot_position
+        distance = np.linalg.norm(direction)
+        if distance <= speed_mps * physics_dt:
+            robot_position = target_wp
+            wp_idx += 1
+            if wp_idx == len(best_waypoints):
+                wp_idx = 1
+                robot_position = START_POS.copy()
+        else:
+            robot_position += direction / distance * speed_mps * physics_dt
+        robot_prim.set_world_pose(position=robot_position)
 
     simulation_app.close()
 

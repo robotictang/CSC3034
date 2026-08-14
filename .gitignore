@@ -1,1 +1,7 @@
+# Local Python environments and bytecode
+.venv/
+__pycache__/
+*.py[cod]
 
+# Local FreeBuff application data
+.freebuff/
