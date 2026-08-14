@@ -101,15 +101,38 @@ def create_plantation(seconds: float, output: Path) -> None:
         )
         for fruit_index, (dx, dy, dz) in enumerate(fruit_positions):
             path = f"/World/{name}/Durian_{fruit_index}"
-            sphere(path + "/Core", (x + dx, dy, dz), 0.42, durian, (0.9, 0.9, 1.1))
-            for spike_index in range(8):
-                angle = spike_index * math.tau / 8
-                spike = UsdGeom.Cone.Define(stage, path + f"/Spike_{spike_index}")
-                spike.CreateRadiusAttr(0.14)
-                spike.CreateHeightAttr(0.32)
-                place(spike.GetPrim(), (x + dx + 0.43 * math.cos(angle),
-                                        dy + 0.43 * math.sin(angle), dz))
-                bind(spike.GetPrim(), durian)
+            centre = (x + dx, dy, dz)
+            # The vertically elongated core and short woody stalk match the
+            # distinctive teardrop silhouette of a durian.
+            sphere(path + "/Core", centre, 0.42, durian, (0.95, 0.95, 1.35))
+            cylinder(path + "/Stem", (x + dx, dy, dz + 0.72), 0.09, 0.42, bark)
+
+            # Dense, outward-facing cones form the characteristic thorny skin.
+            # Rotating each cone away from the fruit core avoids the flat,
+            # upward-only spikes of the earlier stylised version.
+            spike_index = 0
+            for vertical, ring_radius in ((-0.42, 0.20), (-0.22, 0.36),
+                                          (0.00, 0.42), (0.22, 0.36), (0.42, 0.20)):
+                for segment in range(8):
+                    angle = segment * math.tau / 8 + (spike_index % 2) * 0.18
+                    direction = Gf.Vec3d(
+                        ring_radius * math.cos(angle),
+                        ring_radius * math.sin(angle),
+                        vertical,
+                    ).GetNormalized()
+                    spike = UsdGeom.Cone.Define(stage, path + f"/Spike_{spike_index}")
+                    spike.CreateRadiusAttr(0.085)
+                    spike.CreateHeightAttr(0.28)
+                    spike_transform = UsdGeom.Xformable(spike.GetPrim())
+                    spike_transform.AddTranslateOp().Set(
+                        Gf.Vec3d(*centre) + direction * 0.45
+                    )
+                    quaternion = Gf.Rotation(Gf.Vec3d(0, 0, 1), direction).GetQuat()
+                    spike_transform.AddOrientOp().Set(
+                        Gf.Quatf(quaternion.GetReal(), Gf.Vec3f(*quaternion.GetImaginary()))
+                    )
+                    bind(spike.GetPrim(), durian)
+                    spike_index += 1
 
     durian_tree("DurianTree_Left", -3.2)
     durian_tree("DurianTree_Right", 3.2)
