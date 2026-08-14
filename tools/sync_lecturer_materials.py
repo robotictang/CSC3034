@@ -22,10 +22,12 @@ import tempfile
 import zipfile
 
 from pypdf import PdfReader, PdfWriter
+from pypdf.generic import ArrayObject, NameObject
 
 
 AUTHOR = "Dr Tang Tiong Yew"
 AUTHOR_OVERLAY_MARKER = f"{AUTHOR}; legacy references removed; v3"
+BRIEFING_DELIVERY_MARKER = "CSC3034 briefing delivery details updated; v4"
 SYNC_DATE = "14 August 2026"
 OLD_AUTHOR_PATTERN = re.compile(r"Dr\.?\s+Richard\s+Wong(?:\s+Teck\s+Ken)?", re.I)
 logging.getLogger("pypdf").setLevel(logging.ERROR)
@@ -211,6 +213,62 @@ def make_briefing_contact_page(path: Path, width: float, height: float) -> None:
     path.write_text("\n".join(content) + "\n", encoding="ascii")
 
 
+def update_briefing_delivery_details(page) -> bool:
+    """Replace the legacy tutor and course-site text in the original slide stream."""
+    contents = page.raw_get("/Contents").get_object()
+    streams = list(contents) if isinstance(contents, ArrayObject) else [contents]
+    for stream_ref in streams:
+        stream = stream_ref.get_object()
+        content = stream.get_data()
+        if (
+            b"https://ricwtk.github.io/ci-" not in content
+            and b"https://robotictang.github.io/CSC3034/docs/" not in content
+        ):
+            continue
+        content = content.replace(
+            b"-358(Lim)-307(W)97(ei)-307(Lun)",
+            b"-358(Dr)-307(Tang)-307(Tiong)-307(Yew)",
+        )
+        content = content.replace(
+            b"(https://ricwtk.github.io/ci-)-55(labs)",
+            b"()",
+        )
+        # The legacy slide font lacks several glyphs needed by the new URL.
+        content = content.replace(b"(https://robotictang.github.io/CSC3034/docs/)", b"()")
+        stream.set_data(content)
+        # Keep only the edited original stream, discarding a prior overlay if present.
+        page[NameObject("/Contents")] = ArrayObject([stream_ref])
+        return True
+    return False
+
+
+def remove_briefing_legacy_link(page) -> None:
+    """Remove the obsolete ci-labs hyperlink annotation from the briefing slide."""
+    annotations = page.get("/Annots") or []
+    retained = ArrayObject()
+    for annotation_ref in annotations:
+        annotation = annotation_ref.get_object()
+        uri = str((annotation.get("/A") or {}).get("/URI", ""))
+        if uri != "https://ricwtk.github.io/ci-labs":
+            retained.append(annotation_ref)
+    if retained:
+        page[NameObject("/Annots")] = retained
+    elif NameObject("/Annots") in page:
+        del page[NameObject("/Annots")]
+
+
+def make_briefing_url_overlay(path: Path, width: float, height: float) -> None:
+    """Add the new course URL using a standard font with complete URL glyph support."""
+    content = [
+        "%!PS-Adobe-3.0",
+        f"<< /PageSize [{width} {height}] >> setpagedevice",
+        "0.12 0.12 0.12 setrgbcolor",
+        "/Courier findfont 8 scalefont setfont",
+        "174 90 moveto (https://robotictang.github.io/CSC3034/docs/) show",
+        "showpage",
+    ]
+    path.write_text("\n".join(content) + "\n", encoding="ascii")
+
 def author_boxes(pdf: Path) -> list[tuple[int, float, float, float, float, float, float]]:
     result = subprocess.run(
         ["pdftotext", "-bbox-layout", str(pdf), "-"],
@@ -254,7 +312,9 @@ def update_pdf(pdf: Path) -> None:
     existing_metadata = existing.metadata or {}
     has_supplement = str(existing_metadata.get("/Subject", "")).startswith("Current CSC3034 update synchronized")
     has_all_overlays = existing_metadata.get("/CSC3034AuthorOverlay") == AUTHOR_OVERLAY_MARKER
-    if has_supplement and has_all_overlays:
+    has_briefing_delivery_update = existing_metadata.get("/CSC3034BriefingDelivery") == BRIEFING_DELIVERY_MARKER
+    needs_briefing_delivery_update = pdf.name == "00 Briefing.pdf" and not has_briefing_delivery_update
+    if has_supplement and has_all_overlays and not needs_briefing_delivery_update:
         return
     with tempfile.TemporaryDirectory(prefix="csc3034-pdf-") as tmp_name:
         tmp = Path(tmp_name)
@@ -285,12 +345,32 @@ def update_pdf(pdf: Path) -> None:
             ps_to_pdf(contact_ps, contact_pdf, width, height)
             writer.remove_page(1)
             writer.insert_page(PdfReader(contact_pdf).pages[0], 1)
+        if needs_briefing_delivery_update and len(writer.pages) >= 5:
+            page = writer.pages[4]
+            if update_briefing_delivery_details(page):
+                delivery_ps = tmp / "briefing-delivery-url.ps"
+                delivery_pdf = tmp / "briefing-delivery-url.pdf"
+                make_briefing_url_overlay(
+                    delivery_ps,
+                    float(page.mediabox.width),
+                    float(page.mediabox.height),
+                )
+                ps_to_pdf(
+                    delivery_ps,
+                    delivery_pdf,
+                    float(page.mediabox.width),
+                    float(page.mediabox.height),
+                )
+                page.merge_page(PdfReader(delivery_pdf).pages[0], over=True)
+            remove_briefing_legacy_link(page)
         if not has_supplement:
             writer.append(PdfReader(supplement_pdf))
         metadata = {str(key): str(value) for key, value in (reader.metadata or {}).items() if value is not None}
         metadata["/Author"] = AUTHOR
         metadata["/Subject"] = f"Current CSC3034 update synchronized {SYNC_DATE}"
         metadata["/CSC3034AuthorOverlay"] = AUTHOR_OVERLAY_MARKER
+        if pdf.name == "00 Briefing.pdf":
+            metadata["/CSC3034BriefingDelivery"] = BRIEFING_DELIVERY_MARKER
         writer.add_metadata(metadata)
         with output_pdf.open("wb") as stream:
             writer.write(stream)
