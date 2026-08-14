@@ -1,0 +1,1422 @@
+#usda 1.0
+(
+    endTimeCode = 1000000
+    metersPerUnit = 1
+    startTimeCode = 0
+    timeCodesPerSecond = 60
+    upAxis = "Z"
+)
+
+def "Render" (
+    hide_in_stage_window = true
+    no_delete = true
+)
+{
+    def "OmniverseKit"
+    {
+        def "HydraTextures" (
+            hide_in_stage_window = true
+            no_delete = true
+        )
+        {
+            def RenderProduct "omni_kit_widget_viewport_ViewportTexture_0" (
+                prepend apiSchemas = ["OmniRtxSettingsCommonAdvancedAPI_1", "OmniRtxSettingsRtAdvancedAPI_1", "OmniRtxSettingsPtAdvancedAPI_1", "OmniRtxPostColorGradingAPI_1", "OmniRtxPostChromaticAberrationAPI_1", "OmniRtxPostBloomPhysicalAPI_1", "OmniRtxPostMatteObjectAPI_1", "OmniRtxPostCompositingAPI_1", "OmniRtxPostDofAPI_1", "OmniRtxPostMotionBlurAPI_1", "OmniRtxPostTvNoiseAPI_1", "OmniRtxPostTonemapIrayReinhardAPI_1", "OmniRtxPostDebugSettingsAPI_1", "OmniRtxDebugSettingsAPI_1"]
+                hide_in_stage_window = true
+                no_delete = true
+            )
+            {
+                rel camera = </OmniverseKit_Persp>
+                token omni:rtx:ambientOcclusion:denoiserMode = "none"
+                token omni:rtx:background:source:texture:textureMode = "repeatMirrored"
+                token omni:rtx:background:source:type = "domeLight"
+                bool omni:rtx:debug:view:pixelDebug:enableFixedTextPos = 1
+                token omni:rtx:directLighting:sampledLighting:denoisingTechnique = "None"
+                bool omni:rtx:dlss:frameGeneration = 0
+                float3 omni:rtx:domeLight:rotationAxis = (0, 0, 1)
+                bool omni:rtx:indirectDiffuse:denoiser:enabled = 0
+                bool omni:rtx:material:db:syncLoads = 1
+                token omni:rtx:post:dlss:execMode = "performance"
+                bool omni:rtx:post:registeredCompositing:invertColorCorrection = 1
+                bool omni:rtx:post:registeredCompositing:invertToneMap = 1
+                bool omni:rtx:pt:adaptiveSampling:filterError = 0
+                uint omni:rtx:pt:adaptiveSampling:fixedSppIterations = 2
+                int omni:rtx:pt:clampSpp = 64
+                uint omni:rtx:pt:limits:maxBounces = 3
+                uint omni:rtx:pt:limits:maxGlossyBounces = 3
+                uint omni:rtx:pt:maxSamplesPerLaunch = 2073600
+                uint omni:rtx:pt:mgpu:maxPixelsPerRegionExponent = 12
+                int omni:rtx:pt:samplesPerIteration = 64
+                uint omni:rtx:pt:samplesPerPixel = 64
+                bool omni:rtx:reflections:denoiser:enabled = 0
+                token omni:rtx:rendermode = "RealTimePathTracing"
+                color3f omni:rtx:rt:ambientLight:color = (0.1, 0.1, 0.1)
+                bool omni:rtx:rt:demoire = 0
+                bool omni:rtx:rt:lightcache:spatialCache:dontResolveConflicts = 1
+                int omni:rtx:rt:sss:samples = 1
+                uint omni:rtx:rtpt:maxVolumeBounces = 15
+                float omni:rtx:rtpt:modulatingRoughnessThreshold = 0.08
+                bool omni:rtx:scene:hydra:materialSyncLoads = 1
+                bool omni:rtx:scene:hydra:mdlMaterialWarmup = 1
+                rel orderedVars = </Render/Vars/LdrColor>
+                custom bool overrideClipRange = 0
+                uniform int2 resolution = (1280, 720)
+            }
+        }
+    }
+
+    def RenderSettings "OmniverseGlobalRenderSettings" (
+        prepend apiSchemas = ["OmniRtxSettingsGlobalRtAdvancedAPI_1", "OmniRtxSettingsGlobalPtAdvancedAPI_1"]
+        no_delete = true
+    )
+    {
+        rel products = </Render/OmniverseKit/HydraTextures/omni_kit_widget_viewport_ViewportTexture_0>
+    }
+
+    def "Vars"
+    {
+        def RenderVar "LdrColor" (
+            hide_in_stage_window = true
+            no_delete = true
+        )
+        {
+            uniform string sourceName = "LdrColor"
+            uniform token sourceType = "raw"
+        }
+    }
+}
+
+over "OmniverseKit_Persp"
+{
+    float exposure:fStop = 5
+    float exposure:responsivity = 1.1026709
+    float exposure:time = 0.02
+}
+
+def Xform "World"
+{
+    def "Looks"
+    {
+        def Material "Bark"
+        {
+            token outputs:surface.connect = </World/Looks/Bark/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.26, 0.1, 0.03)
+                float inputs:roughness = 0.75
+                token outputs:surface
+            }
+        }
+
+        def Material "Leaves"
+        {
+            token outputs:surface.connect = </World/Looks/Leaves/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.04, 0.28, 0.06)
+                float inputs:roughness = 0.75
+                token outputs:surface
+            }
+        }
+
+        def Material "DurianSkin"
+        {
+            token outputs:surface.connect = </World/Looks/DurianSkin/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.85, 0.72, 0.05)
+                float inputs:roughness = 0.75
+                token outputs:surface
+            }
+        }
+
+        def Material "Soil"
+        {
+            token outputs:surface.connect = </World/Looks/Soil/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.22, 0.09, 0.025)
+                float inputs:roughness = 0.75
+                token outputs:surface
+            }
+        }
+
+        def Material "FarmerShirt"
+        {
+            token outputs:surface.connect = </World/Looks/FarmerShirt/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.06, 0.28, 0.72)
+                float inputs:roughness = 0.75
+                token outputs:surface
+            }
+        }
+
+        def Material "FarmerTrousers"
+        {
+            token outputs:surface.connect = </World/Looks/FarmerTrousers/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.03, 0.08, 0.22)
+                float inputs:roughness = 0.75
+                token outputs:surface
+            }
+        }
+
+        def Material "Skin"
+        {
+            token outputs:surface.connect = </World/Looks/Skin/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.56, 0.29, 0.14)
+                float inputs:roughness = 0.75
+                token outputs:surface
+            }
+        }
+
+        def Material "Hat"
+        {
+            token outputs:surface.connect = </World/Looks/Hat/Shader.outputs:surface>
+
+            def Shader "Shader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.72, 0.48, 0.13)
+                float inputs:roughness = 0.75
+                token outputs:surface
+            }
+        }
+    }
+
+    def Cube "PlantationSoil"
+    {
+        rel material:binding = </World/Looks/Soil>
+        double size = 1
+        float3 xformOp:scale = (12, 9, 0.3)
+        double3 xformOp:translate = (0, 0, -0.15)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Xform "DurianTree_Left"
+    {
+        def Cylinder "Trunk"
+        {
+            double height = 4.2
+            rel material:binding = </World/Looks/Bark>
+            double radius = 0.32
+            double3 xformOp:translate = (-3.2, 0, 2.1)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Sphere "Canopy_0"
+        {
+            rel material:binding = </World/Looks/Leaves>
+            double radius = 1.15
+            float3 xformOp:scale = (1.15, 0.9, 0.85)
+            double3 xformOp:translate = (-3.95, 0, 4.4)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Sphere "Canopy_1"
+        {
+            rel material:binding = </World/Looks/Leaves>
+            double radius = 1.15
+            float3 xformOp:scale = (1.15, 0.9, 0.85)
+            double3 xformOp:translate = (-2.45, 0, 4.4)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Sphere "Canopy_2"
+        {
+            rel material:binding = </World/Looks/Leaves>
+            double radius = 1.15
+            float3 xformOp:scale = (1.15, 0.9, 0.85)
+            double3 xformOp:translate = (-3.2, -0.7, 4.6)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Sphere "Canopy_3"
+        {
+            rel material:binding = </World/Looks/Leaves>
+            double radius = 1.15
+            float3 xformOp:scale = (1.15, 0.9, 0.85)
+            double3 xformOp:translate = (-3.2, 0.7, 4.6)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Sphere "Canopy_4"
+        {
+            rel material:binding = </World/Looks/Leaves>
+            double radius = 1.15
+            float3 xformOp:scale = (1.15, 0.9, 0.85)
+            double3 xformOp:translate = (-3.2, 0, 5.15)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def "Durian_0"
+        {
+            def Sphere "Core"
+            {
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.42
+                float3 xformOp:scale = (0.9, 0.9, 1.1)
+                double3 xformOp:translate = (-4.05, -1.45, 4.05)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cone "Spike_0"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-3.6199999999999997, -1.45, 4.05)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_1"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-3.745944084089784, -1.1459440840897845, 4.05)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_2"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-4.05, -1.02, 4.05)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_3"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-4.354055915910215, -1.1459440840897845, 4.05)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_4"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-4.4799999999999995, -1.45, 4.05)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_5"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-4.354055915910215, -1.7540559159102154, 4.05)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_6"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-4.05, -1.88, 4.05)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_7"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-3.7459440840897846, -1.7540559159102154, 4.05)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+        }
+
+        def "Durian_1"
+        {
+            def Sphere "Core"
+            {
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.42
+                float3 xformOp:scale = (0.9, 0.9, 1.1)
+                double3 xformOp:translate = (-2.4800000000000004, -1.45, 4.25)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cone "Spike_0"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-2.0500000000000003, -1.45, 4.25)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_1"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-2.175944084089785, -1.1459440840897845, 4.25)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_2"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-2.4800000000000004, -1.02, 4.25)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_3"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-2.7840559159102156, -1.1459440840897845, 4.25)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_4"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-2.9100000000000006, -1.45, 4.25)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_5"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-2.784055915910216, -1.7540559159102154, 4.25)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_6"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-2.4800000000000004, -1.88, 4.25)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_7"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-2.1759440840897852, -1.7540559159102154, 4.25)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+        }
+
+        def "Durian_2"
+        {
+            def Sphere "Core"
+            {
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.42
+                float3 xformOp:scale = (0.9, 0.9, 1.1)
+                double3 xformOp:translate = (-3.3800000000000003, -1.5, 4.9)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cone "Spike_0"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-2.95, -1.5, 4.9)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_1"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-3.0759440840897847, -1.1959440840897846, 4.9)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_2"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-3.3800000000000003, -1.07, 4.9)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_3"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-3.684055915910216, -1.1959440840897846, 4.9)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_4"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-3.8100000000000005, -1.5, 4.9)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_5"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-3.684055915910216, -1.8040559159102154, 4.9)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_6"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-3.3800000000000003, -1.93, 4.9)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_7"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-3.075944084089785, -1.8040559159102156, 4.9)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+        }
+
+        def "Durian_3"
+        {
+            def Sphere "Core"
+            {
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.42
+                float3 xformOp:scale = (0.9, 0.9, 1.1)
+                double3 xformOp:translate = (-2.1, -0.25, 4.52)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cone "Spike_0"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-1.6700000000000002, -0.25, 4.52)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_1"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-1.7959440840897847, 0.05405591591021541, 4.52)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_2"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-2.1, 0.18, 4.52)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_3"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-2.4040559159102157, 0.05405591591021547, 4.52)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_4"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-2.5300000000000002, -0.24999999999999994, 4.52)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_5"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-2.4040559159102157, -0.5540559159102154, 4.52)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_6"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-2.1, -0.6799999999999999, 4.52)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_7"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-1.7959440840897847, -0.5540559159102155, 4.52)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+        }
+
+        def "Durian_4"
+        {
+            def Sphere "Core"
+            {
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.42
+                float3 xformOp:scale = (0.9, 0.9, 1.1)
+                double3 xformOp:translate = (-4.300000000000001, -0.3, 4.55)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cone "Spike_0"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-3.8700000000000006, -0.3, 4.55)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_1"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-3.995944084089785, 0.004055915910215424, 4.55)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_2"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-4.300000000000001, 0.13, 4.55)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_3"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-4.604055915910216, 0.00405591591021548, 4.55)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_4"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-4.73, -0.29999999999999993, 4.55)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_5"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-4.604055915910216, -0.6040559159102155, 4.55)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_6"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-4.300000000000001, -0.73, 4.55)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_7"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-3.9959440840897855, -0.6040559159102155, 4.55)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+        }
+
+        def "Durian_5"
+        {
+            def Sphere "Core"
+            {
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.42
+                float3 xformOp:scale = (0.9, 0.9, 1.1)
+                double3 xformOp:translate = (-3.08, 1.05, 4.2)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cone "Spike_0"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-2.65, 1.05, 4.2)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_1"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-2.7759440840897844, 1.3540559159102155, 4.2)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_2"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-3.08, 1.48, 4.2)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_3"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-3.3840559159102153, 1.3540559159102155, 4.2)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_4"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-3.5100000000000002, 1.05, 4.2)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_5"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-3.3840559159102157, 0.7459440840897846, 4.2)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_6"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-3.08, 0.6200000000000001, 4.2)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_7"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (-2.775944084089785, 0.7459440840897845, 4.2)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+        }
+    }
+
+    def Xform "DurianTree_Right"
+    {
+        def Cylinder "Trunk"
+        {
+            double height = 4.2
+            rel material:binding = </World/Looks/Bark>
+            double radius = 0.32
+            double3 xformOp:translate = (3.2, 0, 2.1)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Sphere "Canopy_0"
+        {
+            rel material:binding = </World/Looks/Leaves>
+            double radius = 1.15
+            float3 xformOp:scale = (1.15, 0.9, 0.85)
+            double3 xformOp:translate = (2.45, 0, 4.4)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Sphere "Canopy_1"
+        {
+            rel material:binding = </World/Looks/Leaves>
+            double radius = 1.15
+            float3 xformOp:scale = (1.15, 0.9, 0.85)
+            double3 xformOp:translate = (3.95, 0, 4.4)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Sphere "Canopy_2"
+        {
+            rel material:binding = </World/Looks/Leaves>
+            double radius = 1.15
+            float3 xformOp:scale = (1.15, 0.9, 0.85)
+            double3 xformOp:translate = (3.2, -0.7, 4.6)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Sphere "Canopy_3"
+        {
+            rel material:binding = </World/Looks/Leaves>
+            double radius = 1.15
+            float3 xformOp:scale = (1.15, 0.9, 0.85)
+            double3 xformOp:translate = (3.2, 0.7, 4.6)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Sphere "Canopy_4"
+        {
+            rel material:binding = </World/Looks/Leaves>
+            double radius = 1.15
+            float3 xformOp:scale = (1.15, 0.9, 0.85)
+            double3 xformOp:translate = (3.2, 0, 5.15)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def "Durian_0"
+        {
+            def Sphere "Core"
+            {
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.42
+                float3 xformOp:scale = (0.9, 0.9, 1.1)
+                double3 xformOp:translate = (2.35, -1.45, 4.05)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cone "Spike_0"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (2.7800000000000002, -1.45, 4.05)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_1"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (2.6540559159102157, -1.1459440840897845, 4.05)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_2"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (2.35, -1.02, 4.05)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_3"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (2.0459440840897845, -1.1459440840897845, 4.05)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_4"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (1.9200000000000002, -1.45, 4.05)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_5"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (2.0459440840897845, -1.7540559159102154, 4.05)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_6"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (2.35, -1.88, 4.05)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_7"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (2.6540559159102153, -1.7540559159102154, 4.05)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+        }
+
+        def "Durian_1"
+        {
+            def Sphere "Core"
+            {
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.42
+                float3 xformOp:scale = (0.9, 0.9, 1.1)
+                double3 xformOp:translate = (3.92, -1.45, 4.25)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cone "Spike_0"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (4.35, -1.45, 4.25)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_1"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (4.224055915910215, -1.1459440840897845, 4.25)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_2"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (3.92, -1.02, 4.25)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_3"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (3.6159440840897847, -1.1459440840897845, 4.25)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_4"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (3.4899999999999998, -1.45, 4.25)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_5"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (3.6159440840897843, -1.7540559159102154, 4.25)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_6"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (3.92, -1.88, 4.25)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_7"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (4.224055915910215, -1.7540559159102154, 4.25)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+        }
+
+        def "Durian_2"
+        {
+            def Sphere "Core"
+            {
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.42
+                float3 xformOp:scale = (0.9, 0.9, 1.1)
+                double3 xformOp:translate = (3.02, -1.5, 4.9)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cone "Spike_0"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (3.45, -1.5, 4.9)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_1"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (3.3240559159102157, -1.1959440840897846, 4.9)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_2"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (3.02, -1.07, 4.9)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_3"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (2.7159440840897844, -1.1959440840897846, 4.9)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_4"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (2.59, -1.5, 4.9)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_5"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (2.7159440840897844, -1.8040559159102154, 4.9)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_6"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (3.02, -1.93, 4.9)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_7"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (3.324055915910215, -1.8040559159102156, 4.9)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+        }
+
+        def "Durian_3"
+        {
+            def Sphere "Core"
+            {
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.42
+                float3 xformOp:scale = (0.9, 0.9, 1.1)
+                double3 xformOp:translate = (4.300000000000001, -0.25, 4.52)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cone "Spike_0"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (4.73, -0.25, 4.52)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_1"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (4.604055915910216, 0.05405591591021541, 4.52)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_2"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (4.300000000000001, 0.18, 4.52)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_3"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (3.9959440840897855, 0.05405591591021547, 4.52)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_4"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (3.8700000000000006, -0.24999999999999994, 4.52)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_5"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (3.995944084089785, -0.5540559159102154, 4.52)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_6"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (4.300000000000001, -0.6799999999999999, 4.52)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_7"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (4.604055915910216, -0.5540559159102155, 4.52)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+        }
+
+        def "Durian_4"
+        {
+            def Sphere "Core"
+            {
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.42
+                float3 xformOp:scale = (0.9, 0.9, 1.1)
+                double3 xformOp:translate = (2.1, -0.3, 4.55)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cone "Spike_0"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (2.5300000000000002, -0.3, 4.55)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_1"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (2.4040559159102157, 0.004055915910215424, 4.55)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_2"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (2.1, 0.13, 4.55)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_3"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (1.7959440840897847, 0.00405591591021548, 4.55)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_4"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (1.6700000000000002, -0.29999999999999993, 4.55)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_5"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (1.7959440840897845, -0.6040559159102155, 4.55)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_6"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (2.1, -0.73, 4.55)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_7"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (2.4040559159102153, -0.6040559159102155, 4.55)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+        }
+
+        def "Durian_5"
+        {
+            def Sphere "Core"
+            {
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.42
+                float3 xformOp:scale = (0.9, 0.9, 1.1)
+                double3 xformOp:translate = (3.3200000000000003, 1.05, 4.2)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+            }
+
+            def Cone "Spike_0"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (3.7500000000000004, 1.05, 4.2)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_1"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (3.624055915910216, 1.3540559159102155, 4.2)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_2"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (3.3200000000000003, 1.48, 4.2)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_3"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (3.015944084089785, 1.3540559159102155, 4.2)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_4"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (2.89, 1.05, 4.2)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_5"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (3.0159440840897846, 0.7459440840897846, 4.2)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_6"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (3.3200000000000003, 0.6200000000000001, 4.2)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+
+            def Cone "Spike_7"
+            {
+                double height = 0.32
+                rel material:binding = </World/Looks/DurianSkin>
+                double radius = 0.14
+                double3 xformOp:translate = (3.6240559159102155, 0.7459440840897845, 4.2)
+                uniform token[] xformOpOrder = ["xformOp:translate"]
+            }
+        }
+    }
+
+    def "Farmer"
+    {
+        def Cylinder "Torso"
+        {
+            double height = 1.25
+            rel material:binding = </World/Looks/FarmerShirt>
+            double radius = 0.34
+            double3 xformOp:translate = (0, 0, 1.85)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Sphere "Head"
+        {
+            rel material:binding = </World/Looks/Skin>
+            double radius = 0.26
+            double3 xformOp:translate = (0, 0, 2.7)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "LeftLeg"
+        {
+            double height = 1.3
+            rel material:binding = </World/Looks/FarmerTrousers>
+            double radius = 0.12
+            double3 xformOp:translate = (-0.16, 0, 0.65)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "RightLeg"
+        {
+            double height = 1.3
+            rel material:binding = </World/Looks/FarmerTrousers>
+            double radius = 0.12
+            double3 xformOp:translate = (0.16, 0, 0.65)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "LeftArm"
+        {
+            double height = 1.05
+            rel material:binding = </World/Looks/Skin>
+            double radius = 0.1
+            double3 xformOp:translate = (-0.43, 0, 1.88)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "RightArm"
+        {
+            double height = 1.05
+            rel material:binding = </World/Looks/Skin>
+            double radius = 0.1
+            double3 xformOp:translate = (0.43, 0, 1.88)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "HatBrim"
+        {
+            double height = 0.07
+            rel material:binding = </World/Looks/Hat>
+            double radius = 0.43
+            double3 xformOp:translate = (0, 0, 2.98)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "HatCrown"
+        {
+            double height = 0.25
+            rel material:binding = </World/Looks/Hat>
+            double radius = 0.25
+            double3 xformOp:translate = (0, 0, 3.1)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def DistantLight "Sun"
+    {
+        float inputs:angle = 0.8
+        float inputs:intensity = 3000
+        float3 xformOp:rotateXYZ = (35, -30, 20)
+        uniform token[] xformOpOrder = ["xformOp:rotateXYZ"]
+    }
+
+    def DomeLight "SkyLight"
+    {
+        float inputs:intensity = 500
+    }
+}
+

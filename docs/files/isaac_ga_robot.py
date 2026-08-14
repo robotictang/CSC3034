@@ -244,14 +244,62 @@ def run_isaac_sim(best_chrom):
         Gf.Vec3f(0.35, 0.35, 0.35),
     )
 
+    # -----------------------------------------------------------------
+    # Presentation layer: a clean, high-contrast "planning arena" makes
+    # the GA result easier to inspect than the default grey stage.
+    # -----------------------------------------------------------------
+    stage = omni.usd.get_context().get_stage()
+    from pxr import UsdGeom, UsdLux
+
+    # Soft studio lighting works without any external USD assets.
+    dome = UsdLux.DomeLight.Define(stage, "/World/Lighting/AmbientSky")
+    dome.CreateIntensityAttr(450.0)
+    dome.CreateColorAttr(Gf.Vec3f(0.16, 0.22, 0.38))
+    key_light = UsdLux.SphereLight.Define(stage, "/World/Lighting/KeyLight")
+    key_light.CreateRadiusAttr(2.5)
+    key_light.CreateIntensityAttr(22000.0)
+    key_light.CreateColorAttr(Gf.Vec3f(0.72, 0.86, 1.0))
+    key_light.AddTranslateOp().Set(Gf.Vec3d(-6.0, -8.0, 12.0))
+    rim_light = UsdLux.SphereLight.Define(stage, "/World/Lighting/RimLight")
+    rim_light.CreateRadiusAttr(2.0)
+    rim_light.CreateIntensityAttr(15000.0)
+    rim_light.CreateColorAttr(Gf.Vec3f(1.0, 0.36, 0.16))
+    rim_light.AddTranslateOp().Set(Gf.Vec3d(8.0, 6.0, 9.0))
+
+    # A dark inset floor, four raised rails, and corner beacons frame the
+    # playable space while retaining the local physics ground plane above.
+    world.scene.add(VisualCuboid(
+        prim_path="/World/Arena/Floor", name="arena_floor",
+        position=np.array([0.0, 0.0, -0.12]),
+        scale=np.array([16.8, 16.8, 0.18]), color=np.array([0.035, 0.06, 0.11])
+    ))
+    rail_specs = [
+        ("North", [0.0, 8.25, 0.18], [16.8, 0.16, 0.35]),
+        ("South", [0.0, -8.25, 0.18], [16.8, 0.16, 0.35]),
+        ("East", [8.25, 0.0, 0.18], [0.16, 16.8, 0.35]),
+        ("West", [-8.25, 0.0, 0.18], [0.16, 16.8, 0.35]),
+    ]
+    for name, position, scale in rail_specs:
+        world.scene.add(VisualCuboid(
+            prim_path=f"/World/Arena/Rails/{name}", name=f"rail_{name.lower()}",
+            position=np.array(position), scale=np.array(scale),
+            color=np.array([0.05, 0.55, 0.86])
+        ))
+    for idx, (x, y) in enumerate(((-7.85, -7.85), (-7.85, 7.85), (7.85, -7.85), (7.85, 7.85))):
+        world.scene.add(VisualSphere(
+            prim_path=f"/World/Arena/Beacons/Beacon_{idx}", name=f"beacon_{idx}",
+            position=np.array([x, y, 0.38]), radius=0.16,
+            color=np.array([1.0, 0.42, 0.08])
+        ))
+
     # Spawn Start & Goal Markers
     world.scene.add(VisualSphere(
         prim_path='/World/StartMarker', name='start_marker',
-        position=START_POS, radius=0.4, color=np.array([0.1, 0.8, 0.1])
+        position=START_POS, radius=0.48, color=np.array([0.05, 0.95, 0.38])
     ))
     world.scene.add(VisualSphere(
         prim_path='/World/GoalMarker', name='goal_marker',
-        position=GOAL_POS, radius=0.4, color=np.array([0.9, 0.1, 0.1])
+        position=GOAL_POS, radius=0.48, color=np.array([1.0, 0.16, 0.20])
     ))
 
     # Spawn Obstacles in Isaac Sim Stage
@@ -260,19 +308,37 @@ def run_isaac_sim(best_chrom):
             prim_path=f'/World/Obstacles/Obstacle_{idx}',
             name=f'obstacle_{idx}',
             position=np.array([ox, oy, r]),
-            radius=r,
-            color=np.array([0.3, 0.3, 0.3])
+            radius=r, color=np.array([0.32, 0.12, 0.48])
+        ))
+        # A low halo distinguishes the obstacle footprint from its 3D body.
+        world.scene.add(VisualCuboid(
+            prim_path=f'/World/Obstacles/Halo_{idx}', name=f'obstacle_halo_{idx}',
+            position=np.array([ox, oy, 0.025]),
+            scale=np.array([2.0 * (r + 0.22), 2.0 * (r + 0.22), 0.025]),
+            color=np.array([0.95, 0.16, 0.48])
         ))
 
     # Decode Evolved Waypoints & Spawn Visual Waypoint Markers
     best_waypoints = decode_chromosome(best_chrom)
+    # Lay a glowing-looking cyan route on the floor.  Individual cuboids keep
+    # the result readable from the overhead camera and require no asset files.
+    for idx, (p1, p2) in enumerate(zip(best_waypoints, best_waypoints[1:])):
+        delta = p2 - p1
+        length = float(np.linalg.norm(delta))
+        yaw = math.atan2(delta[1], delta[0])
+        world.scene.add(VisualCuboid(
+            prim_path=f'/World/Trajectory/Segment_{idx}', name=f'trajectory_segment_{idx}',
+            position=np.array([(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2, 0.055]),
+            scale=np.array([length, 0.09, 0.035]),
+            orientation=np.array([math.cos(yaw / 2), 0.0, 0.0, math.sin(yaw / 2)]),
+            color=np.array([0.05, 0.84, 1.0])
+        ))
     for idx, wp in enumerate(best_waypoints[1:-1]):
         world.scene.add(VisualSphere(
             prim_path=f'/World/Waypoints/WP_{idx}',
             name=f'wp_{idx}',
-            position=np.array([wp[0], wp[1], 0.15]),
-            radius=0.15,
-            color=np.array([0.1, 0.6, 0.9])
+            position=np.array([wp[0], wp[1], 0.18]), radius=0.20,
+            color=np.array([0.05, 0.78, 1.0])
         ))
 
     # Spawn the animated robot.  A visual (kinematic) sphere gives a smooth,
@@ -281,13 +347,13 @@ def run_isaac_sim(best_chrom):
         prim_path='/World/Robot/GA_Robot',
         name='ga_robot',
         position=START_POS,
-        radius=0.3,
-        color=np.array([0.9, 0.5, 0.1])
+        radius=0.34,
+        color=np.array([1.0, 0.62, 0.05])
     ))
 
     world.reset()
     set_camera_view(
-        eye=[18.0, -22.0, 22.0],
+        eye=[19.0, -23.0, 24.0],
         target=[0.0, 0.0, 0.0],
         camera_prim_path="/OmniverseKit_Persp",
     )

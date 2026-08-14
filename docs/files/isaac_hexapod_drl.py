@@ -230,6 +230,7 @@ def run_isaac_sim_drl(num_episodes=1, max_steps=None, walk_seconds=30, hold_seco
         f"at {forward_speed:.2f} m/s."
     )
     warned_action_failure = False
+    stage_closed = False
 
     for episode in range(num_episodes):
         world.reset()
@@ -239,7 +240,16 @@ def run_isaac_sim_drl(num_episodes=1, max_steps=None, walk_seconds=30, hold_seco
         print(f"[INFO] Episode {episode + 1}: forward trot at {gait.frequency_hz:.2f} Hz.")
         
         for step in range(max_steps):
+            # A user can close the Isaac Sim window while this standalone
+            # script is running.  Do not read articulation data after Kit has
+            # started shutting down, as those getters may return scalars.
+            if not simulation_app.is_running():
+                stage_closed = True
+                break
             world.step(render=True)
+            if not simulation_app.is_running():
+                stage_closed = True
+                break
 
             try:
                 joint_positions = hexapod_robot.get_joint_positions()
@@ -286,11 +296,19 @@ def run_isaac_sim_drl(num_episodes=1, max_steps=None, walk_seconds=30, hold_seco
             reward = forward_vel * 2.0 - drift_penalty * 0.5 - 0.01 * np.sum(np.square(action))
             episode_reward += reward
 
+        if stage_closed:
+            print("[INFO] Isaac Sim window was closed; stopping the rollout cleanly.")
+            break
+
         end_x = hexapod_robot.get_world_pose()[0][0] if is_articulated else 0.0
         print(
             f"Episode {episode + 1}/{num_episodes} - Total DRL Locomotion Reward: {episode_reward:.2f}; "
             f"forward distance: {end_x - start_x:.2f} m"
         )
+
+    if stage_closed:
+        simulation_app.close()
+        return
 
     print("[SUCCESS] Completed forward-walking actor-critic rollout in NVIDIA Isaac Sim.")
     if hold_seconds:
