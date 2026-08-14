@@ -38,9 +38,7 @@
 
 
     
-    
-      
-    
+    <script src="https://unpkg.com/iframe-worker/shim"></script>
     
       
         
@@ -397,13 +395,16 @@ instead:</p>
 <p>Isaac Sim supplies its own Python 3.12 environment. Run standalone scripts with
 <code>python.bat</code> on Windows or <code>./python.sh</code> on Linux. Install extra packages into
 that environment; for example:</p>
-<div class="tabbed-set" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Windows</label><div class="tabbed-content">
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Windows</label><label for="__tabbed_1_2">Linux</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>C:\isaacsim\python.bat -m pip install scikit-fuzzy
 </code></pre></div></td></tr></table></div>
 </div>
-<input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">Linux</label><div class="tabbed-content">
+<div class="tabbed-block">
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>~/isaacsim/python.sh<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>scikit-fuzzy
 </code></pre></div></td></tr></table></div>
+</div>
 </div>
 </div>
 <hr />
@@ -420,7 +421,9 @@ that environment; for example:</p>
 </ul>
 <p>Run the scripts from the Isaac Sim installation directory using its bundled
 Python launcher:</p>
-<div class="tabbed-set" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><label for="__tabbed_2_1">Windows (CMD / PowerShell)</label><div class="tabbed-content">
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Windows (CMD / PowerShell)</label><label for="__tabbed_2_2">Linux (Terminal)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
 <p>Open Command Prompt or PowerShell and navigate to the repository root directory:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>cd &quot;path\to\ci-labs&quot;
 </code></pre></div></td></tr></table></div>
@@ -444,7 +447,7 @@ C:\isaacsim\python.bat &quot;%REPO%\src\files\isaac_vision_classifier.py&quot;
 C:\isaacsim\python.bat &quot;%REPO%\src\files\isaac_vision_detection.py&quot;
 </code></pre></div></td></tr></table></div>
 </div>
-<input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><label for="__tabbed_2_2">Linux (Terminal)</label><div class="tabbed-content">
+<div class="tabbed-block">
 <p>Open Terminal and navigate to the repository root directory:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/path/to/ci-labs
 </code></pre></div></td></tr></table></div>
@@ -467,6 +470,7 @@ C:\isaacsim\python.bat &quot;%REPO%\src\files\isaac_vision_detection.py&quot;
 ~/isaacsim/python.sh<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$REPO</span><span class="s2">/src/files/isaac_vision_classifier.py&quot;</span>
 ~/isaacsim/python.sh<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$REPO</span><span class="s2">/src/files/isaac_vision_detection.py&quot;</span>
 </code></pre></div></td></tr></table></div>
+</div>
 </div>
 </div>
 <hr />

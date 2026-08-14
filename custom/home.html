@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
+{% block libs -%}
+  {% for script in config.extra.polyfills -%}
+    {{ script | script_tag }}
+  {%- endfor %}
+{%- endblock %}
+
 {% block extrahead %}
   {{ super() }}
   <script>document.documentElement.classList.add("nvidia-theme")</script>

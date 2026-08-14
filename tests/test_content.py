@@ -12,6 +12,15 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class ContentTests(unittest.TestCase):
+    def test_search_assets_support_hosted_and_local_pages(self):
+        config = (ROOT / "mkdocs.yml").read_text(encoding="utf-8")
+        generated_home = (ROOT / "docs" / "index.html").read_text(encoding="utf-8")
+
+        self.assertIn("  - offline", config)
+        self.assertIn("alternate_style: true", config)
+        self.assertIn("iframe-worker/shim", generated_home)
+        self.assertIn('class="tabbed-labels"', generated_home)
+
     def test_embedded_examples_are_synchronised(self):
         result = subprocess.run(
             [sys.executable, "hooks/sync_examples.py", "--check"],
