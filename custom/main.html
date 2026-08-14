@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+  {{ super() }}
+  {% if "archive/" not in page.url %}
+    <script>document.documentElement.classList.add("nvidia-theme")</script>
+  {% endif %}
+{% endblock %}

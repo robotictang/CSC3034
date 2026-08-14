@@ -58,6 +58,8 @@ html.nvidia-theme .md-main__inner {
 
 html.nvidia-theme .md-content__inner {
   position: relative;
+  isolation: isolate;
+  overflow: hidden;
   margin-bottom: 2rem;
   padding: 1.35rem 1.7rem 2rem;
   color: #e8eee5;
@@ -77,6 +79,25 @@ html.nvidia-theme .md-content__inner::before {
   height: 2px;
   background: linear-gradient(90deg, transparent, var(--nvidia-green), transparent);
   box-shadow: 0 0 1rem rgba(118, 185, 0, 0.7);
+  z-index: 2;
+}
+
+html.nvidia-theme .md-content__inner::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 35rem;
+  pointer-events: none;
+  background-image: url("../img/nvidia-ci-background.png");
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: 100% auto;
+  opacity: 0.46;
+  -webkit-mask-image: linear-gradient(#000 0%, rgba(0, 0, 0, 0.9) 55%, transparent 100%);
+  mask-image: linear-gradient(#000 0%, rgba(0, 0, 0, 0.9) 55%, transparent 100%);
 }
 
 html.nvidia-theme .md-typeset,
@@ -235,6 +256,46 @@ html.nvidia-theme .md-footer {
   border-color: var(--nvidia-green-bright);
 }
 
+.pdf-viewer-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 0.8rem;
+  padding: 0.75rem 0.9rem;
+  background: rgba(3, 8, 4, 0.88);
+  border: 1px solid rgba(118, 185, 0, 0.34);
+  border-radius: 0.45rem;
+}
+
+.pdf-viewer-toolbar p {
+  margin: 0;
+  color: rgba(237, 243, 233, 0.68);
+  font-size: 0.72rem;
+}
+
+.pdf-viewer-toolbar .resource-button {
+  flex: 0 0 auto;
+}
+
+.pdf-viewer-frame {
+  display: block;
+  width: 100%;
+  min-height: 72vh;
+  background: #161a17;
+  border: 1px solid rgba(118, 185, 0, 0.55);
+  border-radius: 0.5rem;
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.5), 0 0 1.5rem rgba(118, 185, 0, 0.08);
+}
+
+.pdf-viewer-status {
+  padding: 2rem;
+  text-align: center;
+  background: rgba(3, 8, 4, 0.88);
+  border: 1px solid rgba(118, 185, 0, 0.34);
+  border-radius: 0.5rem;
+}
+
 @media (max-width: 59.9844em) {
   html.nvidia-theme .md-sidebar--primary .md-sidebar__scrollwrap {
     background: #080d09;
@@ -261,8 +322,24 @@ html.nvidia-theme .md-footer {
     border-radius: 0;
   }
 
+  html.nvidia-theme .md-content__inner::after {
+    height: 25rem;
+    background-position: 58% top;
+    background-size: auto 25rem;
+    opacity: 0.38;
+  }
+
   .resource-grid {
     grid-template-columns: 1fr;
+  }
+
+  .pdf-viewer-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .pdf-viewer-frame {
+    min-height: 68vh;
   }
 }
 
