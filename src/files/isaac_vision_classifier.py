@@ -1,18 +1,19 @@
 # Copyright Author: Dr Tang Tiong Yew
-"""
+r"""
 Virtual Camera Image Capture and Deep Learning Classification in NVIDIA Isaac Sim
 ==================================================================================
-This script demonstrates synthetic camera image rendering in NVIDIA Isaac Sim
-and streaming the RGB frames into a Keras Deep Learning classifier (MobileNetV2).
+This script demonstrates Isaac Sim camera capture and, in a separate standalone
+mode, the preprocessing and inference steps for MobileNetV2. TensorFlow is not
+loaded in-process with Isaac Sim 6 because of runtime library conflicts.
 
 Execution Modes:
-1. NVIDIA Isaac Sim Mode (Full 3D GPU rendering & Camera Sensor):
+1. NVIDIA Isaac Sim Mode (3D rendering and camera capture):
    Run with Isaac Sim's standalone python:
-   `isaac-sim.standalone.bat python src/files/isaac_vision_classifier.py`
-   OR `python.bat src/files/isaac_vision_classifier.py`
+   Windows: `C:\isaacsim\python.bat src\files\isaac_vision_classifier.py`
+   Linux: `~/isaacsim/python.sh src/files/isaac_vision_classifier.py`
 
 2. TensorFlow Standalone Fallback Mode (Deep Learning Inference simulation):
-   `python src/files/isaac_vision_classifier.py`
+   `python3 src/files/isaac_vision_classifier.py`
 """
 
 import sys
@@ -47,7 +48,7 @@ if not HAS_ISAAC_SIM:
 # 1. NVIDIA Isaac Sim Implementation
 # =====================================================================
 def run_isaac_sim_classification():
-    """Captures RGB image from virtual Isaac Sim camera and classifies via Keras DL model."""
+    """Capture and summarize an RGB image from an Isaac Sim camera."""
     try:
         from isaacsim import SimulationApp
         simulation_app = SimulationApp({"headless": False})
@@ -115,9 +116,9 @@ def run_isaac_sim_classification():
     # Isaac Sim 6 cannot safely load TensorFlow in-process; report image
     # features here and use the standalone mode for MobileNetV2 inference.
     mean_r, mean_g, mean_b = np.mean(rgb_image, axis=(0, 1))
-    print("\n--- Isaac Sim Virtual Camera Classification Results ---")
+    print("\n--- Isaac Sim Virtual Camera Capture Results ---")
     print(f"Captured RGB averages -> R: {mean_r:.1f}, G: {mean_g:.1f}, B: {mean_b:.1f}")
-    print("Heuristic Classification: Virtual Isaac Sim Ground-Plane Scene")
+    print("[INFO] No classifier runs in this process. Export the frame to a separate ML process for inference.")
 
     simulation_app.close()
 
@@ -126,7 +127,7 @@ def run_isaac_sim_classification():
 # 2. Standalone Fallback Execution
 # =====================================================================
 def run_fallback_classification():
-    """Fallback execution running Keras DL classification on a synthetic image tensor."""
+    """Run a MobileNetV2 pipeline smoke test on a synthetic image tensor."""
     print("========================================================================")
     print(" Running Standalone Deep Learning Image Classifier (No Isaac Sim GUI) ")
     print("========================================================================")
@@ -141,11 +142,12 @@ def run_fallback_classification():
         print("\n[INFO] NumPy Image Feature Extraction Fallback:")
         mean_r, mean_g, mean_b = np.mean(synthetic_rgb, axis=(0, 1))
         print(f"       Extracted Channel RGB Averages -> R: {mean_r:.1f}, G: {mean_g:.1f}, B: {mean_b:.1f}")
-        print("       Heuristic Classification: Synthetic Indoor Stage Texture")
+        print("       No classification was performed.")
         return
 
     img_tensor = tf.convert_to_tensor(synthetic_rgb, dtype=tf.float32)
-    img_tensor = tf.expand_dims(img_tensor / 255.0, axis=0)
+    img_tensor = tf.expand_dims(img_tensor, axis=0)
+    img_tensor = tf.keras.applications.mobilenet_v2.preprocess_input(img_tensor)
 
     print("[INFO] Loading TensorFlow / Keras MobileNetV2 model...")
     try:
@@ -158,15 +160,7 @@ def run_fallback_classification():
             print(f"Predicted Class: {class_name:<20} | Confidence: {score * 100:.2f}%")
     except Exception as e:
         print(f"[WARN] ImageNet weights download skipped/failed: {e}")
-        # Custom simple CNN model inference fallback
-        model = tf.keras.Sequential([
-            tf.keras.layers.Conv2D(16, (3, 3), activation='relu', input_shape=(224, 224, 3)),
-            tf.keras.layers.MaxPooling2D(),
-            tf.keras.layers.Flatten(),
-            tf.keras.layers.Dense(10, activation='softmax')
-        ])
-        preds = model.predict(img_tensor)
-        print(f"[INFO] Custom CNN classification probabilities (10 classes): {preds[0][:5]}...")
+        print("[INFO] No fallback predictions are reported because an untrained model would be meaningless.")
 
     print("[SUCCESS] Standalone classification task finished cleanly.")
 

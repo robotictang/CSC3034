@@ -3,6 +3,8 @@
 Teaching material and runnable examples for the CSC3034 Computational
 Intelligence practical sessions. The site is built with Material for MkDocs.
 
+**Author:** Dr Tang Tiong Yew
+
 ## Local setup
 
 Create the Conda environment and activate it:
@@ -48,7 +50,7 @@ filesystem.
 Run a core example from the repository root:
 
 ```bash
-python src/files/lab3_ga.py
+python3 src/files/lab3_ga.py
 ```
 
 Set `MPLBACKEND=Agg` when running plotting examples in a headless environment.
@@ -57,8 +59,9 @@ Set `MPLBACKEND=Agg` when running plotting examples in a headless environment.
 
 ```bash
 python -m compileall -q src/files hooks
+python hooks/sync_examples.py --check
 python -m unittest discover -s tests -v
-ruff check src/files hooks tests
+ruff check src/files hooks tools
 mkdocs build --strict --clean
 ```
 

@@ -6,6 +6,10 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
+        <meta name="description" content="Computational Intelligence teaching materials by Dr Tang Tiong Yew">
+      
+      
+        <meta name="author" content="Dr Tang Tiong Yew">
       
       
       
@@ -2482,7 +2486,7 @@ Binary string is often used in the implementation of genetic algorithm. However,
 
 1. `numpy` provides the function of [`binary_repr`](https://het.as.utexas.edu/HET/Software/Numpy/reference/generated/numpy.binary_repr.html) to convert a decimal value to its corresponding binary code.
 
-2. Create a function to take the input of a binary code and return the correponding Gray code of the binary code. 
+2. Create a function to take the input of a binary code and return the corresponding Gray code of the binary code.
 
 3. Create a function to calculate the Hamming distance between two binary strings (two binary codes or two Gray codes).
 
@@ -2494,7 +2498,7 @@ Binary string is often used in the implementation of genetic algorithm. However,
 <p>Consider the following problem: </p>
 <div class="admonition abstract">
 <p class="admonition-title">Problem</p>
-<p>You are given a sheet of paper with width <code>w</code> and height <code>h</code>. Your task is to cut the paper into squares of equal size. The aim of the task is to have as many squares as possible, and to have the area of each square as large as possible.</p>
+<p>You are given a sheet of paper with width <code>w</code> and height <code>h</code>. Your task is to cut it into equal squares. In this exercise, the scalar objective is the <strong>total used paper area</strong>: the number of complete squares multiplied by the area of one square. This rewards efficient use of the sheet; it does not independently maximise both the square count and each square's size.</p>
 </div>
 <ol>
 <li>
@@ -2505,7 +2509,7 @@ Binary string is often used in the implementation of genetic algorithm. However,
 <p>In this problem, what is the parameter to be optimised and what are the parameters to be maximised or minimised?</p>
 </li>
 <li>
-<p>Let <code>x</code> denotes the length of the sides of a square. Design a fitness function such that higher fitness corresponds to larger number of squares and large area. If the number of squares (that can be cut out) is zero, or the area of the square is zero, the fitness will be zero.</p>
+<p>Let <code>x</code> denote the side length of a square. Use <span class="arithmatex">\(\lfloor w/x\rfloor\lfloor h/x\rfloor x^2\)</span> as the fitness. If no complete square can be cut, or <code>x</code> is zero, the fitness is zero. If the two goals must instead be optimised separately, formulate the task as a multi-objective problem and examine its Pareto front.</p>
 </li>
 </ol>
 <div class="timeline">
@@ -2515,7 +2519,7 @@ Binary string is often used in the implementation of genetic algorithm. However,
 <div class="container right"><div class="content"><a href="#crossover">crossover</a></div></div>
 <div class="container right"><div class="content"><a href="#mutation">mutation</a></div></div>
 <div class="container right"><div class="content"><a href="#">offspring (next generation population)</a></div></div>
-<div class="container right"><div class="content"><a href="#repeat-until-termination">repeat from fitnexx calculation until termination</a></div></div>
+<div class="container right"><div class="content"><a href="#repeat-until-termination">repeat from fitness calculation until termination</a></div></div>
 </div>
 
 <pre class="mermaid"><code>graph TD
@@ -2527,7 +2531,7 @@ Binary string is often used in the implementation of genetic algorithm. However,
     Cross --&gt; Mut["6. Mutation (Random Bit-Flip with p_m)"]
     Mut --&gt; Next["7. Form Next Generation Population"]
     Next --&gt; Fit
-    Check --&gt;|Yes| End["Optimal Solution Found (Best Chromosome)"]</code></pre>
+    Check --&gt;|Yes| End["Return Best Chromosome Found"]</code></pre>
 <!-- Use the following template for the code development of the rest of this lab. -->
 
 <!-- ```python
@@ -2935,12 +2939,12 @@ if __name__ == "__main__":
 <hr />
 <h3 id="robot-trajectory-problem-setup">Robot Trajectory Problem Setup<a class="headerlink" href="#robot-trajectory-problem-setup" title="Permanent link">&para;</a></h3>
 <p>In this simulation setup:
-1. <strong>Target Navigation</strong>: A mobile robot starts at coordinate <span class="arithmatex">\((-6, -6)\)</span> and must reach a target destination at <span class="arithmatex">\((6, 6)\)</span> within an <span class="arithmatex">\(8\text{m} \times 8\text{m}\)</span> arena.
+1. <strong>Target Navigation</strong>: A mobile robot starts at coordinate <span class="arithmatex">\((-6, -6)\)</span> and must reach a target destination at <span class="arithmatex">\((6, 6)\)</span> within a <span class="arithmatex">\(16\text{m} \times 16\text{m}\)</span> arena.
 2. <strong>Obstacle Avoidance</strong>: Multiple static spherical obstacles are placed across the stage (e.g., origin <span class="arithmatex">\((0,0)\)</span> and surrounding coordinates).
 3. <strong>Chromosome Formulation</strong>: Each chromosome represents a candidate sequence of intermediate 3D waypoints <span class="arithmatex">\((x_i, y_i)\)</span>. Each spatial coordinate is encoded as a 6-bit binary string (mapping to continuous coordinates between <span class="arithmatex">\([-8.0, 8.0]\)</span>), directly building upon the binary encoding concepts covered earlier in this lab.
-4. <strong>Fitness Function</strong>: The fitness of a chromosome trajectory is evaluated by:
-   $<span class="arithmatex">\(\text{Fitness} = \frac{1000}{1.0 + 3.0 \cdot d_{\text{goal}} + 0.2 \cdot L_{\text{path}} + 40.0 \cdot N_{\text{collisions}}}\)</span>$
-   where <span class="arithmatex">\(d_{\text{goal}}\)</span> is the Euclidean distance from the final waypoint to the target, <span class="arithmatex">\(L_{\text{path}}\)</span> is total trajectory length, and <span class="arithmatex">\(N_{\text{collisions}}\)</span> is the penalty for intersecting obstacle boundaries.</p>
+4. <strong>Fitness Function</strong>: Every decoded trajectory explicitly begins at the fixed start and ends at the fixed goal, so its fitness is:
+   $<span class="arithmatex">\(\text{Fitness} = \frac{1000}{1.0 + 0.2 \cdot L_{\text{path}} + 40.0 \cdot N_{\text{collisions}}}\)</span>$
+   where <span class="arithmatex">\(L_{\text{path}}\)</span> is the total trajectory length and <span class="arithmatex">\(N_{\text{collisions}}\)</span> counts path segments that intersect an obstacle's safety radius. Collision checks use point-to-segment distance, not waypoint proximity alone.</p>
 <hr />
 <h3 id="python-implementation-in-nvidia-isaac-sim">Python Implementation in NVIDIA Isaac Sim<a class="headerlink" href="#python-implementation-in-nvidia-isaac-sim" title="Permanent link">&para;</a></h3>
 <p>You can download the full Python script here: <a href="files/isaac_ga_robot.py">isaac_ga_robot.py</a></p>
@@ -3291,13 +3295,26 @@ if __name__ == "__main__":
 <span class="normal">344</span>
 <span class="normal">345</span>
 <span class="normal">346</span>
-<span class="normal">347</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="c1"># Copyright Author: Dr Tang Tiong Yew</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="c1"># Copyright Author: Dr Tang Tiong Yew</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">NVIDIA Isaac Sim &amp; Standalone Python Script:</span>
 <span class="sd">Genetic Algorithm (GA) for Mobile Robot Trajectory &amp; Obstacle Avoidance Optimisation</span>
 
-<span class="sd">This script demonstrates how Genetic Algorithms (GA) are used to evolve an optimal</span>
-<span class="sd">pathway for a mobile robot navigating through an arena with obstacles towards a target destination.</span>
+<span class="sd">This script demonstrates how a Genetic Algorithm (GA) searches for a short,</span>
+<span class="sd">collision-free path through an arena. The best path found is not guaranteed globally optimal.</span>
 
 <span class="sd">Features:</span>
 <span class="sd">1. Dual Execution Modes:</span>
@@ -3305,7 +3322,7 @@ if __name__ == "__main__":
 <span class="sd">   - Photorealistic NVIDIA Isaac Sim Mode (GPU physics &amp; 3D USD stage rendering)</span>
 <span class="sd">2. GA Architecture:</span>
 <span class="sd">   - Binary &amp; Real-Valued Waypoint Encoding</span>
-<span class="sd">   - Fitness evaluation incorporating distance to goal, path length, and obstacle collision penalty</span>
+<span class="sd">   - Fitness evaluation incorporating path length and exact segment-obstacle collision penalties</span>
 <span class="sd">   - Roulette Wheel Parent Selection, One-Point Crossover, and Bit-Flip Mutation</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
@@ -3384,34 +3401,41 @@ if __name__ == "__main__":
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Initialises a population of random chromosomes.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">generate_individual</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">pop_size</span><span class="p">)]</span>
 
+
+<span class="k">def</span><span class="w"> </span><span class="nf">evaluate_trajectory</span><span class="p">(</span><span class="n">waypoints</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return path length and the number of obstacle intersections.&quot;&quot;&quot;</span>
+    <span class="n">path_length</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">num_collisions</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">waypoints</span><span class="p">,</span> <span class="n">waypoints</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+        <span class="n">segment</span> <span class="o">=</span> <span class="n">p2</span> <span class="o">-</span> <span class="n">p1</span>
+        <span class="n">segment_length_sq</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">segment</span><span class="p">,</span> <span class="n">segment</span><span class="p">))</span>
+        <span class="n">path_length</span> <span class="o">+=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">segment</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">ox</span><span class="p">,</span> <span class="n">oy</span><span class="p">,</span> <span class="n">radius</span> <span class="ow">in</span> <span class="n">OBSTACLES</span><span class="p">:</span>
+            <span class="n">center</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">ox</span><span class="p">,</span> <span class="n">oy</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">segment_length_sq</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">closest</span> <span class="o">=</span> <span class="n">p1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">center</span> <span class="o">-</span> <span class="n">p1</span><span class="p">,</span> <span class="n">segment</span><span class="p">)</span> <span class="o">/</span> <span class="n">segment_length_sq</span><span class="p">,</span>
+                        <span class="mf">0.0</span><span class="p">,</span>
+                        <span class="mf">1.0</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">closest</span> <span class="o">=</span> <span class="n">p1</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="n">segment</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">closest</span> <span class="o">-</span> <span class="n">center</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">radius</span> <span class="o">+</span> <span class="mf">0.3</span><span class="p">:</span>
+                <span class="n">num_collisions</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">path_length</span><span class="p">,</span> <span class="n">num_collisions</span>
+
 <span class="k">def</span><span class="w"> </span><span class="nf">calculate_fitness</span><span class="p">(</span><span class="n">chromosome</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates fitness of a chromosome trajectory.</span>
-<span class="sd">    Fitness = 1000 / (1.0 + dist_to_goal*3.0 + path_length*0.2 + num_collisions*40.0)</span>
+<span class="sd">    Fitness = 1000 / (1.0 + path_length*0.2 + num_collisions*40.0)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">waypoints</span> <span class="o">=</span> <span class="n">decode_chromosome</span><span class="p">(</span><span class="n">chromosome</span><span class="p">)</span>
+    <span class="n">path_length</span><span class="p">,</span> <span class="n">num_collisions</span> <span class="o">=</span> <span class="n">evaluate_trajectory</span><span class="p">(</span><span class="n">waypoints</span><span class="p">)</span>
 
-    <span class="c1"># 1. Total trajectory length</span>
-    <span class="n">path_length</span> <span class="o">=</span> <span class="mf">0.0</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">waypoints</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="n">path_length</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">waypoints</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">waypoints</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-
-    <span class="c1"># 2. Distance from final waypoint to Goal</span>
-    <span class="n">dist_to_goal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">waypoints</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">GOAL_POS</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
-
-    <span class="c1"># 3. Obstacle Collision Penalty</span>
-    <span class="n">num_collisions</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">waypoints</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="n">p1</span> <span class="o">=</span> <span class="n">waypoints</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-        <span class="n">p2</span> <span class="o">=</span> <span class="n">waypoints</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
-        <span class="c1"># Sample points along line segment p1-&gt;p2</span>
-        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
-            <span class="n">pt</span> <span class="o">=</span> <span class="n">p1</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="n">p2</span> <span class="o">-</span> <span class="n">p1</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">ox</span><span class="p">,</span> <span class="n">oy</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">OBSTACLES</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pt</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">ox</span><span class="p">,</span> <span class="n">oy</span><span class="p">]))</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">r</span> <span class="o">+</span> <span class="mf">0.3</span><span class="p">):</span> <span class="c1"># 0.3m robot margin</span>
-                    <span class="n">num_collisions</span> <span class="o">+=</span> <span class="mi">1</span>
-
-    <span class="n">fitness</span> <span class="o">=</span> <span class="mf">1000.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">dist_to_goal</span> <span class="o">*</span> <span class="mf">3.0</span> <span class="o">+</span> <span class="n">path_length</span> <span class="o">*</span> <span class="mf">0.2</span> <span class="o">+</span> <span class="n">num_collisions</span> <span class="o">*</span> <span class="mf">40.0</span><span class="p">)</span>
+    <span class="n">fitness</span> <span class="o">=</span> <span class="mf">1000.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">path_length</span> <span class="o">*</span> <span class="mf">0.2</span> <span class="o">+</span> <span class="n">num_collisions</span> <span class="o">*</span> <span class="mf">40.0</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0001</span><span class="p">,</span> <span class="n">fitness</span><span class="p">)</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">select_parents</span><span class="p">(</span><span class="n">population</span><span class="p">,</span> <span class="n">fitnesses</span><span class="p">):</span>
@@ -3462,8 +3486,12 @@ if __name__ == "__main__":
 
         <span class="k">if</span> <span class="p">(</span><span class="n">gen</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">gen</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">gen</span> <span class="o">==</span> <span class="n">max_generations</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">waypoints</span> <span class="o">=</span> <span class="n">decode_chromosome</span><span class="p">(</span><span class="n">population</span><span class="p">[</span><span class="n">max_idx</span><span class="p">])</span>
-            <span class="n">goal_dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">waypoints</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">GOAL_POS</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Generation </span><span class="si">{</span><span class="n">gen</span><span class="o">+</span><span class="mi">1</span><span class="si">:</span><span class="s1">02d</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">max_generations</span><span class="si">:</span><span class="s1">02d</span><span class="si">}</span><span class="s1"> | Best Fitness: </span><span class="si">{</span><span class="n">fitnesses</span><span class="p">[</span><span class="n">max_idx</span><span class="p">]</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> | Goal Distance: </span><span class="si">{</span><span class="n">goal_dist</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">m&#39;</span><span class="p">)</span>
+            <span class="n">path_length</span><span class="p">,</span> <span class="n">collisions</span> <span class="o">=</span> <span class="n">evaluate_trajectory</span><span class="p">(</span><span class="n">waypoints</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Generation </span><span class="si">{</span><span class="n">gen</span><span class="o">+</span><span class="mi">1</span><span class="si">:</span><span class="s1">02d</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">max_generations</span><span class="si">:</span><span class="s1">02d</span><span class="si">}</span><span class="s1"> | &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;Best Fitness: </span><span class="si">{</span><span class="n">fitnesses</span><span class="p">[</span><span class="n">max_idx</span><span class="p">]</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> | &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;Path: </span><span class="si">{</span><span class="n">path_length</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">m | Collisions: </span><span class="si">{</span><span class="n">collisions</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
 
         <span class="c1"># Selection</span>
         <span class="n">parents</span> <span class="o">=</span> <span class="n">select_parents</span><span class="p">(</span><span class="n">population</span><span class="p">,</span> <span class="n">fitnesses</span><span class="p">)</span>
@@ -3478,6 +3506,8 @@ if __name__ == "__main__":
             <span class="n">next_population</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mutate</span><span class="p">(</span><span class="n">o2</span><span class="p">,</span> <span class="n">p_mutation</span><span class="p">))</span>
 
         <span class="n">population</span> <span class="o">=</span> <span class="n">next_population</span><span class="p">[:</span><span class="n">pop_size</span><span class="p">]</span>
+        <span class="c1"># Preserve the best-so-far chromosome (elitism).</span>
+        <span class="n">population</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">best_overall_chrom</span>
 
     <span class="k">return</span> <span class="n">best_overall_chrom</span><span class="p">,</span> <span class="n">best_overall_fitness</span>
 
@@ -3642,17 +3672,17 @@ if __name__ == "__main__":
 <h4 id="how-to-run-the-script">How to Run the Script<a class="headerlink" href="#how-to-run-the-script" title="Permanent link">&para;</a></h4>
 <ol>
 <li>
-<p><strong>NVIDIA Isaac Sim Mode (Full 3D GPU physics &amp; visual stage simulation)</strong>:
+<p><strong>NVIDIA Isaac Sim Mode (3D trajectory visualisation)</strong>:
    Run using Isaac Sim's standalone Python environment:
-   <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>isaac-sim.standalone.bat<span class="w"> </span>python<span class="w"> </span>src/files/isaac_ga_robot.py
+   <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>C:<span class="se">\i</span>saacsim<span class="se">\p</span>ython.bat<span class="w"> </span>src<span class="se">\f</span>iles<span class="se">\i</span>saac_ga_robot.py
 </code></pre></div></td></tr></table></div>
-   <em>OR (on Linux/Omniverse Launcher):</em>
-   <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>./python.sh<span class="w"> </span>src/files/isaac_ga_robot.py
+   <em>OR on Linux:</em>
+   <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>~/isaacsim/python.sh<span class="w"> </span>src/files/isaac_ga_robot.py
 </code></pre></div></td></tr></table></div></p>
 </li>
 <li>
 <p><strong>Standalone Python Mode (Math &amp; GA Fallback Execution)</strong>:
-   <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>python<span class="w"> </span>src/files/isaac_ga_robot.py
+   <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>python3<span class="w"> </span>src/files/isaac_ga_robot.py
 </code></pre></div></td></tr></table></div></p>
 </li>
 </ol>
@@ -3663,21 +3693,20 @@ if __name__ == "__main__":
         Pop["Population of Waypoint Chromosomes"]
     end
 
-    subgraph IsaacStage ["NVIDIA Isaac Sim Stage"]
-        Robot["Mobile Robot Prim"]
-        Arena["3D Arena &amp; Obstacles"]
-        Robot --&gt; Arena
+    subgraph Fitness ["NumPy Fitness Evaluation"]
+        Map["Start, Goal &amp; Obstacle Geometry"]
+        FitEval["Path Length &amp; Segment Collisions"]
+        Map --&gt; FitEval
     end
-
-    Pop --&gt;|"Trajectory (x, y waypoints)"| Robot
-    Arena --&gt;|"Distance to Goal &amp; Collisions"| FitEval["Fitness Evaluator"]
-    FitEval --&gt;|"Fitness Score"| GA</code></pre>
+    Pop --&gt;|"Decoded Waypoints"| FitEval
+    FitEval --&gt;|"Fitness Score"| GA
+    GA --&gt;|"Best Trajectory Only"| IsaacStage["Isaac Sim Visualisation Stage"]</code></pre>
 <div class="admonition tip">
 <p class="admonition-title">Robotic Trajectory Considerations</p>
 <ol>
 <li><strong>Continuous Physics vs Discrete Genes</strong>: Standard GA operates on discrete string representations. Converting binary genes to continuous floating-point spatial coordinates requires mapping resolution (e.g. 6-bit mapping to <span class="arithmatex">\([-8\text{m}, 8\text{m}]\)</span> bounds).</li>
 <li><strong>Multi-Objective Fitness Trade-offs</strong>: In physical robotics, trajectory planning balances competing objectives: reaching the target quickly, minimizing path length (energy consumption), maintaining safety margins around obstacles, and ensuring smooth motor velocity curves.</li>
-<li><strong>GPU-Accelerated Parallel Evaluation</strong>: Advanced robotics applications evaluate entire GA populations simultaneously in NVIDIA Isaac Sim by spawning multiple robot instances in parallel physics scenes across GPU threads.</li>
+<li><strong>Parallel Evaluation Extension</strong>: More advanced applications can evaluate a population across parallel simulator environments. The supplied example evaluates fitness in NumPy and sends only the best trajectory to Isaac Sim for visualisation.</li>
 </ol>
 </div>
 <hr />
@@ -3711,6 +3740,10 @@ Copyright Author: Dr Tang Tiong Yew
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
       <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; Dr Tang Tiong Yew
+    </div>
   
   
     Made with

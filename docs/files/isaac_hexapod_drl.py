@@ -1,29 +1,27 @@
 # Copyright Author: Dr Tang Tiong Yew
-"""
+r"""
 Deep Reinforcement Learning for 6-Legged Walking Robot in NVIDIA Isaac Sim
 ==========================================================================
-This script demonstrates Deep Reinforcement Learning (PPO) policy execution for a
-6-legged walking robot (18 DOF) in NVIDIA Isaac Sim.
+This script demonstrates the observation/action data flow of an actor-critic
+locomotion policy. It does not train PPO or load a trained checkpoint.
 
 Execution Modes:
 1. NVIDIA Isaac Sim Mode (Full 3D GPU physics & visual simulation):
    Run with Isaac Sim's standalone python:
-   `isaac-sim.standalone.bat python src/files/isaac_hexapod_drl.py`
-   OR `python.bat src/files/isaac_hexapod_drl.py`
+   Windows: `C:\isaacsim\python.bat src\files\isaac_hexapod_drl.py`
+   Linux: `~/isaacsim/python.sh src/files/isaac_hexapod_drl.py`
 
 2. Standalone Fallback Mode (Policy & Math simulation):
-   `python src/files/isaac_hexapod_drl.py`
+   `python3 src/files/isaac_hexapod_drl.py`
 """
 
 import sys
-import time
 import numpy as np
 
 HAS_TORCH = False
 try:
     import torch
     import torch.nn as nn
-    import torch.optim as optim
     HAS_TORCH = True
 except ImportError:
     HAS_TORCH = False
@@ -42,7 +40,7 @@ except ImportError:
 
 
 # =====================================================================
-# Actor-Critic Neural Network Policy (PPO)
+# Actor-Critic Neural Network Policy Scaffold
 # =====================================================================
 if HAS_TORCH:
     class HexapodPolicy(nn.Module):
@@ -99,45 +97,68 @@ def run_isaac_sim_drl(num_episodes=5, max_steps=300):
         from omni.isaac.kit import SimulationApp
         simulation_app = SimulationApp({"headless": False})
 
-    from omni.isaac.core import World
-    from omni.isaac.core.robots import Robot
-    from omni.isaac.core.utils.nucleus import get_assets_root_path
+    try:
+        from isaacsim.core.api import World
+        from isaacsim.core.api.objects import DynamicSphere
+        from isaacsim.core.api.robots import Robot
+        from isaacsim.core.utils.stage import add_reference_to_stage
+        from isaacsim.core.utils.types import ArticulationAction
+        from isaacsim.storage.native import get_assets_root_path
+    except ImportError:  # Isaac Sim 4.x compatibility
+        from omni.isaac.core import World
+        from omni.isaac.core.objects import DynamicSphere
+        from omni.isaac.core.robots import Robot
+        from omni.isaac.core.utils.nucleus import get_assets_root_path
+        from omni.isaac.core.utils.stage import add_reference_to_stage
+        from omni.isaac.core.utils.types import ArticulationAction
 
     world = World()
     world.scene.add_default_ground_plane()
 
-    # Load Hexapod 6-legged robot USD asset into Isaac Sim stage
+    # Load Isaac's Ant reference articulation. Replace this path with a
+    # compatible hexapod USD for a true six-legged exercise.
     assets_root_path = get_assets_root_path()
-    hexapod_usd_path = assets_root_path + "/Isaac/Robots/Ant/ant.usd"
 
+    is_articulated = True
     try:
+        if not assets_root_path:
+            raise RuntimeError("Isaac asset root is unavailable")
+        robot_usd_path = assets_root_path + "/Isaac/Robots/Ant/ant.usd"
+        add_reference_to_stage(usd_path=robot_usd_path, prim_path="/World/LeggedRobot")
         hexapod_robot = world.scene.add(
             Robot(
-                prim_path="/World/Hexapod",
-                name="hexapod_walking_robot",
-                usd_path=hexapod_usd_path,
+                prim_path="/World/LeggedRobot",
+                name="legged_robot",
                 position=np.array([0.0, 0.0, 0.5])
             )
         )
     except Exception as e:
         print(f"[WARN] Could not load USD asset: {e}. Spawning base robot prim...")
-        from omni.isaac.core.objects import DynamicSphere
         hexapod_robot = world.scene.add(
             DynamicSphere(
-                prim_path="/World/Hexapod",
-                name="hexapod_walking_robot",
+                prim_path="/World/LeggedRobot",
+                name="legged_robot_marker",
                 position=np.array([0.0, 0.0, 0.5]),
                 radius=0.4
             )
         )
+        is_articulated = False
 
     world.reset()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu") if HAS_TORCH else "cpu"
-    policy = HexapodPolicy(obs_dim=45, action_dim=18)
+    if is_articulated:
+        initial_joint_positions = np.asarray(hexapod_robot.get_joint_positions(), dtype=float)
+        action_dim = len(initial_joint_positions)
+    else:
+        action_dim = 18
+    obs_dim = 9 + 2 * action_dim
+    policy = HexapodPolicy(obs_dim=obs_dim, action_dim=action_dim)
     if HAS_TORCH:
         policy = policy.to(device)
+        policy.eval()
 
-    print(f"[INFO] Hexapod DRL initialized on device: {device}")
+    print(f"[INFO] Actor-critic policy scaffold initialized on {device}; articulation DOF={action_dim}")
+    warned_action_failure = False
 
     for episode in range(num_episodes):
         world.reset()
@@ -152,8 +173,8 @@ def run_isaac_sim_drl(num_episodes=5, max_steps=300):
                 base_lin_vel = hexapod_robot.get_linear_velocity()
                 base_ang_vel = hexapod_robot.get_angular_velocity()
             except Exception:
-                joint_positions = np.zeros(18)
-                joint_velocities = np.zeros(18)
+                joint_positions = np.zeros(action_dim)
+                joint_velocities = np.zeros(action_dim)
                 base_lin_vel = np.array([0.5, 0.01, 0.0])
                 base_ang_vel = np.zeros(3)
 
@@ -161,15 +182,18 @@ def run_isaac_sim_drl(num_episodes=5, max_steps=300):
             if HAS_TORCH:
                 state_tensor = torch.tensor(obs, dtype=torch.float32, device=device).unsqueeze(0)
                 with torch.no_grad():
-                    action_mean, value = policy(state_tensor)
+                    action_mean, _ = policy(state_tensor)
                     action = action_mean.squeeze(0).cpu().numpy()
             else:
                 action = policy.forward_numpy(obs)
 
-            try:
-                hexapod_robot.apply_action(action)
-            except Exception:
-                pass
+            if is_articulated:
+                try:
+                    hexapod_robot.apply_action(ArticulationAction(joint_positions=action))
+                except Exception as exc:
+                    if not warned_action_failure:
+                        print(f"[WARN] Joint command could not be applied: {exc}")
+                        warned_action_failure = True
 
             forward_vel = base_lin_vel[0]
             drift_penalty = abs(base_lin_vel[1])
@@ -178,7 +202,7 @@ def run_isaac_sim_drl(num_episodes=5, max_steps=300):
 
         print(f"Episode {episode + 1}/{num_episodes} - Total DRL Locomotion Reward: {episode_reward:.2f}")
 
-    print("[SUCCESS] Completed 6-Legged Robot DRL Training in NVIDIA Isaac Sim.")
+    print("[SUCCESS] Completed actor-critic policy rollout in NVIDIA Isaac Sim.")
     simulation_app.close()
 
 
@@ -186,7 +210,7 @@ def run_isaac_sim_drl(num_episodes=5, max_steps=300):
 # 2. PyTorch / NumPy Standalone Fallback Execution
 # =====================================================================
 def run_fallback_drl(num_episodes=5, max_steps=300):
-    """Fallback simulation evaluating DRL policy without Isaac Sim GUI."""
+    """Exercise an untrained policy's tensor flow without Isaac Sim GUI."""
     print("==================================================================")
     print(" Running Standalone Hexapod DRL Policy Simulation (No Isaac Sim)  ")
     print("==================================================================")
@@ -194,7 +218,8 @@ def run_fallback_drl(num_episodes=5, max_steps=300):
     if HAS_TORCH:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         policy = HexapodPolicy(obs_dim=45, action_dim=18).to(device)
-        print(f"[INFO] PyTorch Neural Network Policy initialized on device: {device}")
+        policy.eval()
+        print(f"[INFO] Untrained PyTorch policy initialized on device: {device}")
     else:
         policy = HexapodPolicy(obs_dim=45, action_dim=18)
         print("[INFO] PyTorch not installed. Using NumPy neural policy fallback.")
@@ -213,7 +238,7 @@ def run_fallback_drl(num_episodes=5, max_steps=300):
             if HAS_TORCH:
                 state_tensor = torch.tensor(obs, dtype=torch.float32, device=device).unsqueeze(0)
                 with torch.no_grad():
-                    action_mean, value = policy(state_tensor)
+                    action_mean, _ = policy(state_tensor)
                     action = action_mean.squeeze(0).cpu().numpy()
             else:
                 action = policy.forward_numpy(obs)

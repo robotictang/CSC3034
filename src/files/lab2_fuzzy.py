@@ -8,7 +8,7 @@ This script provides the complete solution for Lab 2 exercises, including:
 3. Fuzzy Tipping Recommendation System
 
 Execution Mode:
-`python src/files/lab2_fuzzy.py`
+`python3 src/files/lab2_fuzzy.py`
 """
 
 import numpy as np

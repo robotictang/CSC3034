@@ -1,18 +1,18 @@
 # Copyright Author: Dr Tang Tiong Yew
-"""
+r"""
 Real-Time Stream Capture and Deep Learning Object Detection in NVIDIA Isaac Sim
 ================================================================================
-This script demonstrates continuous synthetic camera video stream capture in NVIDIA Isaac Sim,
-performing deep learning object detection (MobileNet SSD / OpenCV DNN) frame-by-frame.
+This script demonstrates camera capture and optional MobileNet SSD inference.
+Real detections require local Caffe model files; fabricated detections are never reported.
 
 Execution Modes:
-1. NVIDIA Isaac Sim Mode (Full 3D GPU physics & visual camera stream):
+1. NVIDIA Isaac Sim Mode (3D rendering and camera stream capture):
    Run with Isaac Sim's standalone python:
-   `isaac-sim.standalone.bat python src/files/isaac_vision_detection.py`
-   OR `python.bat src/files/isaac_vision_detection.py`
+   Windows: `C:\isaacsim\python.bat src\files\isaac_vision_detection.py`
+   Linux: `~/isaacsim/python.sh src/files/isaac_vision_detection.py`
 
 2. OpenCV Standalone Fallback Mode (Object Detection Stream Simulation):
-   `python src/files/isaac_vision_detection.py`
+   `python3 src/files/isaac_vision_detection.py`
 """
 
 import sys
@@ -91,24 +91,36 @@ def run_isaac_sim_detection(max_frames=100, visualization_fps=2):
             net = cv2.dnn.readNetFromCaffe("deploy.prototxt", "mobilenet_iter_73000.caffemodel")
             print("[INFO] OpenCV MobileNet SSD network loaded successfully.")
         except Exception:
-            print("[INFO] MobileNet SSD caffe model files not found locally. Using heuristic/dummy detection parser.")
+            print("[WARN] MobileNet SSD files not found; frames will be captured without detection.")
 
     print("[INFO] Starting real-time Isaac Sim image capture & detection loop...")
 
     frame_count = 0
+    empty_frame_attempts = 0
     frame_delay = 1.0 / visualization_fps if visualization_fps > 0 else 0.0
     while simulation_app.is_running() and frame_count < max_frames:
         world.step(render=True)
 
         rgba_frame = camera.get_rgba()
         if rgba_frame is None or rgba_frame.size == 0:
+            empty_frame_attempts += 1
+            if empty_frame_attempts >= 300:
+                print("[WARN] Camera produced no frames after 300 render steps; stopping.")
+                break
             continue
+        empty_frame_attempts = 0
 
         rgb_frame = rgba_frame[:, :, :3]
         (h, w) = rgb_frame.shape[:2]
 
         if net is not None and HAS_OPENCV:
-            blob = cv2.dnn.blobFromImage(cv2.resize(rgb_frame, (300, 300)), 0.007843, (300, 300), 127.5)
+            blob = cv2.dnn.blobFromImage(
+                cv2.resize(rgb_frame, (300, 300)),
+                0.007843,
+                (300, 300),
+                127.5,
+                swapRB=True,
+            )
             net.setInput(blob)
             detections = net.forward()
 
@@ -118,15 +130,11 @@ def run_isaac_sim_detection(max_frames=100, visualization_fps=2):
                     idx = int(detections[0, 0, i, 1])
                     box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
                     (startX, startY, endX, endY) = box.astype("int")
-                    label = f"{CLASSES[idx]}: {confidence * 100:.1f}%"
-                    print(f"[Frame {frame_count:03d}] Detected {label} at [{startX}, {startY}, {endX}, {endY}]")
-        else:
-            # Simulated object detection logging
-            if frame_count % 15 == 0:
-                dummy_idx = (frame_count // 15) % (len(CLASSES) - 1) + 1
-                conf = 0.82 + (frame_count % 10) * 0.01
-                bbox = [50, 60, 200, 220]
-                print(f"[Frame {frame_count:03d}] Detected {CLASSES[dummy_idx]}: {conf*100:.1f}% at bbox={bbox}")
+                    if 0 <= idx < len(CLASSES):
+                        label = f"{CLASSES[idx]}: {confidence * 100:.1f}%"
+                        print(f"[Frame {frame_count:03d}] Detected {label} at [{startX}, {startY}, {endX}, {endY}]")
+        elif frame_count % 15 == 0:
+            print(f"[Frame {frame_count:03d}] Captured frame; detection skipped (model unavailable).")
 
         frame_count += 1
 
@@ -135,7 +143,7 @@ def run_isaac_sim_detection(max_frames=100, visualization_fps=2):
         if frame_delay:
             time.sleep(frame_delay)
 
-    print("[SUCCESS] Completed real-time simulation object detection loop.")
+    print("[SUCCESS] Completed real-time camera capture loop.")
     simulation_app.close()
 
 
@@ -143,7 +151,7 @@ def run_isaac_sim_detection(max_frames=100, visualization_fps=2):
 # 2. Standalone Fallback Execution
 # =====================================================================
 def run_fallback_detection(max_frames=50):
-    """Fallback simulation running continuous video stream detection on synthetic frames."""
+    """Generate synthetic frames to test stream plumbing without claiming detections."""
     print("=======================================================================")
     print(" Running Standalone Real-Time Object Detection (No Isaac Sim GUI)     ")
     print("=======================================================================")
@@ -153,19 +161,10 @@ def run_fallback_detection(max_frames=50):
         (h, w) = synthetic_frame.shape[:2]
 
         if frame_count % 10 == 0:
-            target_class = CLASSES[(frame_count // 10) % len(CLASSES)]
-            confidence = 0.75 + (frame_count % 5) * 0.04
-            startX, startY = 100 + frame_count * 2, 80 + frame_count
-            endX, endY = startX + 150, startY + 120
-            
-            if HAS_OPENCV:
-                cv2.rectangle(synthetic_frame, (startX, startY), (endX, endY), (0, 255, 0), 2)
-                cv2.putText(synthetic_frame, f"{target_class}: {confidence*100:.1f}%", 
-                            (startX, startY - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+            mean_value = float(synthetic_frame.mean())
+            print(f"[Frame {frame_count:03d}] Synthetic frame captured | Mean intensity: {mean_value:.1f}")
 
-            print(f"[Frame {frame_count:03d}] Object Detected: {target_class:<12} | Confidence: {confidence*100:.1f}% | BBox: [{startX}, {startY}, {endX}, {endY}]")
-
-    print("[SUCCESS] Standalone real-time object detection stream simulation finished cleanly.")
+    print("[SUCCESS] Standalone stream plumbing test finished; no detector was run.")
 
 
 if __name__ == '__main__':

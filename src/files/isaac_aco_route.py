@@ -1,18 +1,18 @@
 # Copyright Author: Dr Tang Tiong Yew
-"""
+r"""
 Ant Colony Optimisation (ACO) for Robot Swarm Route Finding in NVIDIA Isaac Sim
 ================================================================================
 This script demonstrates multi-robot route finding and swarm path planning
 using Ant Colony Optimisation on a map of connected waypoints (Romania Roadmap).
 
 Execution Modes:
-1. NVIDIA Isaac Sim Mode (Full 3D GPU physics & visual simulation):
+1. NVIDIA Isaac Sim Mode (3D visualisation with waypoint interpolation):
    Run with Isaac Sim's standalone python:
-   `isaac-sim.standalone.bat python src/files/isaac_aco_route.py`
-   OR `python.bat src/files/isaac_aco_route.py`
+   Windows: `C:\isaacsim\python.bat src\files\isaac_aco_route.py`
+   Linux: `~/isaacsim/python.sh src/files/isaac_aco_route.py`
 
 2. Matplotlib Fallback Mode (Standard Python 2D/3D graph visualization):
-   `python src/files/isaac_aco_route.py`
+   `python3 src/files/isaac_aco_route.py`
 """
 
 import sys
@@ -351,10 +351,13 @@ def run_isaac_sim_aco(
             print(f"Iteration {iteration:02d} | Successful Ants: {len(successful_ants)}/{n_ants} | "
                   f"Best Route Cost: {best_route_cost:.1f} km | Route: {' -> '.join(best_route_names or [])}")
 
-    print(f"\n=======================================================")
-    print(f" ACO Convergence Completed!")
-    print(f" Optimal Route Cost: {best_route_cost:.1f} km")
-    print(f" Optimal Path: {' -> '.join(best_route_names or [])}")
+    print("\n=======================================================")
+    print(" ACO Search Completed")
+    if best_route_names:
+        print(f" Best Route Cost: {best_route_cost:.1f} km")
+        print(f" Best Path: {' -> '.join(best_route_names)}")
+    else:
+        print(" No route reached Bucharest within the iteration limit.")
     print("=======================================================")
 
     # Keep the viewport active at a human-readable speed after optimisation.
@@ -469,8 +472,11 @@ def run_matplotlib_fallback_aco(n_ants=10, max_iterations=50, alpha=1.0, beta=2.
             print(f"Iteration {iteration+1:02d} | Successful Ants: {len(successful_ants)}/{n_ants} | "
                   f"Best Cost: {best_route_cost:.1f} km | Path: {' -> '.join(best_route_names or [])}")
 
-    print(f"\nConvergence achieved! Best Route Cost = {best_route_cost:.1f} km")
-    print(f"Path: {' -> '.join(best_route_names or [])}")
+    if best_route_names:
+        print(f"\nSearch complete. Best Route Cost = {best_route_cost:.1f} km")
+        print(f"Path: {' -> '.join(best_route_names)}")
+    else:
+        print("\nSearch complete. No route reached Bucharest.")
 
     plt.ioff()
     plt.show()

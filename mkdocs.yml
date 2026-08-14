@@ -1,4 +1,6 @@
 site_name: CSC3034 CI Labs
+site_author: Dr Tang Tiong Yew
+site_description: Computational Intelligence teaching materials by Dr Tang Tiong Yew
 site_url: ""
 use_directory_urls: false
 docs_dir: src
@@ -104,3 +106,4 @@ extra_javascript:
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 extra_css:
   - stylesheets/extra.css
+copyright: Copyright &copy; Dr Tang Tiong Yew

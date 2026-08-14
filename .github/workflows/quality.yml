@@ -1,0 +1,29 @@
+name: Quality checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install core and documentation dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r src/files/requirements.txt
+          python -m pip install mkdocs mkdocs-material ruff
+      - name: Check Python and synchronised examples
+        run: |
+          python -m compileall -q src/files hooks tests tools
+          python hooks/sync_examples.py --check
+          ruff check src/files hooks tests tools
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
+      - name: Build documentation
+        run: mkdocs build --strict --clean

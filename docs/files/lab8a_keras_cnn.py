@@ -11,7 +11,7 @@ This script provides the complete solution for Lab 8a exercises, including:
 6. Test set predictions & visual grid of predicted vs ground-truth labels
 
 Execution Mode:
-`python src/files/lab8a_keras_cnn.py`
+`python3 src/files/lab8a_keras_cnn.py`
 """
 
 import numpy as np
@@ -44,7 +44,11 @@ def main():
 
     print("    Splitting training data into train (80%) and validation (20%) sets...")
     train_images, val_images, train_labels, val_labels = train_test_split(
-        train_images, train_labels, test_size=0.2, random_state=42
+        train_images,
+        train_labels,
+        test_size=0.2,
+        random_state=42,
+        stratify=train_labels.ravel(),
     )
 
     class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
@@ -63,7 +67,8 @@ def main():
     # 3. Build 3-layer CNN Architecture
     print("\n[2] Constructing 3-Layer Convolutional Neural Network (CNN)...")
     model = models.Sequential([
-        layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)),
+        layers.Input(shape=(32, 32, 3)),
+        layers.Conv2D(32, (3, 3), activation='relu'),
         layers.MaxPooling2D((2, 2)),
         layers.Conv2D(64, (3, 3), activation='relu'),
         layers.MaxPooling2D((2, 2)),

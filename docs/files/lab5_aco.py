@@ -4,17 +4,18 @@ Lab 5: Evolutionary Computation (Ant Colony Optimisation)
 ==========================================================
 This script provides the complete solution for Lab 5 exercises, including:
 1. Romania road network graph representation (`City`, `Road`, `Ant` classes)
-2. Ant path construction & loop elimination
+2. Ant path construction without revisiting cities
 3. Pheromone evaporation and deposition mechanisms
 4. Termination based on path dominance threshold (>=90%)
 5. Matplotlib graph visualization with dynamic line thickness for pheromones
-6. Parameter evaluation experiments (power scaling, deposit multiplier, ant count, alpha, rho)
+6. Parameters for pheromone, heuristic, evaporation, and swarm size experiments
 
 Execution Mode:
-`python src/files/lab5_aco.py`
+`python3 src/files/lab5_aco.py`
 """
 
-import random
+from collections import Counter
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -112,7 +113,7 @@ class Ant:
         self.cities = []
         self.path = []
 
-    def get_path(self, origin, destination, alpha=1.0):
+    def get_path(self, origin, destination, alpha=1.0, beta=2.0):
         self.reset()
         self.cities.append(origin)
 
@@ -120,28 +121,38 @@ class Ant:
         steps = 0
         while self.cities[-1] != destination and steps < max_steps:
             current_city = self.cities[-1]
-            available_roads = [r for r in current_city.roads]
+            available_roads = [
+                road
+                for road in current_city.roads
+                if self._other_city(road, current_city) not in self.cities
+            ]
 
             if not available_roads:
                 break
 
-            # Calculate transition probabilities based on pheromone^alpha
-            pheromones = [r.pheromone ** alpha for r in available_roads]
-            total_p = sum(pheromones)
+            # Standard ACO transition probability: pheromone^alpha * heuristic^beta.
+            desirabilities = [
+                (road.pheromone ** alpha) * ((1.0 / road.cost) ** beta)
+                for road in available_roads
+            ]
+            total_p = sum(desirabilities)
             if total_p == 0:
                 probs = [1.0 / len(available_roads)] * len(available_roads)
             else:
-                probs = [p / total_p for p in pheromones]
+                probs = [value / total_p for value in desirabilities]
 
             chosen_road = np.random.choice(available_roads, p=probs)
-            next_city = chosen_road.connected_cities[1] if chosen_road.connected_cities[0] == current_city else chosen_road.connected_cities[0]
+            next_city = self._other_city(chosen_road, current_city)
 
             self.path.append(chosen_road)
             self.cities.append(next_city)
             steps += 1
 
-        # Remove loops from path
-        self._remove_loops()
+        return self.cities[-1] == destination
+
+    @staticmethod
+    def _other_city(road, current_city):
+        return road.connected_cities[1] if road.connected_cities[0] == current_city else road.connected_cities[0]
 
     def _remove_loops(self):
         i = 0
@@ -159,13 +170,18 @@ class Ant:
         return sum(road.cost for road in self.path)
 
 
-def get_percentage_of_dominant_path(ants):
-    paths = [tuple(c.name for c in ant.cities) for ant in ants if ant.cities]
+def get_percentage_of_dominant_path(ants, destination=None):
+    successful = [
+        ant
+        for ant in ants
+        if ant.cities and (destination is None or ant.cities[-1] == destination)
+    ]
+    paths = [tuple(c.name for c in ant.cities) for ant in successful]
     if not paths:
         return 0.0
-    from collections import Counter
     counts = Counter(paths)
     most_common = counts.most_common(1)[0]
+    # Failed ants cannot count toward the population-wide dominance threshold.
     return most_common[1] / len(ants)
 
 
@@ -224,6 +240,7 @@ def main():
 
     n_ant = 10
     alpha = 1.0
+    beta = 2.0
     rho = 0.1
     initial_pheromone = 0.01
 
@@ -235,40 +252,49 @@ def main():
     max_iteration = 200
     percentage_target = 0.9
     iteration = 0
+    best_ant_snapshot = None
+    best_cost_overall = float('inf')
 
     print("\n--- Running ACO Romania Route Optimization ---")
     fig, ax = create_graph(cities)
 
     while iteration < max_iteration:
+        successful_ants = []
         for ant in ants:
-            ant.get_path(origin, destination, alpha)
+            if ant.get_path(origin, destination, alpha, beta):
+                successful_ants.append(ant)
+                cost = ant.get_path_length()
+                if cost < best_cost_overall:
+                    best_cost_overall = cost
+                    best_ant_snapshot = ([city.name for city in ant.cities], cost)
 
         for road in roads:
             road.evaporate_pheromone(rho)
-            road.deposit_pheromone(ants)
+            road.deposit_pheromone(successful_ants)
 
-        dom_perc = get_percentage_of_dominant_path(ants)
+        dom_perc = get_percentage_of_dominant_path(successful_ants, destination)
         iteration += 1
 
         if iteration % 20 == 0 or dom_perc >= percentage_target:
-            valid_ants = [a for a in ants if a.cities and a.cities[-1] == destination]
-            best_cost = min([a.get_path_length() for a in valid_ants]) if valid_ants else float('inf')
-            print(f"Iteration {iteration:03d} | Dominant Path Ratio: {dom_perc * 100:.1f}% | Min Cost: {best_cost:.1f} km")
+            print(
+                f"Iteration {iteration:03d} | Successful Ants: {len(successful_ants)}/{n_ant} | "
+                f"Dominant Path Ratio: {dom_perc * 100:.1f}% | Best-So-Far Cost: {best_cost_overall:.1f} km"
+            )
 
-        if dom_perc >= percentage_target:
+        if successful_ants and dom_perc >= percentage_target:
             break
 
     draw_pheromone(ax, roads)
     plt.tight_layout()
     plt.show()
 
-    # Find final optimal path
-    valid_ants = [a for a in ants if a.cities and a.cities[-1] == destination]
-    if valid_ants:
-        best_ant = min(valid_ants, key=lambda a: a.get_path_length())
-        path_names = [c.name for c in best_ant.cities]
-        print(f"\n[SUCCESS] Optimal ACO Route Found: {' -> '.join(path_names)}")
-        print(f"          Total Path Distance: {best_ant.get_path_length():.1f} km")
+    # Report the best path observed during this stochastic search.
+    if best_ant_snapshot:
+        path_names, path_cost = best_ant_snapshot
+        print(f"\n[SUCCESS] Best ACO Route Found: {' -> '.join(path_names)}")
+        print(f"          Best Route Distance: {path_cost:.1f} km")
+    else:
+        print("\n[WARNING] No ant reached Bucharest within the iteration limit.")
 
     print("\n[SUCCESS] Lab 5 ACO exercises completed successfully.")
 

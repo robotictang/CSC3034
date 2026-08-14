@@ -7,7 +7,7 @@ on the Wine dataset, including data normalization, training, predictions, evalua
 and visualization of the neural network architecture and weights.
 
 Execution Mode:
-`python src/files/ann_wine_mlp.py`
+`python3 src/files/ann_wine_mlp.py`
 """
 
 import sys
@@ -44,8 +44,8 @@ def visualise(mlp):
     x_neurons = [x for layer in loc_neurons for x, y in layer]
     y_neurons = [y for layer in loc_neurons for x, y in layer]
 
-    # Identify range of connection weights
-    weight_range = [min([layer.min() for layer in mlp.coefs_]), max([layer.max() for layer in mlp.coefs_])]
+    # Use absolute magnitude for thickness and color to show the weight sign.
+    max_abs_weight = max(abs(layer).max() for layer in mlp.coefs_) or 1.0
 
     # Prepare figure
     fig = plt.figure(figsize=(8, 6))
@@ -60,7 +60,8 @@ def visualise(mlp):
     for l, layer in enumerate(mlp.coefs_):
         for i, neuron in enumerate(layer):
             for j, w in enumerate(neuron):
-                norm_w = (w - weight_range[0]) / (weight_range[1] - weight_range[0] + 1e-9)
+                norm_w = abs(w) / max_abs_weight
+                weight_color = "#b2182b" if w < 0 else "#2166ac"
                 ax.plot(
                     [loc_neurons[l][i][0], loc_neurons[l + 1][j][0]],
                     [loc_neurons[l][i][1], loc_neurons[l + 1][j][1]],
@@ -71,7 +72,7 @@ def visualise(mlp):
                 ax.plot(
                     [loc_neurons[l][i][0], loc_neurons[l + 1][j][0]],
                     [loc_neurons[l][i][1], loc_neurons[l + 1][j][1]],
-                    color="#555555",
+                    color=weight_color,
                     linewidth=norm_w * 5 + 0.2,
                     zorder=4
                 )

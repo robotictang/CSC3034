@@ -61,30 +61,33 @@ The labs are designed to follow the schedule of the lectures; therefore, you wil
 In this module, advanced practical sessions incorporate **NVIDIA Isaac Sim**, a state-of-the-art, GPU-accelerated 3D robotics simulation platform built on **NVIDIA Omniverse** and **PhysX 5**. Powered by OpenUSD (Universal Scene Description), Isaac Sim enables photo-realistic rendering (RTX ray tracing) and precise physical dynamics for swarm robotics and autonomous systems.
 
 !!! info "Why NVIDIA Isaac Sim in Computational Intelligence?"
-    Traditional CI labs evaluate algorithms using 2D mathematical functions or static plots. Integrating Isaac Sim allows students to observe how metaheuristic search and swarm intelligence algorithms behave when deployed on **physical robotic agents** with kinematics, momentum, waypoints, and 3D spatial constraints.
+    Traditional CI labs evaluate algorithms using 2D mathematical functions or static plots. Integrating Isaac Sim lets students visualise computational-intelligence outputs in a 3D scene and, in selected examples, observe simple physics-driven proxies. These introductory scripts do not all model complete robot kinematics, sensors, or actuators.
 
 ### Practical Applications in the Labs
 
 NVIDIA Isaac Sim examples are integrated into the Evolutionary Computation (EC) practicals:
 
-*   **[Lab 3: Genetic Algorithms (GA)](lab3.md)**: Evolving 3D spatial waypoint trajectories for mobile robots navigating around obstacles in a bounded arena.
-*   **[Lab 4: Particle Swarm Optimization (PSO)](lab4.md)**: Physical multi-robot swarm target search, driving dynamic robot prims toward global best coordinates ($p_g$) in real time.
-*   **[Lab 5: Ant Colony Optimization (ACO)](lab5.md)**: Swarm route-finding on continuous waypoint graphs with dynamic pheromone decay and deposition mapped to physical robot velocities.
+*   **[Lab 3: Genetic Algorithms (GA)](lab3.md)**: Evolving planar waypoint trajectories around obstacles, then visualising the best trajectory in a 3D stage.
+*   **[Lab 4: Particle Swarm Optimization (PSO)](lab4.md)**: Driving dynamic sphere proxies toward global-best coordinates ($p_g$) in a physics scene.
+*   **[Lab 5: Ant Colony Optimization (ACO)](lab5.md)**: Route-finding on a discrete waypoint graph with pheromone decay and interpolated visual ant markers.
 
 ---
 
 ## System Requirements & Prerequisites
 
-To run the NVIDIA Isaac Sim 3D physical simulation mode, your system should meet the following minimum requirements:
+The following table summarizes the NVIDIA-published requirements for Isaac Sim
+6.0 on x86-64 systems. Requirements change between releases, so check the
+[official requirements page](https://docs.isaacsim.omniverse.nvidia.com/latest/installation/requirements.html)
+and run the compatibility checker before installation.
 
-| Requirement | Minimum Specification | Recommended Specification |
+| Requirement | Minimum | Good |
 | :--- | :--- | :--- |
-| **GPU** | NVIDIA GeForce RTX 2060 (or RTX Quadro equivalent) | NVIDIA GeForce RTX 3070 / 4070 or higher |
-| **GPU Memory (VRAM)** | 8 GB VRAM | 12 GB+ VRAM |
-| **System RAM** | 16 GB RAM | 32 GB RAM |
-| **Operating System** | Windows 10 / 11 (64-bit) or Ubuntu 20.04 / 22.04 LTS | Windows 11 (64-bit) or Ubuntu 22.04 LTS |
-| **NVIDIA Driver** | Version 535.xx or newer (with CUDA 12.x support) | Latest Production Branch / Studio Driver |
-| **Disk Space** | 50 GB free disk space | NVMe SSD with 100 GB free space |
+| **GPU** | NVIDIA GeForce RTX 4080 | NVIDIA GeForce RTX 5080 |
+| **GPU Memory (VRAM)** | 16 GB | 16 GB or more |
+| **System RAM** | 32 GB | 64 GB |
+| **Operating System** | Windows 11 or Ubuntu 22.04/24.04 | Windows 11 or Ubuntu 22.04/24.04 |
+| **NVIDIA Driver** | Linux 580.95.05 / Windows 581.42 | Current NVIDIA-tested driver |
+| **Storage** | 50 GB SSD | 500 GB SSD |
 
 !!! note "No RTX GPU Available?"
     If your system does not meet the hardware requirements for Isaac Sim, **do not worry!** All practical scripts feature an automatic fallback mode that executes the algorithm logic and renders 2D animated visualizations using standard **Matplotlib** (see [Fallback Execution Mode](#fallback-execution-mode-cpu-matplotlib) below).
@@ -93,29 +96,34 @@ To run the NVIDIA Isaac Sim 3D physical simulation mode, your system should meet
 
 ## NVIDIA Isaac Sim Installation & Setup Steps
 
-Follow these steps to set up NVIDIA Isaac Sim on your workstation:
+The Omniverse Launcher was deprecated on 1 October 2025. Use NVIDIA's current
+[workstation installation](https://docs.isaacsim.omniverse.nvidia.com/latest/installation/install_workstation.html)
+instead:
 
-### Step 1: Install NVIDIA Omniverse Launcher
+1. Download the latest Isaac Sim workstation archive for Windows or Linux.
+2. Extract it to a short, stable path such as `C:\isaacsim` or `~/isaacsim`.
+3. Run `post_install.bat` on Windows or `./post_install.sh` on Linux.
+4. Run the compatibility checker:
+    - Windows: `isaac-sim.compatibility_check.bat`
+    - Linux: `./isaac-sim.compatibility_check.sh`
+5. Launch the application with `isaac-sim.bat` on Windows or
+   `./isaac-sim.sh` on Linux.
 
-1. Download the **NVIDIA Omniverse Launcher** from the official website:  
-   [https://www.nvidia.com/en-us/omniverse/](https://www.nvidia.com/en-us/omniverse/)
-2. Run the installer and sign in with your NVIDIA account.
+Isaac Sim supplies its own Python 3.12 environment. Run standalone scripts with
+`python.bat` on Windows or `./python.sh` on Linux. Install extra packages into
+that environment; for example:
 
-### Step 2: Install Isaac Sim App
+=== "Windows"
 
-1. Open **Omniverse Launcher** and navigate to the **Exchange** tab.
-2. Search for **Isaac Sim**.
-3. Click **Install** (select the latest release, e.g., Isaac Sim 4.2.0 or 4.5.0).
-4. Wait for the installation to complete. Note the installation path:
-    *   **Windows**: `%LOCALAPPDATA%\ov\pkg\isaac-sim-4.2.0`  
-        *(e.g., `C:\Users\<YourUsername>\AppData\Local\ov\pkg\isaac-sim-4.2.0`)*
-    *   **Linux**: `~/.local/share/ov/pkg/isaac-sim-4.2.0`
+    ```cmd
+    C:\isaacsim\python.bat -m pip install scikit-fuzzy
+    ```
 
-### Step 3: Verify Environment Setup
+=== "Linux"
 
-Isaac Sim provides a bundled Python environment wrapper script (`isaac-sim.standalone.bat` on Windows or `python.sh` on Linux) that automatically imports all required Omniverse, USD, and PhysX libraries.
-
-Ensure you can access this wrapper executable from your terminal or add the Isaac Sim installation directory to your system environment variables.
+    ```bash
+    ~/isaacsim/python.sh -m pip install scikit-fuzzy
+    ```
 
 ---
 
@@ -131,7 +139,8 @@ The repository includes standalone scripts designed for Isaac Sim under the `src
 *   `src/files/isaac_vision_classifier.py` (Lab 8a)
 *   `src/files/isaac_vision_detection.py` (Lab 8b)
 
-Run the scripts using the Isaac Sim standalone Python launcher:
+Run the scripts from the Isaac Sim installation directory using its bundled
+Python launcher:
 
 === "Windows (CMD / PowerShell)"
 
@@ -141,29 +150,18 @@ Run the scripts using the Isaac Sim standalone Python launcher:
     cd "path\to\ci-labs"
     ```
 
-    Execute the desired practical script using `isaac-sim.standalone.bat`:
+    Execute the desired practical script using `python.bat`:
 
     ```cmd
-    :: Lab 1: Hexapod DRL Locomotion
-    "%LOCALAPPDATA%\ov\pkg\isaac-sim-4.2.0\isaac-sim.standalone.bat" python src/files/isaac_hexapod_drl.py
+    set REPO=C:\path\to\ci-labs
 
-    :: Lab 2: Fuzzy Logic Robot Controller
-    "%LOCALAPPDATA%\ov\pkg\isaac-sim-4.2.0\isaac-sim.standalone.bat" python src/files/isaac_fuzzy_robot.py
-
-    :: Lab 3: GA Trajectory Evolution
-    "%LOCALAPPDATA%\ov\pkg\isaac-sim-4.2.0\isaac-sim.standalone.bat" python src/files/isaac_ga_robot.py
-
-    :: Lab 4: PSO Swarm Simulation
-    "%LOCALAPPDATA%\ov\pkg\isaac-sim-4.2.0\isaac-sim.standalone.bat" python src/files/isaac_pso_swarm.py
-
-    :: Lab 5: ACO Swarm Route Finding
-    "%LOCALAPPDATA%\ov\pkg\isaac-sim-4.2.0\isaac-sim.standalone.bat" python src/files/isaac_aco_route.py
-
-    :: Lab 8a: Vision Classifier
-    "%LOCALAPPDATA%\ov\pkg\isaac-sim-4.2.0\isaac-sim.standalone.bat" python src/files/isaac_vision_classifier.py
-
-    :: Lab 8b: Vision Object Detector
-    "%LOCALAPPDATA%\ov\pkg\isaac-sim-4.2.0\isaac-sim.standalone.bat" python src/files/isaac_vision_detection.py
+    C:\isaacsim\python.bat "%REPO%\src\files\isaac_hexapod_drl.py"
+    C:\isaacsim\python.bat "%REPO%\src\files\isaac_fuzzy_robot.py"
+    C:\isaacsim\python.bat "%REPO%\src\files\isaac_ga_robot.py"
+    C:\isaacsim\python.bat "%REPO%\src\files\isaac_pso_swarm.py"
+    C:\isaacsim\python.bat "%REPO%\src\files\isaac_aco_route.py"
+    C:\isaacsim\python.bat "%REPO%\src\files\isaac_vision_classifier.py"
+    C:\isaacsim\python.bat "%REPO%\src\files\isaac_vision_detection.py"
     ```
 
 === "Linux (Terminal)"
@@ -177,48 +175,42 @@ Run the scripts using the Isaac Sim standalone Python launcher:
     Execute the desired practical script using `python.sh`:
 
     ```bash
-    # Lab 1: Hexapod DRL Locomotion
-    ~/.local/share/ov/pkg/isaac-sim-4.2.0/python.sh src/files/isaac_hexapod_drl.py
+    REPO=/path/to/ci-labs
 
-    # Lab 2: Fuzzy Logic Robot Controller
-    ~/.local/share/ov/pkg/isaac-sim-4.2.0/python.sh src/files/isaac_fuzzy_robot.py
-
-    # Lab 3: GA Trajectory Evolution
-    ~/.local/share/ov/pkg/isaac-sim-4.2.0/python.sh src/files/isaac_ga_robot.py
-
-    # Lab 4: PSO Swarm Simulation
-    ~/.local/share/ov/pkg/isaac-sim-4.2.0/python.sh src/files/isaac_pso_swarm.py
-
-    # Lab 5: ACO Swarm Route Finding
-    ~/.local/share/ov/pkg/isaac-sim-4.2.0/python.sh src/files/isaac_aco_route.py
-
-    # Lab 8a: Vision Classifier
-    ~/.local/share/ov/pkg/isaac-sim-4.2.0/python.sh src/files/isaac_vision_classifier.py
-
-    # Lab 8b: Vision Object Detector
-    ~/.local/share/ov/pkg/isaac-sim-4.2.0/python.sh src/files/isaac_vision_detection.py
+    ~/isaacsim/python.sh "$REPO/src/files/isaac_hexapod_drl.py"
+    ~/isaacsim/python.sh "$REPO/src/files/isaac_fuzzy_robot.py"
+    ~/isaacsim/python.sh "$REPO/src/files/isaac_ga_robot.py"
+    ~/isaacsim/python.sh "$REPO/src/files/isaac_pso_swarm.py"
+    ~/isaacsim/python.sh "$REPO/src/files/isaac_aco_route.py"
+    ~/isaacsim/python.sh "$REPO/src/files/isaac_vision_classifier.py"
+    ~/isaacsim/python.sh "$REPO/src/files/isaac_vision_detection.py"
     ```
 
 ---
 
 ## Fallback Execution Mode (CPU / Matplotlib)
 
-If Isaac Sim is not installed or your system lacks an NVIDIA RTX GPU, all practical scripts automatically detect the missing environment (`isaacsim` / `omni` imports) and run in **Standalone Matplotlib Mode**.
+If Isaac Sim is not installed, the practical scripts detect the missing
+environment and run a standalone fallback. These fallbacks demonstrate the
+algorithm or data flow; they are not substitutes for Isaac Sim physics,
+sensors, policy training, or real object-detection inference.
 
 Simply run the script with your standard Python interpreter:
 
 ```bash
 # Run using standard Python (Matplotlib 2D visualization / Standalone Mode)
-python src/files/isaac_hexapod_drl.py
-python src/files/isaac_fuzzy_robot.py
-python src/files/isaac_ga_robot.py
-python src/files/isaac_pso_swarm.py
-python src/files/isaac_aco_route.py
-python src/files/isaac_vision_classifier.py
-python src/files/isaac_vision_detection.py
+python3 src/files/isaac_hexapod_drl.py
+python3 src/files/isaac_fuzzy_robot.py
+python3 src/files/isaac_ga_robot.py
+python3 src/files/isaac_pso_swarm.py
+python3 src/files/isaac_aco_route.py
+python3 src/files/isaac_vision_classifier.py
+python3 src/files/isaac_vision_detection.py
 ```
 
-This ensures that all students can complete the practical exercises and observe the algorithmic behavior regardless of hardware availability.
+The core computational-intelligence exercises remain usable without NVIDIA
+hardware. Sections that depend on physics or sensors should be completed on a
+compatible lab workstation.
 
 ---
 

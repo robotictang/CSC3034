@@ -6,6 +6,10 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
+        <meta name="description" content="Computational Intelligence teaching materials by Dr Tang Tiong Yew">
+      
+      
+        <meta name="author" content="Dr Tang Tiong Yew">
       
       
       
@@ -454,15 +458,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#additional-deep-reinforcement-learning-for-a-6-legged-walking-robot-in-nvidia-isaac-sim" class="md-nav__link">
+  <a href="#additional-actor-critic-locomotion-policy-data-flow-in-nvidia-isaac-sim" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Additional: Deep Reinforcement Learning for a 6-Legged Walking Robot in NVIDIA Isaac Sim
+        Additional: Actor-Critic Locomotion Policy Data Flow in NVIDIA Isaac Sim
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Additional: Deep Reinforcement Learning for a 6-Legged Walking Robot in NVIDIA Isaac Sim">
+    <nav class="md-nav" aria-label="Additional: Actor-Critic Locomotion Policy Data Flow in NVIDIA Isaac Sim">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -477,10 +481,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-drl-environment-formulation" class="md-nav__link">
+  <a href="#2-policy-environment-formulation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. DRL Environment Formulation
+        2. Policy Environment Formulation
       
     </span>
   </a>
@@ -488,10 +492,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3-complete-isaac-sim-pytorch-ppo-implementation-code" class="md-nav__link">
+  <a href="#3-isaac-sim-pytorch-policy-scaffold" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. Complete Isaac Sim + PyTorch PPO Implementation Code
+        3. Isaac Sim + PyTorch Policy Scaffold
       
     </span>
   </a>
@@ -2547,13 +2551,9 @@ orient="auto">
     C1 --&gt;|"0.7 &lt;= r &lt; 1.0 (30%)"| C["Option C"]</code></pre>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code>```python
-def chooseFromThree():
-  ...
-  return selectedOption
-```
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">chooseFromThree</span><span class="p">():</span>
+  <span class="o">...</span>
+  <span class="k">return</span> <span class="n">selectedOption</span>
 </code></pre></div></td></tr></table></div>
 <h2 id="additional-plot-arc-to-form-golden-spiral">Additional: plot arc to form golden spiral<a class="headerlink" href="#additional-plot-arc-to-form-golden-spiral" title="Permanent link">&para;</a></h2>
 <ol>
@@ -2628,15 +2628,15 @@ def chooseFromThree():
     <span class="n">centers</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">coord</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coordinates</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># add coordinate to list of center</span>
-        <span class="n">centers</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">coord</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">coord</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+            <span class="n">centers</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">coord</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">coord</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
         <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># change x-coordinate of the first center</span>
-        <span class="n">centers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">coord</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-        <span class="n">centers</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">centers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">centers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]])</span>
-        <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># use y-coordinate as y for new center</span>
-            <span class="n">centers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">coord</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span> <span class="c1"># use x-coordinate as x for new center</span>
             <span class="n">centers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">coord</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">centers</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">centers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">centers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]])</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># use y-coordinate as y for new center</span>
+                <span class="n">centers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">coord</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span> <span class="c1"># use x-coordinate as x for new center</span>
+                <span class="n">centers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">coord</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">centers</span>
 </code></pre></div></td></tr></table></div>
     The <code>coordinates</code> is the list of coordinates generated from <a href="#fibonacci-and-golden-ratio">Fibonacci and Golden Ratio</a> step 3.</p>
@@ -2670,14 +2670,20 @@ def chooseFromThree():
         <span class="n">angle</span> <span class="o">-=</span> <span class="mi">90</span>
 </code></pre></div></td></tr></table></div></p>
 <p>In your script, you will first generate the Fibonacci sequence, use the sequence to generate coordinates, generate centers of arcs, and plot the arcs to form the spiral.</p>
-<p>```python
-n = 80
-number_seq = numberofamoebaseq(n)
-coordinates = generatecoordinatesfromseries(number_seq)
-centers = generatecenters(coordinates)
-plt.figure()
-plt.scatter(...) # or plt.plot(...) to plot the coordinates as in Fibonacci and Golden Ratio step 4
-plotspiral(plt.gca(), number_seq, centers) # plt.gca() returns handle of the current axis</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">n</span> <span class="o">=</span> <span class="mi">80</span>
+<span class="n">number_seq</span> <span class="o">=</span> <span class="n">numberofamoebaseq</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="n">coordinates</span> <span class="o">=</span> <span class="n">generatecoordinatesfromseries</span><span class="p">(</span><span class="n">number_seq</span><span class="p">)</span>
+<span class="n">centers</span> <span class="o">=</span> <span class="n">generatecenters</span><span class="p">(</span><span class="n">coordinates</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="o">...</span><span class="p">)</span> <span class="c1"># or plt.plot(...) to plot the coordinates as in Fibonacci and Golden Ratio step 4</span>
+<span class="n">plotspiral</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(),</span> <span class="n">number_seq</span><span class="p">,</span> <span class="n">centers</span><span class="p">)</span> <span class="c1"># plt.gca() returns handle of the current axis</span>
+</code></pre></div></td></tr></table></div>
 <div class="admonition note">
 <p class="admonition-title">Limitation</p>
 <p>Due to the limitation of matplotlib, the spiral plotting only works for the Fibonacci sequence with length less than 93.</p>
@@ -2687,8 +2693,11 @@ plotspiral(plt.gca(), number_seq, centers) # plt.gca() returns handle of the cur
 <hr />
 <p>You can download the full Python script here: <a href="files/lab1.py">lab1.py</a></p>
 <hr />
-<h2 id="additional-deep-reinforcement-learning-for-a-6-legged-walking-robot-in-nvidia-isaac-sim">Additional: Deep Reinforcement Learning for a 6-Legged Walking Robot in NVIDIA Isaac Sim<a class="headerlink" href="#additional-deep-reinforcement-learning-for-a-6-legged-walking-robot-in-nvidia-isaac-sim" title="Permanent link">&para;</a></h2>
-<p>Deep Reinforcement Learning (DRL) enables autonomous multi-legged robots (such as hexapods) to learn complex locomotion gaits in virtual simulation environments without explicit trajectory programming. NVIDIA Isaac Sim provides GPU-accelerated physics simulation to train DRL locomotion policies in parallel.</p>
+<h2 id="additional-actor-critic-locomotion-policy-data-flow-in-nvidia-isaac-sim">Additional: Actor-Critic Locomotion Policy Data Flow in NVIDIA Isaac Sim<a class="headerlink" href="#additional-actor-critic-locomotion-policy-data-flow-in-nvidia-isaac-sim" title="Permanent link">&para;</a></h2>
+<p>Deep reinforcement learning can train locomotion policies in a simulator. This
+introductory example focuses only on the observation-to-action data flow of an
+actor-critic network. It does not implement PPO optimization or load a trained
+checkpoint; use NVIDIA Isaac Lab for a complete training workflow.</p>
 <h3 id="1-hexapod-robot-kinematics-joint-structure">1. Hexapod Robot Kinematics &amp; Joint Structure<a class="headerlink" href="#1-hexapod-robot-kinematics-joint-structure" title="Permanent link">&para;</a></h3>
 <p>A 6-legged walking robot (hexapod) typically features <strong>18 Degrees-of-Freedom (DOF)</strong>, with 3 actuated joints per leg:
 - <strong>Coxa Joint (<span class="arithmatex">\(q_{\text{hip}}\)</span>)</strong>: Controls leg swing forward/backward (yaw).
@@ -2718,50 +2727,55 @@ plotspiral(plt.gca(), number_seq, centers) # plt.gca() returns handle of the cur
   Leg 4        Leg 5        Leg 6
   (Front-R)   (Mid-R)      (Rear-R)
 </code></pre></div></td></tr></table></div>
-<h3 id="2-drl-environment-formulation">2. DRL Environment Formulation<a class="headerlink" href="#2-drl-environment-formulation" title="Permanent link">&para;</a></h3>
+<h3 id="2-policy-environment-formulation">2. Policy Environment Formulation<a class="headerlink" href="#2-policy-environment-formulation" title="Permanent link">&para;</a></h3>
 <p>Reinforcement Learning frames locomotion as a Markov Decision Process (MDP) defined by <span class="arithmatex">\((\mathcal{S}, \mathcal{A}, \mathcal{R}, \mathcal{P}, \gamma)\)</span>:</p>
+<p>For an articulation with <span class="arithmatex">\(n\)</span> controlled joints, the scaffold uses:</p>
 <ol>
-<li><strong>Observation Space (<span class="arithmatex">\(\mathcal{S} \in \mathbb{R}^{42}\)</span>)</strong>:</li>
+<li><strong>Observation Space (<span class="arithmatex">\(\mathcal{S} \in \mathbb{R}^{9+2n}\)</span>)</strong>:</li>
 <li>Base linear velocity (<span class="arithmatex">\(v_x, v_y, v_z\)</span>)</li>
 <li>Base angular velocity (<span class="arithmatex">\(\omega_x, \omega_y, \omega_z\)</span>)</li>
 <li>Gravity vector orientation (<span class="arithmatex">\(g_x, g_y, g_z\)</span>)</li>
-<li>18 joint position angles (<span class="arithmatex">\(q_{1..18}\)</span>)</li>
+<li><span class="arithmatex">\(n\)</span> joint position angles</li>
 <li>
-<p>18 joint angular velocities (<span class="arithmatex">\(\dot{q}_{1..18}\)</span>)</p>
+<p><span class="arithmatex">\(n\)</span> joint angular velocities</p>
 </li>
 <li>
-<p><strong>Action Space (<span class="arithmatex">\(\mathcal{A} \in \mathbb{R}^{18}\)</span>)</strong>:</p>
+<p><strong>Action Space (<span class="arithmatex">\(\mathcal{A} \in \mathbb{R}^{n}\)</span>)</strong>:</p>
 </li>
 <li>
 <p>Target joint position commands <span class="arithmatex">\(a_t \in [-1.0, 1.0]\)</span> scaled to physical joint limits <span class="arithmatex">\([q_{\text{min}}, q_{\text{max}}]\)</span>.</p>
 </li>
 <li>
-<p><strong>Reward Function Design (<span class="arithmatex">\(\mathcal{R}_t\)</span>)</strong>:
-   $<span class="arithmatex">\(\mathcal{R}_t = w_{\text{vel}} \cdot v_x - w_{\text{drift}} \cdot |v_y| - w_{\text{orientation}} \cdot (\|\text{pitch}\| + \|\text{roll}\|) - w_{\text{energy}} \sum_{i=1}^{18} \tau_i \cdot \dot{q}_i\)</span>$</p>
+<p><strong>Illustrative reward calculation (<span class="arithmatex">\(\mathcal{R}_t\)</span>)</strong>:
+   $<span class="arithmatex">\(\mathcal{R}_t = 2v_x - 0.5|v_y| - 0.01\sum_i a_i^2\)</span>$</p>
 </li>
 <li><strong>Forward Reward</strong>: Encourages maximum forward linear velocity (<span class="arithmatex">\(v_x\)</span>).</li>
-<li><strong>Stability Penalty</strong>: Penalizes lateral drift (<span class="arithmatex">\(v_y\)</span>) and body tilt (roll &amp; pitch).</li>
-<li><strong>Energy Penalty</strong>: Penalizes excessive motor torques (<span class="arithmatex">\(\tau\)</span>) and joint velocities (<span class="arithmatex">\(\dot{q}\)</span>).</li>
+<li><strong>Drift Penalty</strong>: Penalizes lateral velocity (<span class="arithmatex">\(v_y\)</span>).</li>
+<li><strong>Action Penalty</strong>: Penalizes large policy outputs.</li>
 </ol>
 <pre class="mermaid"><code>graph LR
     subgraph IsaacSim ["NVIDIA Isaac Sim Stage"]
-        Env["Hexapod Robot Asset (PhysX 5 Engine)"]
+        Env["Loaded Articulation (PhysX)"]
     end
 
-    subgraph DRLAgent ["PPO Deep RL Controller"]
-        Policy["Actor Network (PPO)"]
+    subgraph DRLAgent ["Untrained Actor-Critic Scaffold"]
+        Policy["Actor Network"]
         Critic["Critic Network (Value)"]
     end
 
-    Env --&gt;|"Sensors: Velocity, Joint Pos/Vel (42D State)"| Policy
-    Env --&gt;|"State (42D)"| Critic
-    Policy --&gt;|"Joint Position Targets (18D Action)"| Env
-    Env --&gt;|"Physics Step &amp; Velocity"| Reward["Reward Function R_t"]
-    Reward --&gt;|"Feedback Signal"| DRLAgent</code></pre>
+    Env --&gt;|"Observation: 9 + 2n values"| Policy
+    Env --&gt;|"Observation: 9 + 2n values"| Critic
+    Policy --&gt;|"n Joint Position Targets"| Env
+    Env --&gt;|"Physics Step &amp; Velocity"| Reward["Illustrative Reward R_t"]</code></pre>
 <hr />
-<h3 id="3-complete-isaac-sim-pytorch-ppo-implementation-code">3. Complete Isaac Sim + PyTorch PPO Implementation Code<a class="headerlink" href="#3-complete-isaac-sim-pytorch-ppo-implementation-code" title="Permanent link">&para;</a></h3>
+<h3 id="3-isaac-sim-pytorch-policy-scaffold">3. Isaac Sim + PyTorch Policy Scaffold<a class="headerlink" href="#3-isaac-sim-pytorch-policy-scaffold" title="Permanent link">&para;</a></h3>
 <p>You can download the full Python script here: <a href="files/isaac_hexapod_drl.py">isaac_hexapod_drl.py</a></p>
-<p>Below is the complete standalone Python implementation demonstrating how to set up the 6-legged robot environment in NVIDIA Isaac Sim and train/test a PPO Deep Reinforcement Learning policy using PyTorch.</p>
+<p>The synchronized script below adapts its network dimensions to the loaded
+articulation. The readily available Isaac asset used by the script is the
+four-legged Ant reference articulation, not an 18-DOF six-legged model. Replace
+the USD path with a compatible hexapod asset for the stated six-leg exercise.
+Its fallback mode is a tensor-flow smoke test, not evidence of a trained walking
+gait.</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">  1</span>
 <span class="normal">  2</span>
 <span class="normal">  3</span>
@@ -3002,32 +3016,55 @@ plotspiral(plt.gca(), number_seq, centers) # plt.gca() returns handle of the cur
 <span class="normal">238</span>
 <span class="normal">239</span>
 <span class="normal">240</span>
-<span class="normal">241</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="c1"># Copyright Author: Dr Tang Tiong Yew</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="c1"># Copyright Author: Dr Tang Tiong Yew</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Deep Reinforcement Learning for 6-Legged Walking Robot in NVIDIA Isaac Sim</span>
 <span class="sd">==========================================================================</span>
-<span class="sd">This script demonstrates Deep Reinforcement Learning (PPO) policy execution for a</span>
-<span class="sd">6-legged walking robot (18 DOF) in NVIDIA Isaac Sim.</span>
+<span class="sd">This script demonstrates the observation/action data flow of an actor-critic</span>
+<span class="sd">locomotion policy. It does not train PPO or load a trained checkpoint.</span>
 
 <span class="sd">Execution Modes:</span>
 <span class="sd">1. NVIDIA Isaac Sim Mode (Full 3D GPU physics &amp; visual simulation):</span>
 <span class="sd">   Run with Isaac Sim&#39;s standalone python:</span>
-<span class="sd">   `isaac-sim.standalone.bat python src/files/isaac_hexapod_drl.py`</span>
-<span class="sd">   OR `python.bat src/files/isaac_hexapod_drl.py`</span>
+<span class="sd">   Windows: `C:\isaacsim\python.bat src\files\isaac_hexapod_drl.py`</span>
+<span class="sd">   Linux: `~/isaacsim/python.sh src/files/isaac_hexapod_drl.py`</span>
 
 <span class="sd">2. Standalone Fallback Mode (Policy &amp; Math simulation):</span>
-<span class="sd">   `python src/files/isaac_hexapod_drl.py`</span>
+<span class="sd">   `python3 src/files/isaac_hexapod_drl.py`</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="n">HAS_TORCH</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">torch.optim</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">optim</span>
     <span class="n">HAS_TORCH</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">HAS_TORCH</span> <span class="o">=</span> <span class="kc">False</span>
@@ -3046,7 +3083,7 @@ plotspiral(plt.gca(), number_seq, centers) # plt.gca() returns handle of the cur
 
 
 <span class="c1"># =====================================================================</span>
-<span class="c1"># Actor-Critic Neural Network Policy (PPO)</span>
+<span class="c1"># Actor-Critic Neural Network Policy Scaffold</span>
 <span class="c1"># =====================================================================</span>
 <span class="k">if</span> <span class="n">HAS_TORCH</span><span class="p">:</span>
     <span class="k">class</span><span class="w"> </span><span class="nc">HexapodPolicy</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -3103,45 +3140,68 @@ plotspiral(plt.gca(), number_seq, centers) # plt.gca() returns handle of the cur
         <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.kit</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationApp</span>
         <span class="n">simulation_app</span> <span class="o">=</span> <span class="n">SimulationApp</span><span class="p">({</span><span class="s2">&quot;headless&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
 
-    <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">World</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core.robots</span><span class="w"> </span><span class="kn">import</span> <span class="n">Robot</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core.utils.nucleus</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_assets_root_path</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">isaacsim.core.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">World</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">isaacsim.core.api.objects</span><span class="w"> </span><span class="kn">import</span> <span class="n">DynamicSphere</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">isaacsim.core.api.robots</span><span class="w"> </span><span class="kn">import</span> <span class="n">Robot</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">isaacsim.core.utils.stage</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_reference_to_stage</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">isaacsim.core.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArticulationAction</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">isaacsim.storage.native</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_assets_root_path</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># Isaac Sim 4.x compatibility</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">World</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core.objects</span><span class="w"> </span><span class="kn">import</span> <span class="n">DynamicSphere</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core.robots</span><span class="w"> </span><span class="kn">import</span> <span class="n">Robot</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core.utils.nucleus</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_assets_root_path</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core.utils.stage</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_reference_to_stage</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core.utils.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArticulationAction</span>
 
     <span class="n">world</span> <span class="o">=</span> <span class="n">World</span><span class="p">()</span>
     <span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">add_default_ground_plane</span><span class="p">()</span>
 
-    <span class="c1"># Load Hexapod 6-legged robot USD asset into Isaac Sim stage</span>
+    <span class="c1"># Load Isaac&#39;s Ant reference articulation. Replace this path with a</span>
+    <span class="c1"># compatible hexapod USD for a true six-legged exercise.</span>
     <span class="n">assets_root_path</span> <span class="o">=</span> <span class="n">get_assets_root_path</span><span class="p">()</span>
-    <span class="n">hexapod_usd_path</span> <span class="o">=</span> <span class="n">assets_root_path</span> <span class="o">+</span> <span class="s2">&quot;/Isaac/Robots/Ant/ant.usd&quot;</span>
 
+    <span class="n">is_articulated</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">assets_root_path</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Isaac asset root is unavailable&quot;</span><span class="p">)</span>
+        <span class="n">robot_usd_path</span> <span class="o">=</span> <span class="n">assets_root_path</span> <span class="o">+</span> <span class="s2">&quot;/Isaac/Robots/Ant/ant.usd&quot;</span>
+        <span class="n">add_reference_to_stage</span><span class="p">(</span><span class="n">usd_path</span><span class="o">=</span><span class="n">robot_usd_path</span><span class="p">,</span> <span class="n">prim_path</span><span class="o">=</span><span class="s2">&quot;/World/LeggedRobot&quot;</span><span class="p">)</span>
         <span class="n">hexapod_robot</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
             <span class="n">Robot</span><span class="p">(</span>
-                <span class="n">prim_path</span><span class="o">=</span><span class="s2">&quot;/World/Hexapod&quot;</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;hexapod_walking_robot&quot;</span><span class="p">,</span>
-                <span class="n">usd_path</span><span class="o">=</span><span class="n">hexapod_usd_path</span><span class="p">,</span>
+                <span class="n">prim_path</span><span class="o">=</span><span class="s2">&quot;/World/LeggedRobot&quot;</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;legged_robot&quot;</span><span class="p">,</span>
                 <span class="n">position</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
             <span class="p">)</span>
         <span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WARN] Could not load USD asset: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">. Spawning base robot prim...&quot;</span><span class="p">)</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">omni.isaac.core.objects</span><span class="w"> </span><span class="kn">import</span> <span class="n">DynamicSphere</span>
         <span class="n">hexapod_robot</span> <span class="o">=</span> <span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
             <span class="n">DynamicSphere</span><span class="p">(</span>
-                <span class="n">prim_path</span><span class="o">=</span><span class="s2">&quot;/World/Hexapod&quot;</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;hexapod_walking_robot&quot;</span><span class="p">,</span>
+                <span class="n">prim_path</span><span class="o">=</span><span class="s2">&quot;/World/LeggedRobot&quot;</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;legged_robot_marker&quot;</span><span class="p">,</span>
                 <span class="n">position</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]),</span>
                 <span class="n">radius</span><span class="o">=</span><span class="mf">0.4</span>
             <span class="p">)</span>
         <span class="p">)</span>
+        <span class="n">is_articulated</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="n">world</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
     <span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">HAS_TORCH</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span>
-    <span class="n">policy</span> <span class="o">=</span> <span class="n">HexapodPolicy</span><span class="p">(</span><span class="n">obs_dim</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">action_dim</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">is_articulated</span><span class="p">:</span>
+        <span class="n">initial_joint_positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">hexapod_robot</span><span class="o">.</span><span class="n">get_joint_positions</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">action_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">initial_joint_positions</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">action_dim</span> <span class="o">=</span> <span class="mi">18</span>
+    <span class="n">obs_dim</span> <span class="o">=</span> <span class="mi">9</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">action_dim</span>
+    <span class="n">policy</span> <span class="o">=</span> <span class="n">HexapodPolicy</span><span class="p">(</span><span class="n">obs_dim</span><span class="o">=</span><span class="n">obs_dim</span><span class="p">,</span> <span class="n">action_dim</span><span class="o">=</span><span class="n">action_dim</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">HAS_TORCH</span><span class="p">:</span>
         <span class="n">policy</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">policy</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[INFO] Hexapod DRL initialized on device: </span><span class="si">{</span><span class="n">device</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[INFO] Actor-critic policy scaffold initialized on </span><span class="si">{</span><span class="n">device</span><span class="si">}</span><span class="s2">; articulation DOF=</span><span class="si">{</span><span class="n">action_dim</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">warned_action_failure</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_episodes</span><span class="p">):</span>
         <span class="n">world</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
@@ -3156,8 +3216,8 @@ plotspiral(plt.gca(), number_seq, centers) # plt.gca() returns handle of the cur
                 <span class="n">base_lin_vel</span> <span class="o">=</span> <span class="n">hexapod_robot</span><span class="o">.</span><span class="n">get_linear_velocity</span><span class="p">()</span>
                 <span class="n">base_ang_vel</span> <span class="o">=</span> <span class="n">hexapod_robot</span><span class="o">.</span><span class="n">get_angular_velocity</span><span class="p">()</span>
             <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                <span class="n">joint_positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">18</span><span class="p">)</span>
-                <span class="n">joint_velocities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">18</span><span class="p">)</span>
+                <span class="n">joint_positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">action_dim</span><span class="p">)</span>
+                <span class="n">joint_velocities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">action_dim</span><span class="p">)</span>
                 <span class="n">base_lin_vel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
                 <span class="n">base_ang_vel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 
@@ -3165,15 +3225,18 @@ plotspiral(plt.gca(), number_seq, centers) # plt.gca() returns handle of the cur
             <span class="k">if</span> <span class="n">HAS_TORCH</span><span class="p">:</span>
                 <span class="n">state_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
                 <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-                    <span class="n">action_mean</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">state_tensor</span><span class="p">)</span>
+                    <span class="n">action_mean</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">state_tensor</span><span class="p">)</span>
                     <span class="n">action</span> <span class="o">=</span> <span class="n">action_mean</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">action</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">forward_numpy</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
 
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">hexapod_robot</span><span class="o">.</span><span class="n">apply_action</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                <span class="k">pass</span>
+            <span class="k">if</span> <span class="n">is_articulated</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">hexapod_robot</span><span class="o">.</span><span class="n">apply_action</span><span class="p">(</span><span class="n">ArticulationAction</span><span class="p">(</span><span class="n">joint_positions</span><span class="o">=</span><span class="n">action</span><span class="p">))</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">warned_action_failure</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WARN] Joint command could not be applied: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="n">warned_action_failure</span> <span class="o">=</span> <span class="kc">True</span>
 
             <span class="n">forward_vel</span> <span class="o">=</span> <span class="n">base_lin_vel</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">drift_penalty</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">base_lin_vel</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
@@ -3182,7 +3245,7 @@ plotspiral(plt.gca(), number_seq, centers) # plt.gca() returns handle of the cur
 
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Episode </span><span class="si">{</span><span class="n">episode</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">num_episodes</span><span class="si">}</span><span class="s2"> - Total DRL Locomotion Reward: </span><span class="si">{</span><span class="n">episode_reward</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[SUCCESS] Completed 6-Legged Robot DRL Training in NVIDIA Isaac Sim.&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[SUCCESS] Completed actor-critic policy rollout in NVIDIA Isaac Sim.&quot;</span><span class="p">)</span>
     <span class="n">simulation_app</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 
@@ -3190,7 +3253,7 @@ plotspiral(plt.gca(), number_seq, centers) # plt.gca() returns handle of the cur
 <span class="c1"># 2. PyTorch / NumPy Standalone Fallback Execution</span>
 <span class="c1"># =====================================================================</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">run_fallback_drl</span><span class="p">(</span><span class="n">num_episodes</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">300</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fallback simulation evaluating DRL policy without Isaac Sim GUI.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exercise an untrained policy&#39;s tensor flow without Isaac Sim GUI.&quot;&quot;&quot;</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;==================================================================&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; Running Standalone Hexapod DRL Policy Simulation (No Isaac Sim)  &quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;==================================================================&quot;</span><span class="p">)</span>
@@ -3198,7 +3261,8 @@ plotspiral(plt.gca(), number_seq, centers) # plt.gca() returns handle of the cur
     <span class="k">if</span> <span class="n">HAS_TORCH</span><span class="p">:</span>
         <span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
         <span class="n">policy</span> <span class="o">=</span> <span class="n">HexapodPolicy</span><span class="p">(</span><span class="n">obs_dim</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">action_dim</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[INFO] PyTorch Neural Network Policy initialized on device: </span><span class="si">{</span><span class="n">device</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">policy</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[INFO] Untrained PyTorch policy initialized on device: </span><span class="si">{</span><span class="n">device</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">policy</span> <span class="o">=</span> <span class="n">HexapodPolicy</span><span class="p">(</span><span class="n">obs_dim</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">action_dim</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[INFO] PyTorch not installed. Using NumPy neural policy fallback.&quot;</span><span class="p">)</span>
@@ -3217,7 +3281,7 @@ plotspiral(plt.gca(), number_seq, centers) # plt.gca() returns handle of the cur
             <span class="k">if</span> <span class="n">HAS_TORCH</span><span class="p">:</span>
                 <span class="n">state_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
                 <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-                    <span class="n">action_mean</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">state_tensor</span><span class="p">)</span>
+                    <span class="n">action_mean</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">state_tensor</span><span class="p">)</span>
                     <span class="n">action</span> <span class="o">=</span> <span class="n">action_mean</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">action</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">forward_numpy</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
@@ -3275,6 +3339,10 @@ Copyright Author: Dr Tang Tiong Yew
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
       <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; Dr Tang Tiong Yew
+    </div>
   
   
     Made with

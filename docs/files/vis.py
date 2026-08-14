@@ -9,7 +9,7 @@ except ImportError:
     HAS_MATPLOTLIB = False
 
 
-def vis2d(ax, model, X_train, Y_train, X_test=[], Y_test=[]):
+def vis2d(ax, model, X_train, Y_train, X_test=None, Y_test=None):
     if not HAS_MATPLOTLIB:
         print("[!] Matplotlib is required for vis2d visualization.")
         return
@@ -17,7 +17,7 @@ def vis2d(ax, model, X_train, Y_train, X_test=[], Y_test=[]):
     # Identify graph range
     x_range = [X_train[:, 0].min() - 0.5, X_train[:, 0].max() + 0.5]
     y_range = [X_train[:, 1].min() - 0.5, X_train[:, 1].max() + 0.5]
-    if len(X_test) > 0:
+    if X_test is not None and len(X_test) > 0:
         x_range = [min(x_range[0], X_test[:, 0].min() - 0.5), max(x_range[1], X_test[:, 0].max() + 0.5)]
         y_range = [min(y_range[0], X_test[:, 1].min() - 0.5), max(y_range[1], X_test[:, 1].max() + 0.5)]
 
@@ -33,11 +33,11 @@ def vis2d(ax, model, X_train, Y_train, X_test=[], Y_test=[]):
     
     # Plot training and testing data
     ax.scatter([x[0] for x in X_train], [x[1] for x in X_train], c=Y_train, edgecolors='black')
-    if len(X_test) > 0:
+    if X_test is not None and len(X_test) > 0:
         ax.scatter([x[0] for x in X_test], [x[1] for x in X_test], c=Y_test, edgecolors='brown', alpha=.8)
 
 
-def vis3d(fig, model, X_train, Y_train, X_test=[], Y_test=[]):
+def vis3d(fig, model, X_train, Y_train, X_test=None, Y_test=None):
     if not HAS_MATPLOTLIB:
         print("[!] Matplotlib is required for vis3d visualization.")
         return []
@@ -46,7 +46,7 @@ def vis3d(fig, model, X_train, Y_train, X_test=[], Y_test=[]):
     y_range = [0, 1]
     y_data_min = X_train.min(axis=0)
     y_data_max = X_train.max(axis=0)
-    if len(X_test) > 0:
+    if X_test is not None and len(X_test) > 0:
         y_data_min = np.amin([y_data_min, X_test.min(axis=0)], axis=0)
         y_data_max = np.amax([y_data_max, X_test.max(axis=0)], axis=0)
 

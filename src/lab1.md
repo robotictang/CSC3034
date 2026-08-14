@@ -134,11 +134,11 @@ graph LR
     C1 -->|"0.7 <= r < 1.0 (30%)"| C["Option C"]
 ```
 
-    ```python
-    def chooseFromThree():
-      ...
-      return selectedOption
-    ```
+```python
+def chooseFromThree():
+  ...
+  return selectedOption
+```
 
 ## Additional: plot arc to form golden spiral
 
@@ -199,15 +199,15 @@ graph LR
         centers = []
         for i, coord in enumerate(coordinates):
             if i == 0: # add coordinate to list of center
-            centers.append([coord[0], coord[1]])
+                centers.append([coord[0], coord[1]])
             elif i == 1: # change x-coordinate of the first center
-            centers[-1][0] = coord[0]
-            else:
-            centers.append([centers[-1][0], centers[-1][1]])
-            if i % 2 == 0: # use y-coordinate as y for new center
-                centers[-1][1] = coord[1]
-            else: # use x-coordinate as x for new center
                 centers[-1][0] = coord[0]
+            else:
+                centers.append([centers[-1][0], centers[-1][1]])
+                if i % 2 == 0: # use y-coordinate as y for new center
+                    centers[-1][1] = coord[1]
+                else: # use x-coordinate as x for new center
+                    centers[-1][0] = coord[0]
         return centers
     ```
     The `coordinates` is the list of coordinates generated from [Fibonacci and Golden Ratio](#fibonacci-and-golden-ratio) step 3.
@@ -239,6 +239,8 @@ graph LR
     plt.figure()
     plt.scatter(...) # or plt.plot(...) to plot the coordinates as in Fibonacci and Golden Ratio step 4
     plotspiral(plt.gca(), number_seq, centers) # plt.gca() returns handle of the current axis
+    ```
+
     !!! note "Limitation"
         Due to the limitation of matplotlib, the spiral plotting only works for the Fibonacci sequence with length less than 93.
 
@@ -249,9 +251,12 @@ You can download the full Python script here: [lab1.py](files/lab1.py)
 ---
 
 
-## Additional: Deep Reinforcement Learning for a 6-Legged Walking Robot in NVIDIA Isaac Sim
+## Additional: Actor-Critic Locomotion Policy Data Flow in NVIDIA Isaac Sim
 
-Deep Reinforcement Learning (DRL) enables autonomous multi-legged robots (such as hexapods) to learn complex locomotion gaits in virtual simulation environments without explicit trajectory programming. NVIDIA Isaac Sim provides GPU-accelerated physics simulation to train DRL locomotion policies in parallel.
+Deep reinforcement learning can train locomotion policies in a simulator. This
+introductory example focuses only on the observation-to-action data flow of an
+actor-critic network. It does not implement PPO optimization or load a trained
+checkpoint; use NVIDIA Isaac Lab for a complete training workflow.
 
 ### 1. Hexapod Robot Kinematics & Joint Structure
 
@@ -275,79 +280,83 @@ A 6-legged walking robot (hexapod) typically features **18 Degrees-of-Freedom (D
   (Front-R)   (Mid-R)      (Rear-R)
 ```
 
-### 2. DRL Environment Formulation
+### 2. Policy Environment Formulation
 
 Reinforcement Learning frames locomotion as a Markov Decision Process (MDP) defined by $(\mathcal{S}, \mathcal{A}, \mathcal{R}, \mathcal{P}, \gamma)$:
 
-1. **Observation Space ($\mathcal{S} \in \mathbb{R}^{42}$)**:
+For an articulation with $n$ controlled joints, the scaffold uses:
+
+1. **Observation Space ($\mathcal{S} \in \mathbb{R}^{9+2n}$)**:
    - Base linear velocity ($v_x, v_y, v_z$)
    - Base angular velocity ($\omega_x, \omega_y, \omega_z$)
    - Gravity vector orientation ($g_x, g_y, g_z$)
-   - 18 joint position angles ($q_{1..18}$)
-   - 18 joint angular velocities ($\dot{q}_{1..18}$)
+   - $n$ joint position angles
+   - $n$ joint angular velocities
 
-2. **Action Space ($\mathcal{A} \in \mathbb{R}^{18}$)**:
+2. **Action Space ($\mathcal{A} \in \mathbb{R}^{n}$)**:
    - Target joint position commands $a_t \in [-1.0, 1.0]$ scaled to physical joint limits $[q_{\text{min}}, q_{\text{max}}]$.
 
-3. **Reward Function Design ($\mathcal{R}_t$)**:
-   $$\mathcal{R}_t = w_{\text{vel}} \cdot v_x - w_{\text{drift}} \cdot |v_y| - w_{\text{orientation}} \cdot (\|\text{pitch}\| + \|\text{roll}\|) - w_{\text{energy}} \sum_{i=1}^{18} \tau_i \cdot \dot{q}_i$$
+3. **Illustrative reward calculation ($\mathcal{R}_t$)**:
+   $$\mathcal{R}_t = 2v_x - 0.5|v_y| - 0.01\sum_i a_i^2$$
    - **Forward Reward**: Encourages maximum forward linear velocity ($v_x$).
-   - **Stability Penalty**: Penalizes lateral drift ($v_y$) and body tilt (roll & pitch).
-   - **Energy Penalty**: Penalizes excessive motor torques ($\tau$) and joint velocities ($\dot{q}$).
+   - **Drift Penalty**: Penalizes lateral velocity ($v_y$).
+   - **Action Penalty**: Penalizes large policy outputs.
 
 ```mermaid
 graph LR
     subgraph IsaacSim ["NVIDIA Isaac Sim Stage"]
-        Env["Hexapod Robot Asset (PhysX 5 Engine)"]
+        Env["Loaded Articulation (PhysX)"]
     end
     
-    subgraph DRLAgent ["PPO Deep RL Controller"]
-        Policy["Actor Network (PPO)"]
+    subgraph DRLAgent ["Untrained Actor-Critic Scaffold"]
+        Policy["Actor Network"]
         Critic["Critic Network (Value)"]
     end
     
-    Env -->|"Sensors: Velocity, Joint Pos/Vel (42D State)"| Policy
-    Env -->|"State (42D)"| Critic
-    Policy -->|"Joint Position Targets (18D Action)"| Env
-    Env -->|"Physics Step & Velocity"| Reward["Reward Function R_t"]
-    Reward -->|"Feedback Signal"| DRLAgent
+    Env -->|"Observation: 9 + 2n values"| Policy
+    Env -->|"Observation: 9 + 2n values"| Critic
+    Policy -->|"n Joint Position Targets"| Env
+    Env -->|"Physics Step & Velocity"| Reward["Illustrative Reward R_t"]
 ```
 
 ---
 
-### 3. Complete Isaac Sim + PyTorch PPO Implementation Code
+### 3. Isaac Sim + PyTorch Policy Scaffold
 
 You can download the full Python script here: [isaac_hexapod_drl.py](files/isaac_hexapod_drl.py)
 
-Below is the complete standalone Python implementation demonstrating how to set up the 6-legged robot environment in NVIDIA Isaac Sim and train/test a PPO Deep Reinforcement Learning policy using PyTorch.
+The synchronized script below adapts its network dimensions to the loaded
+articulation. The readily available Isaac asset used by the script is the
+four-legged Ant reference articulation, not an 18-DOF six-legged model. Replace
+the USD path with a compatible hexapod asset for the stated six-leg exercise.
+Its fallback mode is a tensor-flow smoke test, not evidence of a trained walking
+gait.
 
 ```python
 # Copyright Author: Dr Tang Tiong Yew
-"""
+r"""
 Deep Reinforcement Learning for 6-Legged Walking Robot in NVIDIA Isaac Sim
 ==========================================================================
-This script demonstrates Deep Reinforcement Learning (PPO) policy execution for a
-6-legged walking robot (18 DOF) in NVIDIA Isaac Sim.
+This script demonstrates the observation/action data flow of an actor-critic
+locomotion policy. It does not train PPO or load a trained checkpoint.
 
 Execution Modes:
 1. NVIDIA Isaac Sim Mode (Full 3D GPU physics & visual simulation):
    Run with Isaac Sim's standalone python:
-   `isaac-sim.standalone.bat python src/files/isaac_hexapod_drl.py`
-   OR `python.bat src/files/isaac_hexapod_drl.py`
+   Windows: `C:\isaacsim\python.bat src\files\isaac_hexapod_drl.py`
+   Linux: `~/isaacsim/python.sh src/files/isaac_hexapod_drl.py`
 
 2. Standalone Fallback Mode (Policy & Math simulation):
-   `python src/files/isaac_hexapod_drl.py`
+   `python3 src/files/isaac_hexapod_drl.py`
 """
 
 import sys
-import time
 import numpy as np
 
 HAS_TORCH = False
 try:
     import torch
     import torch.nn as nn
-    import torch.optim as optim
     HAS_TORCH = True
 except ImportError:
     HAS_TORCH = False
@@ -366,7 +375,7 @@ except ImportError:
 
 
 # =====================================================================
-# Actor-Critic Neural Network Policy (PPO)
+# Actor-Critic Neural Network Policy Scaffold
 # =====================================================================
 if HAS_TORCH:
     class HexapodPolicy(nn.Module):
@@ -423,45 +432,68 @@ def run_isaac_sim_drl(num_episodes=5, max_steps=300):
         from omni.isaac.kit import SimulationApp
         simulation_app = SimulationApp({"headless": False})
 
-    from omni.isaac.core import World
-    from omni.isaac.core.robots import Robot
-    from omni.isaac.core.utils.nucleus import get_assets_root_path
+    try:
+        from isaacsim.core.api import World
+        from isaacsim.core.api.objects import DynamicSphere
+        from isaacsim.core.api.robots import Robot
+        from isaacsim.core.utils.stage import add_reference_to_stage
+        from isaacsim.core.utils.types import ArticulationAction
+        from isaacsim.storage.native import get_assets_root_path
+    except ImportError:  # Isaac Sim 4.x compatibility
+        from omni.isaac.core import World
+        from omni.isaac.core.objects import DynamicSphere
+        from omni.isaac.core.robots import Robot
+        from omni.isaac.core.utils.nucleus import get_assets_root_path
+        from omni.isaac.core.utils.stage import add_reference_to_stage
+        from omni.isaac.core.utils.types import ArticulationAction
 
     world = World()
     world.scene.add_default_ground_plane()
 
-    # Load Hexapod 6-legged robot USD asset into Isaac Sim stage
+    # Load Isaac's Ant reference articulation. Replace this path with a
+    # compatible hexapod USD for a true six-legged exercise.
     assets_root_path = get_assets_root_path()
-    hexapod_usd_path = assets_root_path + "/Isaac/Robots/Ant/ant.usd"
 
+    is_articulated = True
     try:
+        if not assets_root_path:
+            raise RuntimeError("Isaac asset root is unavailable")
+        robot_usd_path = assets_root_path + "/Isaac/Robots/Ant/ant.usd"
+        add_reference_to_stage(usd_path=robot_usd_path, prim_path="/World/LeggedRobot")
         hexapod_robot = world.scene.add(
             Robot(
-                prim_path="/World/Hexapod",
-                name="hexapod_walking_robot",
-                usd_path=hexapod_usd_path,
+                prim_path="/World/LeggedRobot",
+                name="legged_robot",
                 position=np.array([0.0, 0.0, 0.5])
             )
         )
     except Exception as e:
         print(f"[WARN] Could not load USD asset: {e}. Spawning base robot prim...")
-        from omni.isaac.core.objects import DynamicSphere
         hexapod_robot = world.scene.add(
             DynamicSphere(
-                prim_path="/World/Hexapod",
-                name="hexapod_walking_robot",
+                prim_path="/World/LeggedRobot",
+                name="legged_robot_marker",
                 position=np.array([0.0, 0.0, 0.5]),
                 radius=0.4
             )
         )
+        is_articulated = False
 
     world.reset()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu") if HAS_TORCH else "cpu"
-    policy = HexapodPolicy(obs_dim=45, action_dim=18)
+    if is_articulated:
+        initial_joint_positions = np.asarray(hexapod_robot.get_joint_positions(), dtype=float)
+        action_dim = len(initial_joint_positions)
+    else:
+        action_dim = 18
+    obs_dim = 9 + 2 * action_dim
+    policy = HexapodPolicy(obs_dim=obs_dim, action_dim=action_dim)
     if HAS_TORCH:
         policy = policy.to(device)
+        policy.eval()
 
-    print(f"[INFO] Hexapod DRL initialized on device: {device}")
+    print(f"[INFO] Actor-critic policy scaffold initialized on {device}; articulation DOF={action_dim}")
+    warned_action_failure = False
 
     for episode in range(num_episodes):
         world.reset()
@@ -476,8 +508,8 @@ def run_isaac_sim_drl(num_episodes=5, max_steps=300):
                 base_lin_vel = hexapod_robot.get_linear_velocity()
                 base_ang_vel = hexapod_robot.get_angular_velocity()
             except Exception:
-                joint_positions = np.zeros(18)
-                joint_velocities = np.zeros(18)
+                joint_positions = np.zeros(action_dim)
+                joint_velocities = np.zeros(action_dim)
                 base_lin_vel = np.array([0.5, 0.01, 0.0])
                 base_ang_vel = np.zeros(3)
 
@@ -485,15 +517,18 @@ def run_isaac_sim_drl(num_episodes=5, max_steps=300):
             if HAS_TORCH:
                 state_tensor = torch.tensor(obs, dtype=torch.float32, device=device).unsqueeze(0)
                 with torch.no_grad():
-                    action_mean, value = policy(state_tensor)
+                    action_mean, _ = policy(state_tensor)
                     action = action_mean.squeeze(0).cpu().numpy()
             else:
                 action = policy.forward_numpy(obs)
 
-            try:
-                hexapod_robot.apply_action(action)
-            except Exception:
-                pass
+            if is_articulated:
+                try:
+                    hexapod_robot.apply_action(ArticulationAction(joint_positions=action))
+                except Exception as exc:
+                    if not warned_action_failure:
+                        print(f"[WARN] Joint command could not be applied: {exc}")
+                        warned_action_failure = True
 
             forward_vel = base_lin_vel[0]
             drift_penalty = abs(base_lin_vel[1])
@@ -502,7 +537,7 @@ def run_isaac_sim_drl(num_episodes=5, max_steps=300):
 
         print(f"Episode {episode + 1}/{num_episodes} - Total DRL Locomotion Reward: {episode_reward:.2f}")
 
-    print("[SUCCESS] Completed 6-Legged Robot DRL Training in NVIDIA Isaac Sim.")
+    print("[SUCCESS] Completed actor-critic policy rollout in NVIDIA Isaac Sim.")
     simulation_app.close()
 
 
@@ -510,7 +545,7 @@ def run_isaac_sim_drl(num_episodes=5, max_steps=300):
 # 2. PyTorch / NumPy Standalone Fallback Execution
 # =====================================================================
 def run_fallback_drl(num_episodes=5, max_steps=300):
-    """Fallback simulation evaluating DRL policy without Isaac Sim GUI."""
+    """Exercise an untrained policy's tensor flow without Isaac Sim GUI."""
     print("==================================================================")
     print(" Running Standalone Hexapod DRL Policy Simulation (No Isaac Sim)  ")
     print("==================================================================")
@@ -518,7 +553,8 @@ def run_fallback_drl(num_episodes=5, max_steps=300):
     if HAS_TORCH:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         policy = HexapodPolicy(obs_dim=45, action_dim=18).to(device)
-        print(f"[INFO] PyTorch Neural Network Policy initialized on device: {device}")
+        policy.eval()
+        print(f"[INFO] Untrained PyTorch policy initialized on device: {device}")
     else:
         policy = HexapodPolicy(obs_dim=45, action_dim=18)
         print("[INFO] PyTorch not installed. Using NumPy neural policy fallback.")
@@ -537,7 +573,7 @@ def run_fallback_drl(num_episodes=5, max_steps=300):
             if HAS_TORCH:
                 state_tensor = torch.tensor(obs, dtype=torch.float32, device=device).unsqueeze(0)
                 with torch.no_grad():
-                    action_mean, value = policy(state_tensor)
+                    action_mean, _ = policy(state_tensor)
                     action = action_mean.squeeze(0).cpu().numpy()
             else:
                 action = policy.forward_numpy(obs)
@@ -563,7 +599,6 @@ if __name__ == '__main__':
     else:
         print("[INFO] NVIDIA Isaac Sim environment not detected. Running Standalone Mode.")
         run_fallback_drl()
-
 ```
 
 ---

@@ -3,10 +3,12 @@
 ## Fuzzy Systems
 
 ### Objective
+
 - to construct a Mamdani fuzzy system using the `scikit-fuzzy` Python library
 - to evaluate the result of the constructed fuzzy system
 
 ### Note
+
 Install the `scikit-fuzzy` Python library in your environment before proceeding with the lab.
 
 ```python
@@ -29,7 +31,7 @@ conda install -c conda-forge scikit-fuzzy
 
 1. Speed and distance are the inputs of the system whereas brake and throttle are the outputs.
 
-3. The ranges for the variables are:
+2. The ranges for the variables are:
 
     |Variable|Range|
     |:--------|:-----:|
@@ -65,7 +67,7 @@ graph LR
 3. As the inputs will be the antecedents of the rules, construct the variables `speed` and `distance` as `skfuzzy.control.Antecedent` objects. 
 
     ```python
-    speed = ctrl.Antecedent(np.arange(0, 85, 0.1), 'speed')
+    speed = ctrl.Antecedent(np.arange(0, 85.1, 0.1), 'speed')
     ```
 
 4. The initialisation function for `skfuzzy.control.Antecedent` object takes 2 arguments, the first is the *universe* of the variable, i.e. the values the variables can take, the second is the label of the variable. The initialisation function for `skfuzzy.control.Consequent` is similar. 
@@ -138,7 +140,7 @@ graph LR
     |`skfuzzy.membership.trimf(x, abc)`|Triangular membership function generator|
     |`skfuzzy.membership.zmf(x, a, b)`|Z-function fuzzy membership generator|
 
-3. The fit vector of a linguitic value can be assigned to a linguistic variable using
+3. The fit vector of a linguistic value can be assigned to a linguistic variable using
 
     ```python
     speed['stopped'] = mf.trimf(speed.universe, [0, 0, 2])
@@ -157,7 +159,7 @@ graph LR
 
 #### Define rules
 
-1. The rules for this system are displayed in the following fuzzy association memory (FAM) representaion table.
+1. The rules for this system are displayed in the following fuzzy association memory (FAM) representation table.
 
     <div class="md-typeset__scrollwrap">
     <table class="fam-table">
@@ -225,13 +227,13 @@ graph LR
 
 ```mermaid
 graph TD
-    InS["Speed Input e.g. 35 km/h"] --> MF1["Compute Membership: speed['slow']"]
+    InS["Speed Input e.g. 6.5 km/h"] --> MF1["Compute Membership: speed['slow']"]
     InD["Distance Input e.g. 150 m"] --> MF2["Compute Membership: distance['near']"]
     
     MF1 --> AND["AND Operation (min membership)"]
     MF2 --> AND
     
-    AND --> RuleOut["Fire Rule Consequent: brake['slight'], throttle['slight']"]
+    AND --> RuleOut["Fire Rule Consequent: brake['very slight'], throttle['slight']"]
     RuleOut --> Agg["Aggregate Consequents across Rules (max)"]
     Agg --> Centroid["Defuzzify via Centroid"]
     Centroid --> OutB["Crisp Brake %"]
@@ -243,6 +245,12 @@ graph TD
     If the consequent consists of multiple parts, they can be combined as a `list`/`tuple`.
 
     **Task**: Define all the rules. Then combine all the rules in a `list`, i.e. `rules = [rule1, rule2, ...]`.
+
+    !!! warning "Rule coverage"
+        Blank FAM cells produce no output when no other membership overlaps a
+        populated cell. That is acceptable for this focused exercise, but a
+        real train controller must define safe behavior over the entire input
+        space rather than silently replacing undefined outputs with zero.
 
 #### Construct the fuzzy control system
 1. The train control system can be constructed with
@@ -257,7 +265,8 @@ graph TD
     train = ctrl.ControlSystemSimulation(control_system=train_ctrl)
     ```
 
-3. To obtain the values for `brake` and `throttle` given that `speed` is 30 km/h and `distance` is 6 m,
+3. To obtain the values for `brake` and `throttle` given that `speed` is
+   30 km/h and `distance` is 2000 m,
 
     ```python
     # define the values for the inputs
@@ -363,7 +372,7 @@ graph TD
         |Medium          |(0/0, 1/15, 0/30)    |
         |High            |(0/15, 1/30)         |
 
-4. The rules are displayed in the following fuzzy association memory (FAM) representaion table.
+4. The rules are displayed in the following fuzzy association memory (FAM) representation table.
 
     <div class="md-typeset__scrollwrap">
     <table class="fam-table">
@@ -420,7 +429,7 @@ You can download the full Python script here: [lab2_fuzzy.py](files/lab2_fuzzy.p
 
 ## NVIDIA Isaac Sim Example: Fuzzy Logic Robot Obstacle Avoidance Controller
 
-Fuzzy Logic Controllers (FLC) are extensively used in autonomous mobile robotics to handle uncertainty and non-linear dynamics during navigation. In this section, we build a **Mamdani Fuzzy Inference System** using `scikit-fuzzy` and integrate it into an **NVIDIA Isaac Sim** simulation loop to autonomously navigate a mobile robot while avoiding obstacles.
+Fuzzy Logic Controllers (FLCs) are widely used in mobile robotics to handle uncertainty and nonlinear dynamics. This example builds a **Mamdani fuzzy inference system** with `scikit-fuzzy` and uses Isaac Sim to visualise the resulting planar motion. It is an educational controller demonstration: distance and heading are calculated from scene geometry, and the robot pose is updated directly rather than through simulated range sensors, wheel joints, or contact physics.
 
 ### 1. Fuzzy Logic Controller Architecture
 
@@ -429,7 +438,7 @@ The controller uses 2 inputs (distance to obstacle & heading error to target) an
 ```
        +-----------------------+
        |   NVIDIA Isaac Sim    |
-       |  Sensors (Range/Pose) |
+       | Scene Geometry/Pose   |
        +-----------+-----------+
                    |
      [distance]    |    [heading]
@@ -444,19 +453,19 @@ The controller uses 2 inputs (distance to obstacle & heading error to target) an
                    v
        +-----------+-----------+
        |  NVIDIA Isaac Sim     |
-       | Robot Motor Actuators |
+       | Visual Pose Update    |
        +-----------------------+
 ```
 
 #### Inputs (Antecedents)
-1. **`distance` ($0 \text{ to } 5 \text{ m}$)**: Distance from front sensor to closest obstacle barrier.
+1. **`distance` ($0 \text{ to } 5 \text{ m}$)**: Geometric distance from the robot to the obstacle centre, clipped to the input range.
    - `near`: `[0.0, 0.0, 1.5]`
    - `medium`: `[1.0, 2.5, 4.0]`
    - `far`: `[3.0, 5.0, 5.0]`
 2. **`heading` ($-180^\circ \text{ to } +180^\circ$)**: Angle offset towards target destination.
-   - `left`: `[-180, -90, 0]`
+   - `right`: `[-180, -90, 0]`
    - `straight`: `[-30, 0, 30]`
-   - `right`: `[0, 90, 180]`
+   - `left`: `[0, 90, 180]`
 
 #### Outputs (Consequents)
 1. **`linear_velocity` ($0 \text{ to } 1.5 \text{ m/s}$)**: Forward speed of the robot.
@@ -478,20 +487,20 @@ Below is the complete standalone Python script demonstrating how to construct th
 
 ```python
 # Copyright Author: Dr Tang Tiong Yew
-"""
+r"""
 Fuzzy Logic Robot Obstacle Avoidance Controller in NVIDIA Isaac Sim
 ===================================================================
 This script demonstrates Mamdani Fuzzy Logic Control for autonomous mobile robot navigation
 and obstacle avoidance inside NVIDIA Isaac Sim using `scikit-fuzzy`.
 
 Execution Modes:
-1. NVIDIA Isaac Sim Mode (Full 3D GPU physics & visual simulation):
+1. NVIDIA Isaac Sim Mode (3D visualisation with direct pose updates):
    Run with Isaac Sim's standalone python:
-   `isaac-sim.standalone.bat python src/files/isaac_fuzzy_robot.py`
-   OR `python.bat src/files/isaac_fuzzy_robot.py`
+   Windows: `C:\isaacsim\python.bat src\files\isaac_fuzzy_robot.py`
+   Linux: `~/isaacsim/python.sh src/files/isaac_fuzzy_robot.py`
 
 2. Standalone Fallback Mode (scikit-fuzzy controller simulation):
-   `python src/files/isaac_fuzzy_robot.py`
+   `python3 src/files/isaac_fuzzy_robot.py`
 """
 
 import sys
@@ -534,9 +543,9 @@ def build_fuzzy_controller():
     distance['medium'] = fuzz.trimf(distance.universe, [1.0, 2.5, 4.0])
     distance['far'] = fuzz.trimf(distance.universe, [3.0, 5.0, 5.0])
 
-    heading['left'] = fuzz.trimf(heading.universe, [-180, -90, 0])
+    heading['right'] = fuzz.trimf(heading.universe, [-180, -90, 0])
     heading['straight'] = fuzz.trimf(heading.universe, [-30, 0, 30])
-    heading['right'] = fuzz.trimf(heading.universe, [0, 90, 180])
+    heading['left'] = fuzz.trimf(heading.universe, [0, 90, 180])
 
     linear_vel['stop'] = fuzz.trimf(linear_vel.universe, [0.0, 0.0, 0.3])
     linear_vel['slow'] = fuzz.trimf(linear_vel.universe, [0.2, 0.6, 1.0])
@@ -601,6 +610,12 @@ def run_isaac_sim_fuzzy(max_steps=200, step_delay_seconds=1.0):
     obstacle.AddScaleOp().Set(Gf.Vec3f(0.6, 0.6, 0.5))
     obstacle.CreateDisplayColorAttr([Gf.Vec3f(0.9, 0.12, 0.10)])
 
+    target_position = np.array([5.0, 3.0], dtype=float)
+    target = UsdGeom.Sphere.Define(stage, "/World/Target")
+    target.CreateRadiusAttr(0.35)
+    target.AddTranslateOp().Set(Gf.Vec3d(float(target_position[0]), float(target_position[1]), 0.35))
+    target.CreateDisplayColorAttr([Gf.Vec3f(0.1, 0.85, 0.2)])
+
     robot = UsdGeom.Xform.Define(stage, "/World/FuzzyRobot")
     robot_translate = robot.AddTranslateOp()
     robot_rotate = robot.AddRotateZOp()
@@ -636,15 +651,21 @@ def run_isaac_sim_fuzzy(max_steps=200, step_delay_seconds=1.0):
     step_count = 0
     robot_position = np.array([-4.0, 0.0], dtype=float)
     robot_heading = 0.0
+    obstacle_position = np.array([2.0, 0.0], dtype=float)
+    obstacle_clearance_radius = 0.9
     visual_time_step = 0.10
     while simulation_app.is_running() and step_count < max_steps:
         world.step(render=True)
 
-        simulated_obstacle_dist = max(0.5, 5.0 - (step_count * 0.02))
-        simulated_heading_error = 15.0 if step_count < 100 else -45.0
+        obstacle_dist = np.linalg.norm(robot_position - obstacle_position) - obstacle_clearance_radius
+        measured_obstacle_dist = float(np.clip(obstacle_dist, 0.0, 5.0))
+        target_vector = target_position - robot_position
+        desired_heading = np.arctan2(target_vector[1], target_vector[0])
+        heading_error = (desired_heading - robot_heading + np.pi) % (2 * np.pi) - np.pi
+        measured_heading_error = float(np.degrees(heading_error))
 
-        fuzzy_sim.input['distance'] = simulated_obstacle_dist
-        fuzzy_sim.input['heading'] = simulated_heading_error
+        fuzzy_sim.input['distance'] = measured_obstacle_dist
+        fuzzy_sim.input['heading'] = measured_heading_error
 
         try:
             fuzzy_sim.compute()
@@ -663,7 +684,7 @@ def run_isaac_sim_fuzzy(max_steps=200, step_delay_seconds=1.0):
         robot_rotate.Set(float(np.degrees(robot_heading)))
 
         if step_count % 20 == 0:
-            print(f"[Step {step_count:03d}] Distance: {simulated_obstacle_dist:.2f}m | Heading: {simulated_heading_error:.1f}° "
+            print(f"[Step {step_count:03d}] Distance: {measured_obstacle_dist:.2f}m | Heading: {measured_heading_error:.1f}° "
                   f"--> Fuzzy Outputs: Linear Vel = {target_v:.2f} m/s, Angular Vel = {target_w:.2f} rad/s")
 
         step_count += 1
@@ -729,7 +750,6 @@ if __name__ == '__main__':
     else:
         print("[INFO] Running Standalone Mode.")
         run_fallback_fuzzy()
-
 ```
 
 ---

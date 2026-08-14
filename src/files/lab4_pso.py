@@ -10,7 +10,7 @@ This script provides the complete solution for Lab 4 exercises, including:
 5. Parameter investigations (inertia weight w, acceleration constants alpha1 & alpha2)
 
 Execution Mode:
-`python src/files/lab4_pso.py`
+`python3 src/files/lab4_pso.py`
 """
 
 import random
@@ -72,9 +72,11 @@ def compareFitness(pos1, pos2):
 
 
 def calc_avg_fit_diff(particles):
+    """Return mean absolute fitness deviation, normalised for scale."""
     fits = [fit_fcn(p.position) for p in particles]
     mean_fit = np.mean(fits)
-    return float(np.mean([abs(f - mean_fit) for f in fits]))
+    scale = max(float(np.mean(np.abs(fits))), 1.0)
+    return float(np.mean([abs(f - mean_fit) for f in fits]) / scale)
 
 
 def calc_avg_pos_diff(particles):
@@ -83,13 +85,17 @@ def calc_avg_pos_diff(particles):
     return float(np.mean([abs(p - mean_pos) for p in positions]))
 
 
-def run_gbest_pso(alpha=[0.1, 0.1], n_particle=10, inertia_weight=1.0, position_limits=[-100, 100], max_iter=200):
+def run_gbest_pso(alpha=None, n_particle=10, inertia_weight=0.7, position_limits=None, max_iter=200):
+    if alpha is None:
+        alpha = [0.1, 0.1]
+    if position_limits is None:
+        position_limits = [-100, 100]
     particles = initialise_particles(n_particle, position_limits)
     global_best_position = None
     global_best_position_list = []
 
     iteration = 0
-    min_avg_fit_diff = 0.1
+    min_avg_fit_diff = 1e-4
     min_avg_pos_diff = 0.1
 
     while (iteration < max_iter and 
@@ -103,14 +109,13 @@ def run_gbest_pso(alpha=[0.1, 0.1], n_particle=10, inertia_weight=1.0, position_
             if global_best_position is None:
                 global_best_position = particle.position
             else:
-                global_best_position = compareFitness(global_best_position, particle.position)
+                global_best_position = compareFitness(global_best_position, particle.best_position)
 
         global_best_position_list.append(global_best_position)
         
-        # Generate random beta for current iteration
-        beta = [random.random(), random.random()]
-        
         for particle in particles:
+            # Standard PSO uses independent random coefficients per particle.
+            beta = [random.random(), random.random()]
             particle.update_velocity(alpha, beta, global_best_position, inertia_weight)
             particle.update_position(position_limits)
             
@@ -120,6 +125,8 @@ def run_gbest_pso(alpha=[0.1, 0.1], n_particle=10, inertia_weight=1.0, position_
 
 
 def main():
+    random.seed(7)
+    np.random.seed(7)
     print("=====================================================")
     print(" Lab 4: Particle Swarm Optimisation - Exercises     ")
     print("=====================================================")
@@ -130,7 +137,12 @@ def main():
     position_limits = [-100, 100]
     
     print("\n--- 1. Executing Standard gbest PSO ---")
-    particles, gbest, gbest_list, iterations = run_gbest_pso(alpha=alpha, n_particle=n_particle, inertia_weight=1.0)
+    particles, gbest, gbest_list, iterations = run_gbest_pso(
+        alpha=alpha,
+        n_particle=n_particle,
+        inertia_weight=0.7,
+        position_limits=position_limits,
+    )
     print(f"Iterations until convergence: {iterations}")
     print(f"Global Best Position x*: {gbest:.4f}")
     print(f"Minimum Fitness f(x*): {fit_fcn(gbest):.2e}")
@@ -149,13 +161,24 @@ def main():
         position_axes[0].plot(iter_list, particle.position_list, '-o', alpha=0.6, markersize=3)
         position_axes[1].plot(iter_list, [fit_fcn(x) for x in particle.position_list], '-o', alpha=0.6, markersize=3)
 
+    iteration_count = min(len(p.position_list) for p in particles)
+    plot_iterations = list(range(iteration_count))
+    position_axes[2].boxplot(
+        [[p.position_list[i] for p in particles] for i in plot_iterations],
+        positions=plot_iterations,
+    )
+    position_axes[3].boxplot(
+        [[fit_fcn(p.position_list[i]) for p in particles] for i in plot_iterations],
+        positions=plot_iterations,
+    )
+
     plt.tight_layout()
     plt.show()
 
     # Parameter Experiments
     print("\n--- 3. Parameter Sensitivity Investigations ---")
     experiments = [
-        ("Standard (w=1.0, a1=0.1, a2=0.1)", 1.0, [0.1, 0.1]),
+        ("Standard (w=0.7, a1=0.1, a2=0.1)", 0.7, [0.1, 0.1]),
         ("Inertia Weight w=0.5 (w=0.5, a1=0.1, a2=0.1)", 0.5, [0.1, 0.1]),
         ("Reduced Cognitive (w=1.0, a1=0.05, a2=0.1)", 1.0, [0.05, 0.1]),
         ("Zero Cognitive (w=1.0, a1=0.0, a2=0.1)", 1.0, [0.0, 0.1]),

@@ -1,18 +1,18 @@
 # Copyright Author: Dr Tang Tiong Yew
-"""
+r"""
 Fuzzy Logic Robot Obstacle Avoidance Controller in NVIDIA Isaac Sim
 ===================================================================
 This script demonstrates Mamdani Fuzzy Logic Control for autonomous mobile robot navigation
 and obstacle avoidance inside NVIDIA Isaac Sim using `scikit-fuzzy`.
 
 Execution Modes:
-1. NVIDIA Isaac Sim Mode (Full 3D GPU physics & visual simulation):
+1. NVIDIA Isaac Sim Mode (3D visualisation with direct pose updates):
    Run with Isaac Sim's standalone python:
-   `isaac-sim.standalone.bat python src/files/isaac_fuzzy_robot.py`
-   OR `python.bat src/files/isaac_fuzzy_robot.py`
+   Windows: `C:\isaacsim\python.bat src\files\isaac_fuzzy_robot.py`
+   Linux: `~/isaacsim/python.sh src/files/isaac_fuzzy_robot.py`
 
 2. Standalone Fallback Mode (scikit-fuzzy controller simulation):
-   `python src/files/isaac_fuzzy_robot.py`
+   `python3 src/files/isaac_fuzzy_robot.py`
 """
 
 import sys
@@ -55,9 +55,9 @@ def build_fuzzy_controller():
     distance['medium'] = fuzz.trimf(distance.universe, [1.0, 2.5, 4.0])
     distance['far'] = fuzz.trimf(distance.universe, [3.0, 5.0, 5.0])
 
-    heading['left'] = fuzz.trimf(heading.universe, [-180, -90, 0])
+    heading['right'] = fuzz.trimf(heading.universe, [-180, -90, 0])
     heading['straight'] = fuzz.trimf(heading.universe, [-30, 0, 30])
-    heading['right'] = fuzz.trimf(heading.universe, [0, 90, 180])
+    heading['left'] = fuzz.trimf(heading.universe, [0, 90, 180])
 
     linear_vel['stop'] = fuzz.trimf(linear_vel.universe, [0.0, 0.0, 0.3])
     linear_vel['slow'] = fuzz.trimf(linear_vel.universe, [0.2, 0.6, 1.0])
@@ -122,6 +122,12 @@ def run_isaac_sim_fuzzy(max_steps=200, step_delay_seconds=1.0):
     obstacle.AddScaleOp().Set(Gf.Vec3f(0.6, 0.6, 0.5))
     obstacle.CreateDisplayColorAttr([Gf.Vec3f(0.9, 0.12, 0.10)])
 
+    target_position = np.array([5.0, 3.0], dtype=float)
+    target = UsdGeom.Sphere.Define(stage, "/World/Target")
+    target.CreateRadiusAttr(0.35)
+    target.AddTranslateOp().Set(Gf.Vec3d(float(target_position[0]), float(target_position[1]), 0.35))
+    target.CreateDisplayColorAttr([Gf.Vec3f(0.1, 0.85, 0.2)])
+
     robot = UsdGeom.Xform.Define(stage, "/World/FuzzyRobot")
     robot_translate = robot.AddTranslateOp()
     robot_rotate = robot.AddRotateZOp()
@@ -157,15 +163,21 @@ def run_isaac_sim_fuzzy(max_steps=200, step_delay_seconds=1.0):
     step_count = 0
     robot_position = np.array([-4.0, 0.0], dtype=float)
     robot_heading = 0.0
+    obstacle_position = np.array([2.0, 0.0], dtype=float)
+    obstacle_clearance_radius = 0.9
     visual_time_step = 0.10
     while simulation_app.is_running() and step_count < max_steps:
         world.step(render=True)
 
-        simulated_obstacle_dist = max(0.5, 5.0 - (step_count * 0.02))
-        simulated_heading_error = 15.0 if step_count < 100 else -45.0
+        obstacle_dist = np.linalg.norm(robot_position - obstacle_position) - obstacle_clearance_radius
+        measured_obstacle_dist = float(np.clip(obstacle_dist, 0.0, 5.0))
+        target_vector = target_position - robot_position
+        desired_heading = np.arctan2(target_vector[1], target_vector[0])
+        heading_error = (desired_heading - robot_heading + np.pi) % (2 * np.pi) - np.pi
+        measured_heading_error = float(np.degrees(heading_error))
 
-        fuzzy_sim.input['distance'] = simulated_obstacle_dist
-        fuzzy_sim.input['heading'] = simulated_heading_error
+        fuzzy_sim.input['distance'] = measured_obstacle_dist
+        fuzzy_sim.input['heading'] = measured_heading_error
 
         try:
             fuzzy_sim.compute()
@@ -184,7 +196,7 @@ def run_isaac_sim_fuzzy(max_steps=200, step_delay_seconds=1.0):
         robot_rotate.Set(float(np.degrees(robot_heading)))
 
         if step_count % 20 == 0:
-            print(f"[Step {step_count:03d}] Distance: {simulated_obstacle_dist:.2f}m | Heading: {simulated_heading_error:.1f}° "
+            print(f"[Step {step_count:03d}] Distance: {measured_obstacle_dist:.2f}m | Heading: {measured_heading_error:.1f}° "
                   f"--> Fuzzy Outputs: Linear Vel = {target_v:.2f} m/s, Angular Vel = {target_w:.2f} rad/s")
 
         step_count += 1

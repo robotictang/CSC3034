@@ -3,8 +3,8 @@
 NVIDIA Isaac Sim & Standalone Python Script:
 Genetic Algorithm (GA) for Mobile Robot Trajectory & Obstacle Avoidance Optimisation
 
-This script demonstrates how Genetic Algorithms (GA) are used to evolve an optimal
-pathway for a mobile robot navigating through an arena with obstacles towards a target destination.
+This script demonstrates how a Genetic Algorithm (GA) searches for a short,
+collision-free path through an arena. The best path found is not guaranteed globally optimal.
 
 Features:
 1. Dual Execution Modes:
@@ -12,7 +12,7 @@ Features:
    - Photorealistic NVIDIA Isaac Sim Mode (GPU physics & 3D USD stage rendering)
 2. GA Architecture:
    - Binary & Real-Valued Waypoint Encoding
-   - Fitness evaluation incorporating distance to goal, path length, and obstacle collision penalty
+   - Fitness evaluation incorporating path length and exact segment-obstacle collision penalties
    - Roulette Wheel Parent Selection, One-Point Crossover, and Bit-Flip Mutation
 """
 
@@ -91,34 +91,41 @@ def generate_population(pop_size):
     """Initialises a population of random chromosomes."""
     return [generate_individual() for _ in range(pop_size)]
 
+
+def evaluate_trajectory(waypoints):
+    """Return path length and the number of obstacle intersections."""
+    path_length = 0.0
+    num_collisions = 0
+    for p1, p2 in zip(waypoints, waypoints[1:]):
+        segment = p2 - p1
+        segment_length_sq = float(np.dot(segment, segment))
+        path_length += float(np.linalg.norm(segment))
+        for ox, oy, radius in OBSTACLES:
+            center = np.array([ox, oy])
+            if segment_length_sq == 0:
+                closest = p1
+            else:
+                t = float(
+                    np.clip(
+                        np.dot(center - p1, segment) / segment_length_sq,
+                        0.0,
+                        1.0,
+                    )
+                )
+                closest = p1 + t * segment
+            if np.linalg.norm(closest - center) <= radius + 0.3:
+                num_collisions += 1
+    return path_length, num_collisions
+
 def calculate_fitness(chromosome):
     """
     Calculates fitness of a chromosome trajectory.
-    Fitness = 1000 / (1.0 + dist_to_goal*3.0 + path_length*0.2 + num_collisions*40.0)
+    Fitness = 1000 / (1.0 + path_length*0.2 + num_collisions*40.0)
     """
     waypoints = decode_chromosome(chromosome)
-    
-    # 1. Total trajectory length
-    path_length = 0.0
-    for i in range(len(waypoints) - 1):
-        path_length += np.linalg.norm(waypoints[i+1] - waypoints[i])
-        
-    # 2. Distance from final waypoint to Goal
-    dist_to_goal = np.linalg.norm(waypoints[-2] - GOAL_POS[:2])
-    
-    # 3. Obstacle Collision Penalty
-    num_collisions = 0
-    for i in range(len(waypoints) - 1):
-        p1 = waypoints[i]
-        p2 = waypoints[i+1]
-        # Sample points along line segment p1->p2
-        for t in np.linspace(0, 1, 10):
-            pt = p1 + t * (p2 - p1)
-            for ox, oy, r in OBSTACLES:
-                if np.linalg.norm(pt - np.array([ox, oy])) < (r + 0.3): # 0.3m robot margin
-                    num_collisions += 1
-                    
-    fitness = 1000.0 / (1.0 + dist_to_goal * 3.0 + path_length * 0.2 + num_collisions * 40.0)
+    path_length, num_collisions = evaluate_trajectory(waypoints)
+
+    fitness = 1000.0 / (1.0 + path_length * 0.2 + num_collisions * 40.0)
     return max(0.0001, fitness)
 
 def select_parents(population, fitnesses):
@@ -169,8 +176,12 @@ def run_ga_optimization(pop_size=40, max_generations=60, p_crossover=0.85, p_mut
             
         if (gen + 1) % 10 == 0 or gen == 0 or gen == max_generations - 1:
             waypoints = decode_chromosome(population[max_idx])
-            goal_dist = np.linalg.norm(waypoints[-2] - GOAL_POS[:2])
-            print(f'Generation {gen+1:02d}/{max_generations:02d} | Best Fitness: {fitnesses[max_idx]:.2f} | Goal Distance: {goal_dist:.2f}m')
+            path_length, collisions = evaluate_trajectory(waypoints)
+            print(
+                f'Generation {gen+1:02d}/{max_generations:02d} | '
+                f'Best Fitness: {fitnesses[max_idx]:.2f} | '
+                f'Path: {path_length:.2f}m | Collisions: {collisions}'
+            )
             
         # Selection
         parents = select_parents(population, fitnesses)
@@ -185,6 +196,8 @@ def run_ga_optimization(pop_size=40, max_generations=60, p_crossover=0.85, p_mut
             next_population.append(mutate(o2, p_mutation))
             
         population = next_population[:pop_size]
+        # Preserve the best-so-far chromosome (elitism).
+        population[0] = best_overall_chrom
         
     return best_overall_chrom, best_overall_fitness
 

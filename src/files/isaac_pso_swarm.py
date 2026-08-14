@@ -1,17 +1,17 @@
 # Copyright Author: Dr Tang Tiong Yew
-"""
+r"""
 Particle Swarm Optimisation (PSO) for Robot Swarm Simulation
 ============================================================
 This script demonstrates multi-robot target localization using Particle Swarm Optimisation.
 
 Execution Modes:
-1. NVIDIA Isaac Sim Mode (Full 3D GPU physics simulation):
+1. NVIDIA Isaac Sim Mode (3D physics with dynamic-sphere particle proxies):
    Run with Isaac Sim's standalone python:
-   `isaac-sim.standalone.bat python src/files/isaac_pso_swarm.py`
-   OR `python.bat src/files/isaac_pso_swarm.py`
+   Windows: `C:\isaacsim\python.bat src\files\isaac_pso_swarm.py`
+   Linux: `~/isaacsim/python.sh src/files/isaac_pso_swarm.py`
 
 2. Matplotlib Swarm Fallback Mode (Standard Python 2D/3D simulation):
-   `python src/files/isaac_pso_swarm.py`
+   `python3 src/files/isaac_pso_swarm.py`
 """
 
 import os
@@ -156,9 +156,8 @@ def run_isaac_sim_pso(n_robots=10, max_iterations=200, seconds_per_iteration=0.5
                 global_best_fitness = fitness
                 global_best_pos = np.copy(robot.position[:2])
 
-        beta = [np.random.random(), np.random.random()]
-
         for robot in robots:
+            beta = [np.random.random(), np.random.random()]
             robot.update_motion(alpha, beta, global_best_pos)
 
         if iteration % 10 == 0:
@@ -172,7 +171,8 @@ def run_isaac_sim_pso(n_robots=10, max_iterations=200, seconds_per_iteration=0.5
 
         iteration += 1
 
-    print(f"\nTarget Beacon Reached at {global_best_pos} with distance {global_best_fitness:.3f}m")
+    status = "reached" if global_best_fitness < 0.1 else "not reached within the iteration limit"
+    print(f"\nTarget beacon {status}; best position {global_best_pos}, distance {global_best_fitness:.3f}m")
     simulation_app.close()
 
 
@@ -237,8 +237,8 @@ def run_matplotlib_fallback_pso(n_robots=10, max_iterations=100):
                     global_best_pos = np.copy(positions[i])
 
         # 2. Velocity & position updates
-        r1, r2 = np.random.random(), np.random.random()
         for i in range(n_robots):
+            r1, r2 = np.random.random(), np.random.random()
             cognitive = alpha[0] * r1 * (personal_bests[i] - positions[i])
             social = alpha[1] * r2 * (global_best_pos - positions[i])
             velocities[i] = 0.5 * velocities[i] + cognitive + social

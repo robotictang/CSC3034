@@ -37,27 +37,27 @@ graph TD
     Eval --> PBest["3. Update Personal Best p_i (If f(x_i) < f(p_i))"]
     PBest --> GBest["4. Update Global Best p_g (If min(f(p_i)) < f(p_g))"]
     GBest --> Check{"Convergence / Max Iterations Reached?"}
-    Check -->|No| Vel["5. Calculate New Velocity: v_i(t+1) = v_i(t) + alpha1*beta1*(p_i - x_i) + alpha2*beta2*(p_g - x_i)"]
+    Check -->|No| Vel["5. Calculate New Velocity: v_i(t+1) = w*v_i(t) + alpha1*beta1*(p_i - x_i) + alpha2*beta2*(p_g - x_i)"]
     Vel --> Pos["6. Update Position: x_i(t+1) = x_i(t) + v_i(t+1)"]
     Pos --> Eval
-    Check -->|Yes| End["Optimal Solution p_g Found"]
+    Check -->|Yes| End["Return Best Position p_g Found"]
 ```
 
 ### Parameter definition
 
-1. With global best particle swarm optimisaton, the position update function is given by
+1. With global best particle swarm optimisation, the position update function is given by
 
     $$x_i(t+1) = x_i(t) + v_i(t+1)$$
 
     and the velocity update function is
 
-    $$v_i(t+1) = v_i(t) + \alpha_1\beta_1(t) \Big( p_i(t) - x_i(t) \Big) + \alpha_2\beta_2(t)\Big(p_g(t) - x_i(t)\Big)$$
+    $$v_i(t+1) = wv_i(t) + \alpha_1\beta_1(t) \Big( p_i(t) - x_i(t) \Big) + \alpha_2\beta_2(t)\Big(p_g(t) - x_i(t)\Big)$$
 
-2. &alpha;<sub>1</sub> and &alpha;<sub>2</sub> are acceleration constants that are fixed throughout the algorithm. Define a small value for &alpha;<sub>1</sub> and &alpha;<sub>2</sub>, for example `0.1`.
+2. $w$ is the inertia weight; values below `1` damp previous velocity and commonly improve convergence. &alpha;<sub>1</sub> and &alpha;<sub>2</sub> are acceleration constants that remain fixed throughout a run. For this exercise, use `w = 0.7` and `0.1` for both acceleration constants.
 
 ```mermaid
 graph LR
-    X["Current Position x_i(t)"] --> Inertia["Inertia Component: v_i(t)"]
+    X["Current Position x_i(t)"] --> Inertia["Inertia Component: w*v_i(t)"]
     X --> Cog["Cognitive Vector: alpha1*beta1*(p_i - x_i)"]
     X --> Soc["Social Vector: alpha2*beta2*(p_g - x_i)"]
     Inertia --> Sum["Vector Addition (+)"]
@@ -67,11 +67,12 @@ graph LR
     NewV --> NewX["Next Position x_i(t+1)"]
 ```
 
-    ```python
-    alpha = [0.1, 0.1]
-    ```
+```python
+alpha = [0.1, 0.1]
+w = 0.7
+```
 
-3. &beta;<sub>1</sub>(t) and &beta;<sub>2</sub>(t) are random values between `0` and `1` that are regenerated every iteration. Therefore no definition is required.
+3. &beta;<sub>1</sub>(t) and &beta;<sub>2</sub>(t) are random values between `0` and `1`. Standard PSO samples a fresh pair independently for each particle at every update.
 
 4. Also, define the number of particles to run the algorithm with.
 
@@ -84,6 +85,7 @@ graph LR
     ```python
     if __name__ == '__main__':
       alpha = [0.1, 0.1]
+      w = 0.7
       n_particle = 10
     ```
 
@@ -179,7 +181,7 @@ graph LR
       def update_personal_best(...):
         ...
 
-      def update_velocity(self, alpha, beta, glob_best_pos):
+      def update_velocity(self, alpha, beta, glob_best_pos, inertia_weight):
         # alpha is a list of two values. we will access alpha_1 and alpha_2 by alpha[0] and alpha[1] respectively. This also applies to beta.
         # the current position, current velocity, and personal best position of the particle can be accessed by self.position, self.velocity, and self.best_position
         # assign the particle's velocity with the updated velocity
@@ -244,7 +246,7 @@ graph LR
       # termination threshold
       iteration = 0
       max_iter = 200
-      min_avg_fit_diff = 0.1
+      min_avg_fit_diff = 1e-4  # normalised fitness spread
       min_avg_pos_diff = 0.1
       # initialise particles
       particles = initialise_particles(n_particle, position_limits)
@@ -258,11 +260,11 @@ graph LR
             global_best_position = particle.position
           else:
             global_best_position = compareFitness(global_best_position, particle.position)
-        # generate beta randomly for current iteration
-        beta = [random.random(), random.random()]
         for particle in particles:
+          # independent random coefficients for this particle update
+          beta = [random.random(), random.random()]
           # update velocity
-          particle.update_velocity(alpha, beta, global_best_position)
+          particle.update_velocity(alpha, beta, global_best_position, w)
           # update position
           particle.update_position(position_limits)
         iteration += 1
@@ -438,7 +440,7 @@ Consider a swarm of $N$ mobile robots deployed in a 3D environment. A target bea
    $$v_{i,x}(t+1) = w \cdot v_{i,x}(t) + \alpha_1 \beta_1(t) \Big(p_{i,x}(t) - x_i(t)\Big) + \alpha_2 \beta_2(t) \Big(p_{g,x}(t) - x_i(t)\Big)$$
    $$v_{i,y}(t+1) = w \cdot v_{i,y}(t) + \alpha_1 \beta_1(t) \Big(p_{i,y}(t) - y_i(t)\Big) + \alpha_2 \beta_2(t) \Big(p_{g,y}(t) - y_i(t)\Big)$$
 
-3. **Robot Control**: The 2D velocity vector $(v_{i,x}, v_{i,y})$ is set as physical linear velocity commands for the robot body inside Isaac Sim.
+3. **Particle Motion**: The supplied educational example applies the 2D velocity to dynamic sphere proxies in the physics scene. These proxies are not wheeled mobile robots; a robot extension would translate the vector into wheel commands and enforce its kinematics.
 
 ### Python Implementation in NVIDIA Isaac Sim
 
@@ -448,19 +450,19 @@ Below is the complete standalone Python implementation using Isaac Sim's Python 
 
 ```python
 # Copyright Author: Dr Tang Tiong Yew
-"""
+r"""
 Particle Swarm Optimisation (PSO) for Robot Swarm Simulation
 ============================================================
 This script demonstrates multi-robot target localization using Particle Swarm Optimisation.
 
 Execution Modes:
-1. NVIDIA Isaac Sim Mode (Full 3D GPU physics simulation):
+1. NVIDIA Isaac Sim Mode (3D physics with dynamic-sphere particle proxies):
    Run with Isaac Sim's standalone python:
-   `isaac-sim.standalone.bat python src/files/isaac_pso_swarm.py`
-   OR `python.bat src/files/isaac_pso_swarm.py`
+   Windows: `C:\isaacsim\python.bat src\files\isaac_pso_swarm.py`
+   Linux: `~/isaacsim/python.sh src/files/isaac_pso_swarm.py`
 
 2. Matplotlib Swarm Fallback Mode (Standard Python 2D/3D simulation):
-   `python src/files/isaac_pso_swarm.py`
+   `python3 src/files/isaac_pso_swarm.py`
 """
 
 import os
@@ -605,9 +607,8 @@ def run_isaac_sim_pso(n_robots=10, max_iterations=200, seconds_per_iteration=0.5
                 global_best_fitness = fitness
                 global_best_pos = np.copy(robot.position[:2])
 
-        beta = [np.random.random(), np.random.random()]
-
         for robot in robots:
+            beta = [np.random.random(), np.random.random()]
             robot.update_motion(alpha, beta, global_best_pos)
 
         if iteration % 10 == 0:
@@ -621,7 +622,8 @@ def run_isaac_sim_pso(n_robots=10, max_iterations=200, seconds_per_iteration=0.5
 
         iteration += 1
 
-    print(f"\nTarget Beacon Reached at {global_best_pos} with distance {global_best_fitness:.3f}m")
+    status = "reached" if global_best_fitness < 0.1 else "not reached within the iteration limit"
+    print(f"\nTarget beacon {status}; best position {global_best_pos}, distance {global_best_fitness:.3f}m")
     simulation_app.close()
 
 
@@ -686,8 +688,8 @@ def run_matplotlib_fallback_pso(n_robots=10, max_iterations=100):
                     global_best_pos = np.copy(positions[i])
 
         # 2. Velocity & position updates
-        r1, r2 = np.random.random(), np.random.random()
         for i in range(n_robots):
+            r1, r2 = np.random.random(), np.random.random()
             cognitive = alpha[0] * r1 * (personal_bests[i] - positions[i])
             social = alpha[1] * r2 * (global_best_pos - positions[i])
             velocities[i] = 0.5 * velocities[i] + cognitive + social
@@ -722,7 +724,6 @@ if __name__ == "__main__":
         run_isaac_sim_pso()
     else:
         run_matplotlib_fallback_pso()
-
 ```
 
 ### Key Differences: Mathematical vs Physical Swarm PSO
@@ -730,13 +731,13 @@ if __name__ == "__main__":
 ```mermaid
 graph LR
     subgraph Swarm ["Isaac Sim Multi-Robot Swarm"]
-        R1["Robot 1"]
-        R2["Robot 2"]
-        R3["Robot N"]
+        R1["Dynamic Sphere 1"]
+        R2["Dynamic Sphere 2"]
+        R3["Dynamic Sphere N"]
     end
     
     subgraph PSOAlg ["Swarm Controller"]
-        Sensing["Target Distance Sensing"]
+        Sensing["Distance from Scene Poses"]
         GBestUpdate["Global Best p_g Tracking"]
         MotorDrive["Motor Velocity Commands"]
     end

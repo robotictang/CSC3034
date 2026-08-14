@@ -6,6 +6,10 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
+        <meta name="description" content="Computational Intelligence teaching materials by Dr Tang Tiong Yew">
+      
+      
+        <meta name="author" content="Dr Tang Tiong Yew">
       
       
       
@@ -2576,7 +2580,7 @@
 <ol>
 <li>
 <p>As the inputs will be the antecedents of the rules, construct the variables <code>speed</code> and <code>distance</code> as <code>skfuzzy.control.Antecedent</code> objects. </p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">speed</span> <span class="o">=</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">Antecedent</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">85</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span> <span class="s1">&#39;speed&#39;</span><span class="p">)</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">speed</span> <span class="o">=</span> <span class="n">ctrl</span><span class="o">.</span><span class="n">Antecedent</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">85.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span> <span class="s1">&#39;speed&#39;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
 </li>
 <li>
@@ -2790,7 +2794,7 @@
 </table>
 </li>
 <li>
-<p>The fit vector of a linguitic value can be assigned to a linguistic variable using</p>
+<p>The fit vector of a linguistic value can be assigned to a linguistic variable using</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">speed</span><span class="p">[</span><span class="s1">&#39;stopped&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">trimf</span><span class="p">(</span><span class="n">speed</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
 <span class="n">speed</span><span class="p">[</span><span class="s1">&#39;very slow&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mf</span><span class="o">.</span><span class="n">trimf</span><span class="p">(</span><span class="n">speed</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
@@ -2807,7 +2811,7 @@
 <h4 id="define-rules">Define rules<a class="headerlink" href="#define-rules" title="Permanent link">&para;</a></h4>
 <ol>
 <li>
-<p>The rules for this system are displayed in the following fuzzy association memory (FAM) representaion table.</p>
+<p>The rules for this system are displayed in the following fuzzy association memory (FAM) representation table.</p>
 <p><div class="md-typeset__scrollwrap">
 <table class="fam-table">
 <tr>
@@ -2873,26 +2877,38 @@
 </li>
 </ol>
 <pre class="mermaid"><code>graph TD
-    InS["Speed Input e.g. 35 km/h"] --&gt; MF1["Compute Membership: speed['slow']"]
+    InS["Speed Input e.g. 6.5 km/h"] --&gt; MF1["Compute Membership: speed['slow']"]
     InD["Distance Input e.g. 150 m"] --&gt; MF2["Compute Membership: distance['near']"]
 
     MF1 --&gt; AND["AND Operation (min membership)"]
     MF2 --&gt; AND
 
-    AND --&gt; RuleOut["Fire Rule Consequent: brake['slight'], throttle['slight']"]
+    AND --&gt; RuleOut["Fire Rule Consequent: brake['very slight'], throttle['slight']"]
     RuleOut --&gt; Agg["Aggregate Consequents across Rules (max)"]
     Agg --&gt; Centroid["Defuzzify via Centroid"]
     Centroid --&gt; OutB["Crisp Brake %"]
     Centroid --&gt; OutT["Crisp Throttle %"]</code></pre>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code>If the antecedent consists of multiple parts, they can be combined using operators `|` (OR), `&amp;` (AND), and `~` (NOT).
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span></pre></div></td><td class="code"><div><pre><span></span><code>If the antecedent consists of multiple parts, they can be combined using operators `|` (OR), `&amp;` (AND), and `~` (NOT).
 
 If the consequent consists of multiple parts, they can be combined as a `list`/`tuple`.
 
 **Task**: Define all the rules. Then combine all the rules in a `list`, i.e. `rules = [rule1, rule2, ...]`.
+
+!!! warning &quot;Rule coverage&quot;
+    Blank FAM cells produce no output when no other membership overlaps a
+    populated cell. That is acceptable for this focused exercise, but a
+    real train controller must define safe behavior over the entire input
+    space rather than silently replacing undefined outputs with zero.
 </code></pre></div></td></tr></table></div>
 <h4 id="construct-the-fuzzy-control-system">Construct the fuzzy control system<a class="headerlink" href="#construct-the-fuzzy-control-system" title="Permanent link">&para;</a></h4>
 <ol>
@@ -2907,7 +2923,8 @@ If the consequent consists of multiple parts, they can be combined as a `list`/`
 </code></pre></div></td></tr></table></div>
 </li>
 <li>
-<p>To obtain the values for <code>brake</code> and <code>throttle</code> given that <code>speed</code> is 30 km/h and <code>distance</code> is 6 m,</p>
+<p>To obtain the values for <code>brake</code> and <code>throttle</code> given that <code>speed</code> is
+   30 km/h and <code>distance</code> is 2000 m,</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>
@@ -3109,7 +3126,7 @@ If the consequent consists of multiple parts, they can be combined as a `list`/`
 </ul>
 </li>
 <li>
-<p>The rules are displayed in the following fuzzy association memory (FAM) representaion table.</p>
+<p>The rules are displayed in the following fuzzy association memory (FAM) representation table.</p>
 <p><div class="md-typeset__scrollwrap">
 <table class="fam-table">
 <tr>
@@ -3176,7 +3193,7 @@ If the consequent consists of multiple parts, they can be combined as a `list`/`
 <p>You can download the full Python script here: <a href="files/lab2_fuzzy.py">lab2_fuzzy.py</a></p>
 <hr />
 <h2 id="nvidia-isaac-sim-example-fuzzy-logic-robot-obstacle-avoidance-controller">NVIDIA Isaac Sim Example: Fuzzy Logic Robot Obstacle Avoidance Controller<a class="headerlink" href="#nvidia-isaac-sim-example-fuzzy-logic-robot-obstacle-avoidance-controller" title="Permanent link">&para;</a></h2>
-<p>Fuzzy Logic Controllers (FLC) are extensively used in autonomous mobile robotics to handle uncertainty and non-linear dynamics during navigation. In this section, we build a <strong>Mamdani Fuzzy Inference System</strong> using <code>scikit-fuzzy</code> and integrate it into an <strong>NVIDIA Isaac Sim</strong> simulation loop to autonomously navigate a mobile robot while avoiding obstacles.</p>
+<p>Fuzzy Logic Controllers (FLCs) are widely used in mobile robotics to handle uncertainty and nonlinear dynamics. This example builds a <strong>Mamdani fuzzy inference system</strong> with <code>scikit-fuzzy</code> and uses Isaac Sim to visualise the resulting planar motion. It is an educational controller demonstration: distance and heading are calculated from scene geometry, and the robot pose is updated directly rather than through simulated range sensors, wheel joints, or contact physics.</p>
 <h3 id="1-fuzzy-logic-controller-architecture">1. Fuzzy Logic Controller Architecture<a class="headerlink" href="#1-fuzzy-logic-controller-architecture" title="Permanent link">&para;</a></h3>
 <p>The controller uses 2 inputs (distance to obstacle &amp; heading error to target) and computes 2 control outputs (linear velocity &amp; angular steering velocity):</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
@@ -3199,7 +3216,7 @@ If the consequent consists of multiple parts, they can be combined as a `list`/`
 <span class="normal">18</span>
 <span class="normal">19</span></pre></div></td><td class="code"><div><pre><span></span><code>       +-----------------------+
        |   NVIDIA Isaac Sim    |
-       |  Sensors (Range/Pose) |
+       | Scene Geometry/Pose   |
        +-----------+-----------+
                    |
      [distance]    |    [heading]
@@ -3214,19 +3231,19 @@ If the consequent consists of multiple parts, they can be combined as a `list`/`
                    v
        +-----------+-----------+
        |  NVIDIA Isaac Sim     |
-       | Robot Motor Actuators |
+       | Visual Pose Update    |
        +-----------------------+
 </code></pre></div></td></tr></table></div>
 <h4 id="inputs-antecedents">Inputs (Antecedents)<a class="headerlink" href="#inputs-antecedents" title="Permanent link">&para;</a></h4>
 <ol>
-<li><strong><code>distance</code> (<span class="arithmatex">\(0 \text{ to } 5 \text{ m}\)</span>)</strong>: Distance from front sensor to closest obstacle barrier.</li>
+<li><strong><code>distance</code> (<span class="arithmatex">\(0 \text{ to } 5 \text{ m}\)</span>)</strong>: Geometric distance from the robot to the obstacle centre, clipped to the input range.</li>
 <li><code>near</code>: <code>[0.0, 0.0, 1.5]</code></li>
 <li><code>medium</code>: <code>[1.0, 2.5, 4.0]</code></li>
 <li><code>far</code>: <code>[3.0, 5.0, 5.0]</code></li>
 <li><strong><code>heading</code> (<span class="arithmatex">\(-180^\circ \text{ to } +180^\circ\)</span>)</strong>: Angle offset towards target destination.</li>
-<li><code>left</code>: <code>[-180, -90, 0]</code></li>
+<li><code>right</code>: <code>[-180, -90, 0]</code></li>
 <li><code>straight</code>: <code>[-30, 0, 30]</code></li>
-<li><code>right</code>: <code>[0, 90, 180]</code></li>
+<li><code>left</code>: <code>[0, 90, 180]</code></li>
 </ol>
 <h4 id="outputs-consequents">Outputs (Consequents)<a class="headerlink" href="#outputs-consequents" title="Permanent link">&para;</a></h4>
 <ol>
@@ -3494,21 +3511,33 @@ If the consequent consists of multiple parts, they can be combined as a `list`/`
 <span class="normal">249</span>
 <span class="normal">250</span>
 <span class="normal">251</span>
-<span class="normal">252</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="c1"># Copyright Author: Dr Tang Tiong Yew</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="c1"># Copyright Author: Dr Tang Tiong Yew</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Fuzzy Logic Robot Obstacle Avoidance Controller in NVIDIA Isaac Sim</span>
 <span class="sd">===================================================================</span>
 <span class="sd">This script demonstrates Mamdani Fuzzy Logic Control for autonomous mobile robot navigation</span>
 <span class="sd">and obstacle avoidance inside NVIDIA Isaac Sim using `scikit-fuzzy`.</span>
 
 <span class="sd">Execution Modes:</span>
-<span class="sd">1. NVIDIA Isaac Sim Mode (Full 3D GPU physics &amp; visual simulation):</span>
+<span class="sd">1. NVIDIA Isaac Sim Mode (3D visualisation with direct pose updates):</span>
 <span class="sd">   Run with Isaac Sim&#39;s standalone python:</span>
-<span class="sd">   `isaac-sim.standalone.bat python src/files/isaac_fuzzy_robot.py`</span>
-<span class="sd">   OR `python.bat src/files/isaac_fuzzy_robot.py`</span>
+<span class="sd">   Windows: `C:\isaacsim\python.bat src\files\isaac_fuzzy_robot.py`</span>
+<span class="sd">   Linux: `~/isaacsim/python.sh src/files/isaac_fuzzy_robot.py`</span>
 
 <span class="sd">2. Standalone Fallback Mode (scikit-fuzzy controller simulation):</span>
-<span class="sd">   `python src/files/isaac_fuzzy_robot.py`</span>
+<span class="sd">   `python3 src/files/isaac_fuzzy_robot.py`</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
@@ -3551,9 +3580,9 @@ If the consequent consists of multiple parts, they can be combined as a `list`/`
     <span class="n">distance</span><span class="p">[</span><span class="s1">&#39;medium&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">trimf</span><span class="p">(</span><span class="n">distance</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">])</span>
     <span class="n">distance</span><span class="p">[</span><span class="s1">&#39;far&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">trimf</span><span class="p">(</span><span class="n">distance</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span> <span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">])</span>
 
-    <span class="n">heading</span><span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">trimf</span><span class="p">(</span><span class="n">heading</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span> <span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">heading</span><span class="p">[</span><span class="s1">&#39;right&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">trimf</span><span class="p">(</span><span class="n">heading</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span> <span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
     <span class="n">heading</span><span class="p">[</span><span class="s1">&#39;straight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">trimf</span><span class="p">(</span><span class="n">heading</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">30</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">30</span><span class="p">])</span>
-    <span class="n">heading</span><span class="p">[</span><span class="s1">&#39;right&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">trimf</span><span class="p">(</span><span class="n">heading</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">180</span><span class="p">])</span>
+    <span class="n">heading</span><span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">trimf</span><span class="p">(</span><span class="n">heading</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">180</span><span class="p">])</span>
 
     <span class="n">linear_vel</span><span class="p">[</span><span class="s1">&#39;stop&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">trimf</span><span class="p">(</span><span class="n">linear_vel</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span>
     <span class="n">linear_vel</span><span class="p">[</span><span class="s1">&#39;slow&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">trimf</span><span class="p">(</span><span class="n">linear_vel</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
@@ -3618,6 +3647,12 @@ If the consequent consists of multiple parts, they can be combined as a `list`/`
     <span class="n">obstacle</span><span class="o">.</span><span class="n">AddScaleOp</span><span class="p">()</span><span class="o">.</span><span class="n">Set</span><span class="p">(</span><span class="n">Gf</span><span class="o">.</span><span class="n">Vec3f</span><span class="p">(</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
     <span class="n">obstacle</span><span class="o">.</span><span class="n">CreateDisplayColorAttr</span><span class="p">([</span><span class="n">Gf</span><span class="o">.</span><span class="n">Vec3f</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.12</span><span class="p">,</span> <span class="mf">0.10</span><span class="p">)])</span>
 
+    <span class="n">target_position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="n">UsdGeom</span><span class="o">.</span><span class="n">Sphere</span><span class="o">.</span><span class="n">Define</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="s2">&quot;/World/Target&quot;</span><span class="p">)</span>
+    <span class="n">target</span><span class="o">.</span><span class="n">CreateRadiusAttr</span><span class="p">(</span><span class="mf">0.35</span><span class="p">)</span>
+    <span class="n">target</span><span class="o">.</span><span class="n">AddTranslateOp</span><span class="p">()</span><span class="o">.</span><span class="n">Set</span><span class="p">(</span><span class="n">Gf</span><span class="o">.</span><span class="n">Vec3d</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">target_position</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">target_position</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="mf">0.35</span><span class="p">))</span>
+    <span class="n">target</span><span class="o">.</span><span class="n">CreateDisplayColorAttr</span><span class="p">([</span><span class="n">Gf</span><span class="o">.</span><span class="n">Vec3f</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)])</span>
+
     <span class="n">robot</span> <span class="o">=</span> <span class="n">UsdGeom</span><span class="o">.</span><span class="n">Xform</span><span class="o">.</span><span class="n">Define</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="s2">&quot;/World/FuzzyRobot&quot;</span><span class="p">)</span>
     <span class="n">robot_translate</span> <span class="o">=</span> <span class="n">robot</span><span class="o">.</span><span class="n">AddTranslateOp</span><span class="p">()</span>
     <span class="n">robot_rotate</span> <span class="o">=</span> <span class="n">robot</span><span class="o">.</span><span class="n">AddRotateZOp</span><span class="p">()</span>
@@ -3653,15 +3688,21 @@ If the consequent consists of multiple parts, they can be combined as a `list`/`
     <span class="n">step_count</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">robot_position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">robot_heading</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">obstacle_position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">obstacle_clearance_radius</span> <span class="o">=</span> <span class="mf">0.9</span>
     <span class="n">visual_time_step</span> <span class="o">=</span> <span class="mf">0.10</span>
     <span class="k">while</span> <span class="n">simulation_app</span><span class="o">.</span><span class="n">is_running</span><span class="p">()</span> <span class="ow">and</span> <span class="n">step_count</span> <span class="o">&lt;</span> <span class="n">max_steps</span><span class="p">:</span>
         <span class="n">world</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">render</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="n">simulated_obstacle_dist</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">5.0</span> <span class="o">-</span> <span class="p">(</span><span class="n">step_count</span> <span class="o">*</span> <span class="mf">0.02</span><span class="p">))</span>
-        <span class="n">simulated_heading_error</span> <span class="o">=</span> <span class="mf">15.0</span> <span class="k">if</span> <span class="n">step_count</span> <span class="o">&lt;</span> <span class="mi">100</span> <span class="k">else</span> <span class="o">-</span><span class="mf">45.0</span>
+        <span class="n">obstacle_dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">robot_position</span> <span class="o">-</span> <span class="n">obstacle_position</span><span class="p">)</span> <span class="o">-</span> <span class="n">obstacle_clearance_radius</span>
+        <span class="n">measured_obstacle_dist</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">obstacle_dist</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">))</span>
+        <span class="n">target_vector</span> <span class="o">=</span> <span class="n">target_position</span> <span class="o">-</span> <span class="n">robot_position</span>
+        <span class="n">desired_heading</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">target_vector</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">target_vector</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">heading_error</span> <span class="o">=</span> <span class="p">(</span><span class="n">desired_heading</span> <span class="o">-</span> <span class="n">robot_heading</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+        <span class="n">measured_heading_error</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">heading_error</span><span class="p">))</span>
 
-        <span class="n">fuzzy_sim</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="s1">&#39;distance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">simulated_obstacle_dist</span>
-        <span class="n">fuzzy_sim</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="s1">&#39;heading&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">simulated_heading_error</span>
+        <span class="n">fuzzy_sim</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="s1">&#39;distance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">measured_obstacle_dist</span>
+        <span class="n">fuzzy_sim</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="s1">&#39;heading&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">measured_heading_error</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">fuzzy_sim</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
@@ -3680,7 +3721,7 @@ If the consequent consists of multiple parts, they can be combined as a `list`/`
         <span class="n">robot_rotate</span><span class="o">.</span><span class="n">Set</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">robot_heading</span><span class="p">)))</span>
 
         <span class="k">if</span> <span class="n">step_count</span> <span class="o">%</span> <span class="mi">20</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Step </span><span class="si">{</span><span class="n">step_count</span><span class="si">:</span><span class="s2">03d</span><span class="si">}</span><span class="s2">] Distance: </span><span class="si">{</span><span class="n">simulated_obstacle_dist</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">m | Heading: </span><span class="si">{</span><span class="n">simulated_heading_error</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">° &quot;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Step </span><span class="si">{</span><span class="n">step_count</span><span class="si">:</span><span class="s2">03d</span><span class="si">}</span><span class="s2">] Distance: </span><span class="si">{</span><span class="n">measured_obstacle_dist</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">m | Heading: </span><span class="si">{</span><span class="n">measured_heading_error</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">° &quot;</span>
                   <span class="sa">f</span><span class="s2">&quot;--&gt; Fuzzy Outputs: Linear Vel = </span><span class="si">{</span><span class="n">target_v</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> m/s, Angular Vel = </span><span class="si">{</span><span class="n">target_w</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> rad/s&quot;</span><span class="p">)</span>
 
         <span class="n">step_count</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -3778,6 +3819,10 @@ Copyright Author: Dr Tang Tiong Yew
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
       <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; Dr Tang Tiong Yew
+    </div>
   
   
     Made with

@@ -13,7 +13,7 @@ This script provides the complete solution for Lab 3 exercises, including:
 8. Complete GA optimization loop execution
 
 Execution Mode:
-`python src/files/lab3_ga.py`
+`python3 src/files/lab3_ga.py`
 """
 
 import random
@@ -22,7 +22,7 @@ import numpy as np
 
 def value2binary(value, bits=6):
     """Converts an integer decimal value to its binary string representation."""
-    val_clamped = max(0, int(value))
+    val_clamped = min((1 << bits) - 1, max(0, int(value)))
     return format(val_clamped, f'0{bits}b')
 
 
@@ -39,7 +39,7 @@ def generatePopulation(pop_size, pop_min, pop_max):
 def calculateFitness(value, w=20, h=15):
     """
     Calculates the fitness of a chromosome (side length x in cm).
-    Maximizes number of squares and square area cut from paper of width w and height h.
+    Maximises total used paper area for a sheet of width w and height h.
     """
     x = value
     if x <= 0 or x > min(w, h):
@@ -89,13 +89,14 @@ def crossover(parents, bits=6):
     return [o1, o2]
 
 
-def mutate(chromosome, p_mutation=0.05, bits=6):
-    """Mutates each gene of a chromosome based on mutation probability."""
+def mutate(chromosome, p_mutation=0.05, bits=6, value_min=1, value_max=10):
+    """Mutate a chromosome and repair it to the permitted problem domain."""
     b_str = list(value2binary(chromosome, bits))
     for i in range(len(b_str)):
         if random.random() < p_mutation:
             b_str[i] = '1' if b_str[i] == '0' else '0'
-    return binary2value(''.join(b_str))
+    mutated = binary2value(''.join(b_str))
+    return min(value_max, max(value_min, mutated))
 
 
 def findOverallDistance(chromosomes):
@@ -147,6 +148,8 @@ def main():
     p_mutation = 0.05
 
     population = [generatePopulation(pop_size, pop_min, pop_max)]
+    best_solution = max(population[0], key=calculateFitness)
+    best_fitness = calculateFitness(best_solution)
 
     while curr_iter < max_iter and findOverallDistance(population[-1]) > min_overalldistance:
         curr_iter += 1
@@ -163,16 +166,19 @@ def main():
             
         # Perform mutation
         mutated_pop = [mutate(o, p_mutation) for o in offsprings]
+        # Preserve the best solution found so far (elitism).
+        candidate = max(mutated_pop, key=calculateFitness)
+        candidate_fitness = calculateFitness(candidate)
+        if candidate_fitness > best_fitness:
+            best_solution = candidate
+            best_fitness = candidate_fitness
+        mutated_pop[0] = best_solution
         population.append(mutated_pop)
 
         if curr_iter % 10 == 0 or curr_iter == 1:
             best_in_gen = max(mutated_pop, key=calculateFitness)
             best_fit = calculateFitness(best_in_gen)
             print(f"Generation {curr_iter:02d} | Best Chromosome (side length x): {best_in_gen} cm | Fitness: {best_fit:.1f}")
-
-    final_pop = population[-1]
-    best_solution = max(final_pop, key=calculateFitness)
-    best_fitness = calculateFitness(best_solution)
 
     print("\n=====================================================")
     print(f" GA Optimisation Finished at Generation {curr_iter}")

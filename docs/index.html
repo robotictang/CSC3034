@@ -6,6 +6,10 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
+        <meta name="description" content="Computational Intelligence teaching materials by Dr Tang Tiong Yew">
+      
+      
+        <meta name="author" content="Dr Tang Tiong Yew">
       
       
       
@@ -291,56 +295,59 @@
 <p>In this module, advanced practical sessions incorporate <strong>NVIDIA Isaac Sim</strong>, a state-of-the-art, GPU-accelerated 3D robotics simulation platform built on <strong>NVIDIA Omniverse</strong> and <strong>PhysX 5</strong>. Powered by OpenUSD (Universal Scene Description), Isaac Sim enables photo-realistic rendering (RTX ray tracing) and precise physical dynamics for swarm robotics and autonomous systems.</p>
 <div class="admonition info">
 <p class="admonition-title">Why NVIDIA Isaac Sim in Computational Intelligence?</p>
-<p>Traditional CI labs evaluate algorithms using 2D mathematical functions or static plots. Integrating Isaac Sim allows students to observe how metaheuristic search and swarm intelligence algorithms behave when deployed on <strong>physical robotic agents</strong> with kinematics, momentum, waypoints, and 3D spatial constraints.</p>
+<p>Traditional CI labs evaluate algorithms using 2D mathematical functions or static plots. Integrating Isaac Sim lets students visualise computational-intelligence outputs in a 3D scene and, in selected examples, observe simple physics-driven proxies. These introductory scripts do not all model complete robot kinematics, sensors, or actuators.</p>
 </div>
 <h3 id="practical-applications-in-the-labs">Practical Applications in the Labs<a class="headerlink" href="#practical-applications-in-the-labs" title="Permanent link">&para;</a></h3>
 <p>NVIDIA Isaac Sim examples are integrated into the Evolutionary Computation (EC) practicals:</p>
 <ul>
-<li><strong><a href="lab3.html">Lab 3: Genetic Algorithms (GA)</a></strong>: Evolving 3D spatial waypoint trajectories for mobile robots navigating around obstacles in a bounded arena.</li>
-<li><strong><a href="lab4.html">Lab 4: Particle Swarm Optimization (PSO)</a></strong>: Physical multi-robot swarm target search, driving dynamic robot prims toward global best coordinates (<span class="arithmatex">\(p_g\)</span>) in real time.</li>
-<li><strong><a href="lab5.html">Lab 5: Ant Colony Optimization (ACO)</a></strong>: Swarm route-finding on continuous waypoint graphs with dynamic pheromone decay and deposition mapped to physical robot velocities.</li>
+<li><strong><a href="lab3.html">Lab 3: Genetic Algorithms (GA)</a></strong>: Evolving planar waypoint trajectories around obstacles, then visualising the best trajectory in a 3D stage.</li>
+<li><strong><a href="lab4.html">Lab 4: Particle Swarm Optimization (PSO)</a></strong>: Driving dynamic sphere proxies toward global-best coordinates (<span class="arithmatex">\(p_g\)</span>) in a physics scene.</li>
+<li><strong><a href="lab5.html">Lab 5: Ant Colony Optimization (ACO)</a></strong>: Route-finding on a discrete waypoint graph with pheromone decay and interpolated visual ant markers.</li>
 </ul>
 <hr />
 <h2 id="system-requirements-prerequisites">System Requirements &amp; Prerequisites<a class="headerlink" href="#system-requirements-prerequisites" title="Permanent link">&para;</a></h2>
-<p>To run the NVIDIA Isaac Sim 3D physical simulation mode, your system should meet the following minimum requirements:</p>
+<p>The following table summarizes the NVIDIA-published requirements for Isaac Sim
+6.0 on x86-64 systems. Requirements change between releases, so check the
+<a href="https://docs.isaacsim.omniverse.nvidia.com/latest/installation/requirements.html">official requirements page</a>
+and run the compatibility checker before installation.</p>
 <table>
 <thead>
 <tr>
 <th style="text-align: left;">Requirement</th>
-<th style="text-align: left;">Minimum Specification</th>
-<th style="text-align: left;">Recommended Specification</th>
+<th style="text-align: left;">Minimum</th>
+<th style="text-align: left;">Good</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align: left;"><strong>GPU</strong></td>
-<td style="text-align: left;">NVIDIA GeForce RTX 2060 (or RTX Quadro equivalent)</td>
-<td style="text-align: left;">NVIDIA GeForce RTX 3070 / 4070 or higher</td>
+<td style="text-align: left;">NVIDIA GeForce RTX 4080</td>
+<td style="text-align: left;">NVIDIA GeForce RTX 5080</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>GPU Memory (VRAM)</strong></td>
-<td style="text-align: left;">8 GB VRAM</td>
-<td style="text-align: left;">12 GB+ VRAM</td>
+<td style="text-align: left;">16 GB</td>
+<td style="text-align: left;">16 GB or more</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>System RAM</strong></td>
-<td style="text-align: left;">16 GB RAM</td>
-<td style="text-align: left;">32 GB RAM</td>
+<td style="text-align: left;">32 GB</td>
+<td style="text-align: left;">64 GB</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>Operating System</strong></td>
-<td style="text-align: left;">Windows 10 / 11 (64-bit) or Ubuntu 20.04 / 22.04 LTS</td>
-<td style="text-align: left;">Windows 11 (64-bit) or Ubuntu 22.04 LTS</td>
+<td style="text-align: left;">Windows 11 or Ubuntu 22.04/24.04</td>
+<td style="text-align: left;">Windows 11 or Ubuntu 22.04/24.04</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>NVIDIA Driver</strong></td>
-<td style="text-align: left;">Version 535.xx or newer (with CUDA 12.x support)</td>
-<td style="text-align: left;">Latest Production Branch / Studio Driver</td>
+<td style="text-align: left;">Linux 580.95.05 / Windows 581.42</td>
+<td style="text-align: left;">Current NVIDIA-tested driver</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Disk Space</strong></td>
-<td style="text-align: left;">50 GB free disk space</td>
-<td style="text-align: left;">NVMe SSD with 100 GB free space</td>
+<td style="text-align: left;"><strong>Storage</strong></td>
+<td style="text-align: left;">50 GB SSD</td>
+<td style="text-align: left;">500 GB SSD</td>
 </tr>
 </tbody>
 </table>
@@ -350,28 +357,33 @@
 </div>
 <hr />
 <h2 id="nvidia-isaac-sim-installation-setup-steps">NVIDIA Isaac Sim Installation &amp; Setup Steps<a class="headerlink" href="#nvidia-isaac-sim-installation-setup-steps" title="Permanent link">&para;</a></h2>
-<p>Follow these steps to set up NVIDIA Isaac Sim on your workstation:</p>
-<h3 id="step-1-install-nvidia-omniverse-launcher">Step 1: Install NVIDIA Omniverse Launcher<a class="headerlink" href="#step-1-install-nvidia-omniverse-launcher" title="Permanent link">&para;</a></h3>
+<p>The Omniverse Launcher was deprecated on 1 October 2025. Use NVIDIA's current
+<a href="https://docs.isaacsim.omniverse.nvidia.com/latest/installation/install_workstation.html">workstation installation</a>
+instead:</p>
 <ol>
-<li>Download the <strong>NVIDIA Omniverse Launcher</strong> from the official website:<br />
-<a href="https://www.nvidia.com/en-us/omniverse/">https://www.nvidia.com/en-us/omniverse/</a></li>
-<li>Run the installer and sign in with your NVIDIA account.</li>
-</ol>
-<h3 id="step-2-install-isaac-sim-app">Step 2: Install Isaac Sim App<a class="headerlink" href="#step-2-install-isaac-sim-app" title="Permanent link">&para;</a></h3>
-<ol>
-<li>Open <strong>Omniverse Launcher</strong> and navigate to the <strong>Exchange</strong> tab.</li>
-<li>Search for <strong>Isaac Sim</strong>.</li>
-<li>Click <strong>Install</strong> (select the latest release, e.g., Isaac Sim 4.2.0 or 4.5.0).</li>
-<li>Wait for the installation to complete. Note the installation path:<ul>
-<li><strong>Windows</strong>: <code>%LOCALAPPDATA%\ov\pkg\isaac-sim-4.2.0</code><br />
-<em>(e.g., <code>C:\Users\&lt;YourUsername&gt;\AppData\Local\ov\pkg\isaac-sim-4.2.0</code>)</em></li>
-<li><strong>Linux</strong>: <code>~/.local/share/ov/pkg/isaac-sim-4.2.0</code></li>
+<li>Download the latest Isaac Sim workstation archive for Windows or Linux.</li>
+<li>Extract it to a short, stable path such as <code>C:\isaacsim</code> or <code>~/isaacsim</code>.</li>
+<li>Run <code>post_install.bat</code> on Windows or <code>./post_install.sh</code> on Linux.</li>
+<li>Run the compatibility checker:<ul>
+<li>Windows: <code>isaac-sim.compatibility_check.bat</code></li>
+<li>Linux: <code>./isaac-sim.compatibility_check.sh</code></li>
 </ul>
 </li>
+<li>Launch the application with <code>isaac-sim.bat</code> on Windows or
+   <code>./isaac-sim.sh</code> on Linux.</li>
 </ol>
-<h3 id="step-3-verify-environment-setup">Step 3: Verify Environment Setup<a class="headerlink" href="#step-3-verify-environment-setup" title="Permanent link">&para;</a></h3>
-<p>Isaac Sim provides a bundled Python environment wrapper script (<code>isaac-sim.standalone.bat</code> on Windows or <code>python.sh</code> on Linux) that automatically imports all required Omniverse, USD, and PhysX libraries.</p>
-<p>Ensure you can access this wrapper executable from your terminal or add the Isaac Sim installation directory to your system environment variables.</p>
+<p>Isaac Sim supplies its own Python 3.12 environment. Run standalone scripts with
+<code>python.bat</code> on Windows or <code>./python.sh</code> on Linux. Install extra packages into
+that environment; for example:</p>
+<div class="tabbed-set" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Windows</label><div class="tabbed-content">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>C:\isaacsim\python.bat -m pip install scikit-fuzzy
+</code></pre></div></td></tr></table></div>
+</div>
+<input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">Linux</label><div class="tabbed-content">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>~/isaacsim/python.sh<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>scikit-fuzzy
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
 <hr />
 <h2 id="running-practical-examples-in-isaac-sim">Running Practical Examples in Isaac Sim<a class="headerlink" href="#running-practical-examples-in-isaac-sim" title="Permanent link">&para;</a></h2>
 <p>The repository includes standalone scripts designed for Isaac Sim under the <code>src/files/</code> directory:</p>
@@ -384,103 +396,63 @@
 <li><code>src/files/isaac_vision_classifier.py</code> (Lab 8a)</li>
 <li><code>src/files/isaac_vision_detection.py</code> (Lab 8b)</li>
 </ul>
-<p>Run the scripts using the Isaac Sim standalone Python launcher:</p>
-<div class="tabbed-set" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Windows (CMD / PowerShell)</label><div class="tabbed-content">
+<p>Run the scripts from the Isaac Sim installation directory using its bundled
+Python launcher:</p>
+<div class="tabbed-set" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><label for="__tabbed_2_1">Windows (CMD / PowerShell)</label><div class="tabbed-content">
 <p>Open Command Prompt or PowerShell and navigate to the repository root directory:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>cd &quot;path\to\ci-labs&quot;
 </code></pre></div></td></tr></table></div>
-<p>Execute the desired practical script using <code>isaac-sim.standalone.bat</code>:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span></pre></div></td><td class="code"><div><pre><span></span><code>:: Lab 1: Hexapod DRL Locomotion
-&quot;%LOCALAPPDATA%\ov\pkg\isaac-sim-4.2.0\isaac-sim.standalone.bat&quot; python src/files/isaac_hexapod_drl.py
+<p>Execute the desired practical script using <code>python.bat</code>:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span>
+<span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code>set REPO=C:\path\to\ci-labs
 
-:: Lab 2: Fuzzy Logic Robot Controller
-&quot;%LOCALAPPDATA%\ov\pkg\isaac-sim-4.2.0\isaac-sim.standalone.bat&quot; python src/files/isaac_fuzzy_robot.py
-
-:: Lab 3: GA Trajectory Evolution
-&quot;%LOCALAPPDATA%\ov\pkg\isaac-sim-4.2.0\isaac-sim.standalone.bat&quot; python src/files/isaac_ga_robot.py
-
-:: Lab 4: PSO Swarm Simulation
-&quot;%LOCALAPPDATA%\ov\pkg\isaac-sim-4.2.0\isaac-sim.standalone.bat&quot; python src/files/isaac_pso_swarm.py
-
-:: Lab 5: ACO Swarm Route Finding
-&quot;%LOCALAPPDATA%\ov\pkg\isaac-sim-4.2.0\isaac-sim.standalone.bat&quot; python src/files/isaac_aco_route.py
-
-:: Lab 8a: Vision Classifier
-&quot;%LOCALAPPDATA%\ov\pkg\isaac-sim-4.2.0\isaac-sim.standalone.bat&quot; python src/files/isaac_vision_classifier.py
-
-:: Lab 8b: Vision Object Detector
-&quot;%LOCALAPPDATA%\ov\pkg\isaac-sim-4.2.0\isaac-sim.standalone.bat&quot; python src/files/isaac_vision_detection.py
+C:\isaacsim\python.bat &quot;%REPO%\src\files\isaac_hexapod_drl.py&quot;
+C:\isaacsim\python.bat &quot;%REPO%\src\files\isaac_fuzzy_robot.py&quot;
+C:\isaacsim\python.bat &quot;%REPO%\src\files\isaac_ga_robot.py&quot;
+C:\isaacsim\python.bat &quot;%REPO%\src\files\isaac_pso_swarm.py&quot;
+C:\isaacsim\python.bat &quot;%REPO%\src\files\isaac_aco_route.py&quot;
+C:\isaacsim\python.bat &quot;%REPO%\src\files\isaac_vision_classifier.py&quot;
+C:\isaacsim\python.bat &quot;%REPO%\src\files\isaac_vision_detection.py&quot;
 </code></pre></div></td></tr></table></div>
 </div>
-<input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">Linux (Terminal)</label><div class="tabbed-content">
+<input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><label for="__tabbed_2_2">Linux (Terminal)</label><div class="tabbed-content">
 <p>Open Terminal and navigate to the repository root directory:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/path/to/ci-labs
 </code></pre></div></td></tr></table></div>
 <p>Execute the desired practical script using <code>python.sh</code>:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="c1"># Lab 1: Hexapod DRL Locomotion</span>
-~/.local/share/ov/pkg/isaac-sim-4.2.0/python.sh<span class="w"> </span>src/files/isaac_hexapod_drl.py
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span>
+<span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nv">REPO</span><span class="o">=</span>/path/to/ci-labs
 
-<span class="c1"># Lab 2: Fuzzy Logic Robot Controller</span>
-~/.local/share/ov/pkg/isaac-sim-4.2.0/python.sh<span class="w"> </span>src/files/isaac_fuzzy_robot.py
-
-<span class="c1"># Lab 3: GA Trajectory Evolution</span>
-~/.local/share/ov/pkg/isaac-sim-4.2.0/python.sh<span class="w"> </span>src/files/isaac_ga_robot.py
-
-<span class="c1"># Lab 4: PSO Swarm Simulation</span>
-~/.local/share/ov/pkg/isaac-sim-4.2.0/python.sh<span class="w"> </span>src/files/isaac_pso_swarm.py
-
-<span class="c1"># Lab 5: ACO Swarm Route Finding</span>
-~/.local/share/ov/pkg/isaac-sim-4.2.0/python.sh<span class="w"> </span>src/files/isaac_aco_route.py
-
-<span class="c1"># Lab 8a: Vision Classifier</span>
-~/.local/share/ov/pkg/isaac-sim-4.2.0/python.sh<span class="w"> </span>src/files/isaac_vision_classifier.py
-
-<span class="c1"># Lab 8b: Vision Object Detector</span>
-~/.local/share/ov/pkg/isaac-sim-4.2.0/python.sh<span class="w"> </span>src/files/isaac_vision_detection.py
+~/isaacsim/python.sh<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$REPO</span><span class="s2">/src/files/isaac_hexapod_drl.py&quot;</span>
+~/isaacsim/python.sh<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$REPO</span><span class="s2">/src/files/isaac_fuzzy_robot.py&quot;</span>
+~/isaacsim/python.sh<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$REPO</span><span class="s2">/src/files/isaac_ga_robot.py&quot;</span>
+~/isaacsim/python.sh<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$REPO</span><span class="s2">/src/files/isaac_pso_swarm.py&quot;</span>
+~/isaacsim/python.sh<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$REPO</span><span class="s2">/src/files/isaac_aco_route.py&quot;</span>
+~/isaacsim/python.sh<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$REPO</span><span class="s2">/src/files/isaac_vision_classifier.py&quot;</span>
+~/isaacsim/python.sh<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$REPO</span><span class="s2">/src/files/isaac_vision_detection.py&quot;</span>
 </code></pre></div></td></tr></table></div>
 </div>
 </div>
 <hr />
 <h2 id="fallback-execution-mode-cpu-matplotlib">Fallback Execution Mode (CPU / Matplotlib)<a class="headerlink" href="#fallback-execution-mode-cpu-matplotlib" title="Permanent link">&para;</a></h2>
-<p>If Isaac Sim is not installed or your system lacks an NVIDIA RTX GPU, all practical scripts automatically detect the missing environment (<code>isaacsim</code> / <code>omni</code> imports) and run in <strong>Standalone Matplotlib Mode</strong>.</p>
+<p>If Isaac Sim is not installed, the practical scripts detect the missing
+environment and run a standalone fallback. These fallbacks demonstrate the
+algorithm or data flow; they are not substitutes for Isaac Sim physics,
+sensors, policy training, or real object-detection inference.</p>
 <p>Simply run the script with your standard Python interpreter:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
@@ -490,15 +462,17 @@
 <span class="normal">6</span>
 <span class="normal">7</span>
 <span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="c1"># Run using standard Python (Matplotlib 2D visualization / Standalone Mode)</span>
-python<span class="w"> </span>src/files/isaac_hexapod_drl.py
-python<span class="w"> </span>src/files/isaac_fuzzy_robot.py
-python<span class="w"> </span>src/files/isaac_ga_robot.py
-python<span class="w"> </span>src/files/isaac_pso_swarm.py
-python<span class="w"> </span>src/files/isaac_aco_route.py
-python<span class="w"> </span>src/files/isaac_vision_classifier.py
-python<span class="w"> </span>src/files/isaac_vision_detection.py
+python3<span class="w"> </span>src/files/isaac_hexapod_drl.py
+python3<span class="w"> </span>src/files/isaac_fuzzy_robot.py
+python3<span class="w"> </span>src/files/isaac_ga_robot.py
+python3<span class="w"> </span>src/files/isaac_pso_swarm.py
+python3<span class="w"> </span>src/files/isaac_aco_route.py
+python3<span class="w"> </span>src/files/isaac_vision_classifier.py
+python3<span class="w"> </span>src/files/isaac_vision_detection.py
 </code></pre></div></td></tr></table></div>
-<p>This ensures that all students can complete the practical exercises and observe the algorithmic behavior regardless of hardware availability.</p>
+<p>The core computational-intelligence exercises remain usable without NVIDIA
+hardware. Sections that depend on physics or sensors should be completed on a
+compatible lab workstation.</p>
 <hr />
 <h2 id="nvidia-physical-ai-learning-resources">NVIDIA Physical AI Learning Resources<a class="headerlink" href="#nvidia-physical-ai-learning-resources" title="Permanent link">&para;</a></h2>
 <p>For supplementary self-paced learning and deep dives into physical AI and robotics simulation, students are encouraged to explore the <strong><a href="https://docs.nvidia.com/learning/physical-ai/">NVIDIA Physical AI Learning Portal</a></strong>.</p>
@@ -548,6 +522,10 @@ Copyright Author: Dr Tang Tiong Yew
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
       <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; Dr Tang Tiong Yew
+    </div>
   
   
     Made with

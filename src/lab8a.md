@@ -1,10 +1,12 @@
 # Lab 8a: ANN using Keras
+
 ## Image Classification Using Keras
 
-We are using Tensorflow for this lab. Install it using: `pip install tensorflow`
-
+This lab uses TensorFlow. Install the optional lab dependencies with
+`python -m pip install -r src/files/requirements-deep-learning.txt`.
 
 The libraries used in this lab:
+
 ```python
 import tensorflow as tf
 from tensorflow.keras import layers, models
@@ -21,7 +23,7 @@ graph TD
     Norm --> Split["3. Train/Val Split (80% Train, 20% Val)"]
     Split --> Arch["4. Define 3-Layer CNN Architecture"]
     Arch --> Comp["5. Compile Model (Adam, SparseCategoricalCrossentropy)"]
-    Comp --> Fit["6. Train Model (model.fit: 5 Epochs, batch size 8)"]
+    Comp --> Fit["6. Train Model (model.fit: 5 Epochs, batch size 32)"]
     Fit --> Eval["7. Evaluate Accuracy & Loss on Test Data"]
     Eval --> Predict["8. Generate Predictions & Visualise Grid"]
 ```
@@ -44,7 +46,8 @@ Split the training data into training and validation sets.
 
 ```python
 train_images, val_images, train_labels, val_labels = train_test_split(
-    train_images, train_labels, test_size=0.2, random_state=42
+    train_images, train_labels, test_size=0.2, random_state=42,
+    stratify=train_labels.ravel()
 )
 ```
 
@@ -67,7 +70,8 @@ for i in range(9):
 
 ### Build the Model
 
-We are building a 3-layers Convolutional Neural Network (CNN). A typical convolutional block had a convolutinal layer, activation function, pooling operator. 
+We are building a CNN with three convolutional layers. A typical convolutional
+block has a convolutional layer, an activation function, and a pooling operator.
 
 The convolutional layer is responsible for feature extraction, while the associated activation function introduces non-linearity. The pooling layer reduces the spatial dimensions of the feature map.
 
@@ -87,8 +91,9 @@ graph LR
 
 ```python
 model = models.Sequential([
+    layers.Input(shape=(32, 32, 3)),
     # convolutional block 1
-    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)),
+    layers.Conv2D(32, (3, 3), activation='relu'),
     layers.MaxPooling2D((2, 2)),
      # convolutional block 2
     layers.Conv2D(64, (3, 3), activation='relu'),
@@ -106,28 +111,33 @@ model = models.Sequential([
 ### Train the Model
 
 `model.compile` is used to configure the model for training.
-  - The Adam optimizer is an adaptive learning rate optimization algorithm that’s widely used in training deep learning models. 
-  - Sparse Categorical Crossentropy loss function is used for multi-class classification problems where the target labels are integers (not one-hot encoded). It measures the difference between the true labels and the predicted probabilities. logits is the model's output.
-    - from_logits=True: This parameter indicates that the model’s output is not a probability distribution (i.e., the output layer does not use a softmax activation function).
-  - Accuracy Metric specifies that the model's performance will be evaluated using accuracy, which is the proportion of correctly predicted instances out of the total instances. It's a common metric for classification tasks.
+- Adam is an adaptive optimizer commonly used for neural-network training.
+- Sparse categorical cross-entropy supports integer class labels.
+- `from_logits=False` is required because the output layer already uses Softmax
+  and therefore returns probabilities.
+- Accuracy is the proportion of correctly classified examples.
 
 ```python
 model.compile(optimizer='adam',
-              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False),
               metrics=['accuracy'])
 ```
 
 `model.fit` trains the model on the provided training data.
-  - train_images: The input images for training.
-  - train_labels: The corresponding labels for the training images.
-  - epochs: The number of times the model will iterate over the entire training dataset. In this case, the model will train for 5 epochs.
-  - validation_data=(test_images, test_labels): This tuple provides the validation data, which is used to evaluate the model's performance on unseen data after each epoch. It consists of:
-    - test_images: The input images for validation.
-    - test_labels: The corresponding labels for the validation images.
-    - batch_size: The number of samples per gradient update. The training data will be divided into batches of 8 samples, and the model's weights will be updated after each batch.
+- `train_images` and `train_labels` are the training examples and labels.
+- `epochs=5` makes five passes over the training set.
+- `validation_data=(val_images, val_labels)` measures generalization after each
+  epoch without using the test set.
+- `batch_size=32` uses 32 samples per gradient update.
 
 ```python
-history = model.fit(train_images, train_labels, epochs=5, validation_data=(val_images, val_labels), batch_size=8)
+history = model.fit(
+    train_images,
+    train_labels,
+    epochs=5,
+    validation_data=(val_images, val_labels),
+    batch_size=32,
+)
 ```
 
 ### Evaluate the Model
@@ -172,7 +182,9 @@ axes = axes.ravel()
 
 for i in np.arange(0, 25):
     axes[i].imshow(test_images[i])
-    axes[i].set_title("Predict: %s \nTrue: %s" % (class_names[np.argmax(test_labels[i])], class_names[pred_classes[i]]))
+    predicted = class_names[pred_classes[i]]
+    actual = class_names[test_labels[i][0]]
+    axes[i].set_title(f"Pred: {predicted}\nTrue: {actual}")
     axes[i].axis('off')
     plt.subplots_adjust(wspace=1)
 ```
@@ -184,30 +196,35 @@ You can download the full Python script here: [lab8a_keras_cnn.py](files/lab8a_k
 ---
 
 
-## NVIDIA Isaac Sim Example: Virtual Camera Image Capture and Deep Learning Classification
+## NVIDIA Isaac Sim Example: Virtual Camera Image Capture
 
-NVIDIA Isaac Sim (built on NVIDIA Omniverse) allows developers to simulate high-fidelity virtual environments with physical sensors, such as RGB cameras, depth sensors, and LiDARs. In this section, we demonstrate how to capture synthetic images from a virtual camera inside NVIDIA Isaac Sim and pass them to a Keras deep learning model for classification.
+NVIDIA Isaac Sim can generate synthetic RGB camera frames. The supplied script
+captures and summarizes a frame in Isaac Sim. Its separate standard-Python mode
+demonstrates MobileNetV2 preprocessing and inference because TensorFlow and
+Isaac Sim 6 can load conflicting runtime libraries in one process. A production
+pipeline should export or stream the frame to a separate inference process.
 
 You can download the full Python script here: [isaac_vision_classifier.py](files/isaac_vision_classifier.py)
 
-Below is the complete standalone Python script demonstrating synthetic camera image rendering in NVIDIA Isaac Sim and streaming RGB frames into a Keras Deep Learning classifier:
+Below is the synchronized camera-capture and inference-pipeline example:
 
 ```python
 # Copyright Author: Dr Tang Tiong Yew
-"""
+r"""
 Virtual Camera Image Capture and Deep Learning Classification in NVIDIA Isaac Sim
 ==================================================================================
-This script demonstrates synthetic camera image rendering in NVIDIA Isaac Sim
-and streaming the RGB frames into a Keras Deep Learning classifier (MobileNetV2).
+This script demonstrates Isaac Sim camera capture and, in a separate standalone
+mode, the preprocessing and inference steps for MobileNetV2. TensorFlow is not
+loaded in-process with Isaac Sim 6 because of runtime library conflicts.
 
 Execution Modes:
-1. NVIDIA Isaac Sim Mode (Full 3D GPU rendering & Camera Sensor):
+1. NVIDIA Isaac Sim Mode (3D rendering and camera capture):
    Run with Isaac Sim's standalone python:
-   `isaac-sim.standalone.bat python src/files/isaac_vision_classifier.py`
-   OR `python.bat src/files/isaac_vision_classifier.py`
+   Windows: `C:\isaacsim\python.bat src\files\isaac_vision_classifier.py`
+   Linux: `~/isaacsim/python.sh src/files/isaac_vision_classifier.py`
 
 2. TensorFlow Standalone Fallback Mode (Deep Learning Inference simulation):
-   `python src/files/isaac_vision_classifier.py`
+   `python3 src/files/isaac_vision_classifier.py`
 """
 
 import sys
@@ -242,7 +259,7 @@ if not HAS_ISAAC_SIM:
 # 1. NVIDIA Isaac Sim Implementation
 # =====================================================================
 def run_isaac_sim_classification():
-    """Captures RGB image from virtual Isaac Sim camera and classifies via Keras DL model."""
+    """Capture and summarize an RGB image from an Isaac Sim camera."""
     try:
         from isaacsim import SimulationApp
         simulation_app = SimulationApp({"headless": False})
@@ -310,9 +327,9 @@ def run_isaac_sim_classification():
     # Isaac Sim 6 cannot safely load TensorFlow in-process; report image
     # features here and use the standalone mode for MobileNetV2 inference.
     mean_r, mean_g, mean_b = np.mean(rgb_image, axis=(0, 1))
-    print("\n--- Isaac Sim Virtual Camera Classification Results ---")
+    print("\n--- Isaac Sim Virtual Camera Capture Results ---")
     print(f"Captured RGB averages -> R: {mean_r:.1f}, G: {mean_g:.1f}, B: {mean_b:.1f}")
-    print("Heuristic Classification: Virtual Isaac Sim Ground-Plane Scene")
+    print("[INFO] No classifier runs in this process. Export the frame to a separate ML process for inference.")
 
     simulation_app.close()
 
@@ -321,7 +338,7 @@ def run_isaac_sim_classification():
 # 2. Standalone Fallback Execution
 # =====================================================================
 def run_fallback_classification():
-    """Fallback execution running Keras DL classification on a synthetic image tensor."""
+    """Run a MobileNetV2 pipeline smoke test on a synthetic image tensor."""
     print("========================================================================")
     print(" Running Standalone Deep Learning Image Classifier (No Isaac Sim GUI) ")
     print("========================================================================")
@@ -336,11 +353,12 @@ def run_fallback_classification():
         print("\n[INFO] NumPy Image Feature Extraction Fallback:")
         mean_r, mean_g, mean_b = np.mean(synthetic_rgb, axis=(0, 1))
         print(f"       Extracted Channel RGB Averages -> R: {mean_r:.1f}, G: {mean_g:.1f}, B: {mean_b:.1f}")
-        print("       Heuristic Classification: Synthetic Indoor Stage Texture")
+        print("       No classification was performed.")
         return
 
     img_tensor = tf.convert_to_tensor(synthetic_rgb, dtype=tf.float32)
-    img_tensor = tf.expand_dims(img_tensor / 255.0, axis=0)
+    img_tensor = tf.expand_dims(img_tensor, axis=0)
+    img_tensor = tf.keras.applications.mobilenet_v2.preprocess_input(img_tensor)
 
     print("[INFO] Loading TensorFlow / Keras MobileNetV2 model...")
     try:
@@ -353,15 +371,7 @@ def run_fallback_classification():
             print(f"Predicted Class: {class_name:<20} | Confidence: {score * 100:.2f}%")
     except Exception as e:
         print(f"[WARN] ImageNet weights download skipped/failed: {e}")
-        # Custom simple CNN model inference fallback
-        model = tf.keras.Sequential([
-            tf.keras.layers.Conv2D(16, (3, 3), activation='relu', input_shape=(224, 224, 3)),
-            tf.keras.layers.MaxPooling2D(),
-            tf.keras.layers.Flatten(),
-            tf.keras.layers.Dense(10, activation='softmax')
-        ])
-        preds = model.predict(img_tensor)
-        print(f"[INFO] Custom CNN classification probabilities (10 classes): {preds[0][:5]}...")
+        print("[INFO] No fallback predictions are reported because an untrained model would be meaningless.")
 
     print("[SUCCESS] Standalone classification task finished cleanly.")
 
@@ -373,7 +383,6 @@ if __name__ == '__main__':
     else:
         print("[INFO] Running Standalone Mode.")
         run_fallback_classification()
-
 ```
 
 ---

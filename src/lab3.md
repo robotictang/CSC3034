@@ -6,7 +6,7 @@ Binary string is often used in the implementation of genetic algorithm. However,
 
 1. `numpy` provides the function of [`binary_repr`](https://het.as.utexas.edu/HET/Software/Numpy/reference/generated/numpy.binary_repr.html) to convert a decimal value to its corresponding binary code.
 
-2. Create a function to take the input of a binary code and return the correponding Gray code of the binary code. 
+2. Create a function to take the input of a binary code and return the corresponding Gray code of the binary code.
 
 3. Create a function to calculate the Hamming distance between two binary strings (two binary codes or two Gray codes).
 
@@ -19,7 +19,7 @@ Binary string is often used in the implementation of genetic algorithm. However,
 Consider the following problem: 
 
 !!! abstract "Problem"
-    You are given a sheet of paper with width `w` and height `h`. Your task is to cut the paper into squares of equal size. The aim of the task is to have as many squares as possible, and to have the area of each square as large as possible.
+    You are given a sheet of paper with width `w` and height `h`. Your task is to cut it into equal squares. In this exercise, the scalar objective is the **total used paper area**: the number of complete squares multiplied by the area of one square. This rewards efficient use of the sheet; it does not independently maximise both the square count and each square's size.
 
 1. An optimisation problem can always be phrased in the form of
 
@@ -28,7 +28,7 @@ Consider the following problem:
 
     In this problem, what is the parameter to be optimised and what are the parameters to be maximised or minimised?
 
-2. Let `x` denotes the length of the sides of a square. Design a fitness function such that higher fitness corresponds to larger number of squares and large area. If the number of squares (that can be cut out) is zero, or the area of the square is zero, the fitness will be zero.
+2. Let `x` denote the side length of a square. Use $\lfloor w/x\rfloor\lfloor h/x\rfloor x^2$ as the fitness. If no complete square can be cut, or `x` is zero, the fitness is zero. If the two goals must instead be optimised separately, formulate the task as a multi-objective problem and examine its Pareto front.
 
 <div class="timeline">
 <div class="container right"><div class="content"><a href='#feature-encoding'>feature encoding</a></div></div>
@@ -37,7 +37,7 @@ Consider the following problem:
 <div class="container right"><div class="content"><a href="#crossover">crossover</a></div></div>
 <div class="container right"><div class="content"><a href="#mutation">mutation</a></div></div>
 <div class="container right"><div class="content"><a href="#">offspring (next generation population)</a></div></div>
-<div class="container right"><div class="content"><a href="#repeat-until-termination">repeat from fitnexx calculation until termination</a></div></div>
+<div class="container right"><div class="content"><a href="#repeat-until-termination">repeat from fitness calculation until termination</a></div></div>
 </div>
 
 ```mermaid
@@ -50,7 +50,7 @@ graph TD
     Cross --> Mut["6. Mutation (Random Bit-Flip with p_m)"]
     Mut --> Next["7. Form Next Generation Population"]
     Next --> Fit
-    Check -->|Yes| End["Optimal Solution Found (Best Chromosome)"]
+    Check -->|Yes| End["Return Best Chromosome Found"]
 ```
 
 <!-- Use the following template for the code development of the rest of this lab. -->
@@ -418,12 +418,12 @@ In real-world mobile robotics and autonomous navigation, Genetic Algorithms (GA)
 ### Robot Trajectory Problem Setup
 
 In this simulation setup:
-1. **Target Navigation**: A mobile robot starts at coordinate $(-6, -6)$ and must reach a target destination at $(6, 6)$ within an $8\text{m} \times 8\text{m}$ arena.
+1. **Target Navigation**: A mobile robot starts at coordinate $(-6, -6)$ and must reach a target destination at $(6, 6)$ within a $16\text{m} \times 16\text{m}$ arena.
 2. **Obstacle Avoidance**: Multiple static spherical obstacles are placed across the stage (e.g., origin $(0,0)$ and surrounding coordinates).
 3. **Chromosome Formulation**: Each chromosome represents a candidate sequence of intermediate 3D waypoints $(x_i, y_i)$. Each spatial coordinate is encoded as a 6-bit binary string (mapping to continuous coordinates between $[-8.0, 8.0]$), directly building upon the binary encoding concepts covered earlier in this lab.
-4. **Fitness Function**: The fitness of a chromosome trajectory is evaluated by:
-   $$\text{Fitness} = \frac{1000}{1.0 + 3.0 \cdot d_{\text{goal}} + 0.2 \cdot L_{\text{path}} + 40.0 \cdot N_{\text{collisions}}}$$
-   where $d_{\text{goal}}$ is the Euclidean distance from the final waypoint to the target, $L_{\text{path}}$ is total trajectory length, and $N_{\text{collisions}}$ is the penalty for intersecting obstacle boundaries.
+4. **Fitness Function**: Every decoded trajectory explicitly begins at the fixed start and ends at the fixed goal, so its fitness is:
+   $$\text{Fitness} = \frac{1000}{1.0 + 0.2 \cdot L_{\text{path}} + 40.0 \cdot N_{\text{collisions}}}$$
+   where $L_{\text{path}}$ is the total trajectory length and $N_{\text{collisions}}$ counts path segments that intersect an obstacle's safety radius. Collision checks use point-to-segment distance, not waypoint proximity alone.
 
 ---
 
@@ -439,8 +439,8 @@ Below is the complete standalone Python implementation using Isaac Sim's Python 
 NVIDIA Isaac Sim & Standalone Python Script:
 Genetic Algorithm (GA) for Mobile Robot Trajectory & Obstacle Avoidance Optimisation
 
-This script demonstrates how Genetic Algorithms (GA) are used to evolve an optimal
-pathway for a mobile robot navigating through an arena with obstacles towards a target destination.
+This script demonstrates how a Genetic Algorithm (GA) searches for a short,
+collision-free path through an arena. The best path found is not guaranteed globally optimal.
 
 Features:
 1. Dual Execution Modes:
@@ -448,7 +448,7 @@ Features:
    - Photorealistic NVIDIA Isaac Sim Mode (GPU physics & 3D USD stage rendering)
 2. GA Architecture:
    - Binary & Real-Valued Waypoint Encoding
-   - Fitness evaluation incorporating distance to goal, path length, and obstacle collision penalty
+   - Fitness evaluation incorporating path length and exact segment-obstacle collision penalties
    - Roulette Wheel Parent Selection, One-Point Crossover, and Bit-Flip Mutation
 """
 
@@ -527,34 +527,41 @@ def generate_population(pop_size):
     """Initialises a population of random chromosomes."""
     return [generate_individual() for _ in range(pop_size)]
 
+
+def evaluate_trajectory(waypoints):
+    """Return path length and the number of obstacle intersections."""
+    path_length = 0.0
+    num_collisions = 0
+    for p1, p2 in zip(waypoints, waypoints[1:]):
+        segment = p2 - p1
+        segment_length_sq = float(np.dot(segment, segment))
+        path_length += float(np.linalg.norm(segment))
+        for ox, oy, radius in OBSTACLES:
+            center = np.array([ox, oy])
+            if segment_length_sq == 0:
+                closest = p1
+            else:
+                t = float(
+                    np.clip(
+                        np.dot(center - p1, segment) / segment_length_sq,
+                        0.0,
+                        1.0,
+                    )
+                )
+                closest = p1 + t * segment
+            if np.linalg.norm(closest - center) <= radius + 0.3:
+                num_collisions += 1
+    return path_length, num_collisions
+
 def calculate_fitness(chromosome):
     """
     Calculates fitness of a chromosome trajectory.
-    Fitness = 1000 / (1.0 + dist_to_goal*3.0 + path_length*0.2 + num_collisions*40.0)
+    Fitness = 1000 / (1.0 + path_length*0.2 + num_collisions*40.0)
     """
     waypoints = decode_chromosome(chromosome)
-    
-    # 1. Total trajectory length
-    path_length = 0.0
-    for i in range(len(waypoints) - 1):
-        path_length += np.linalg.norm(waypoints[i+1] - waypoints[i])
-        
-    # 2. Distance from final waypoint to Goal
-    dist_to_goal = np.linalg.norm(waypoints[-2] - GOAL_POS[:2])
-    
-    # 3. Obstacle Collision Penalty
-    num_collisions = 0
-    for i in range(len(waypoints) - 1):
-        p1 = waypoints[i]
-        p2 = waypoints[i+1]
-        # Sample points along line segment p1->p2
-        for t in np.linspace(0, 1, 10):
-            pt = p1 + t * (p2 - p1)
-            for ox, oy, r in OBSTACLES:
-                if np.linalg.norm(pt - np.array([ox, oy])) < (r + 0.3): # 0.3m robot margin
-                    num_collisions += 1
-                    
-    fitness = 1000.0 / (1.0 + dist_to_goal * 3.0 + path_length * 0.2 + num_collisions * 40.0)
+    path_length, num_collisions = evaluate_trajectory(waypoints)
+
+    fitness = 1000.0 / (1.0 + path_length * 0.2 + num_collisions * 40.0)
     return max(0.0001, fitness)
 
 def select_parents(population, fitnesses):
@@ -605,8 +612,12 @@ def run_ga_optimization(pop_size=40, max_generations=60, p_crossover=0.85, p_mut
             
         if (gen + 1) % 10 == 0 or gen == 0 or gen == max_generations - 1:
             waypoints = decode_chromosome(population[max_idx])
-            goal_dist = np.linalg.norm(waypoints[-2] - GOAL_POS[:2])
-            print(f'Generation {gen+1:02d}/{max_generations:02d} | Best Fitness: {fitnesses[max_idx]:.2f} | Goal Distance: {goal_dist:.2f}m')
+            path_length, collisions = evaluate_trajectory(waypoints)
+            print(
+                f'Generation {gen+1:02d}/{max_generations:02d} | '
+                f'Best Fitness: {fitnesses[max_idx]:.2f} | '
+                f'Path: {path_length:.2f}m | Collisions: {collisions}'
+            )
             
         # Selection
         parents = select_parents(population, fitnesses)
@@ -621,6 +632,8 @@ def run_ga_optimization(pop_size=40, max_generations=60, p_crossover=0.85, p_mut
             next_population.append(mutate(o2, p_mutation))
             
         population = next_population[:pop_size]
+        # Preserve the best-so-far chromosome (elitism).
+        population[0] = best_overall_chrom
         
     return best_overall_chrom, best_overall_fitness
 
@@ -781,24 +794,23 @@ if __name__ == '__main__':
         run_isaac_sim(best_chrom)
     else:
         run_matplotlib_visualization(best_chrom)
-
 ```
 
 #### How to Run the Script
 
-1. **NVIDIA Isaac Sim Mode (Full 3D GPU physics & visual stage simulation)**:
+1. **NVIDIA Isaac Sim Mode (3D trajectory visualisation)**:
    Run using Isaac Sim's standalone Python environment:
    ```bash
-   isaac-sim.standalone.bat python src/files/isaac_ga_robot.py
+   C:\isaacsim\python.bat src\files\isaac_ga_robot.py
    ```
-   *OR (on Linux/Omniverse Launcher):*
+   *OR on Linux:*
    ```bash
-   ./python.sh src/files/isaac_ga_robot.py
+   ~/isaacsim/python.sh src/files/isaac_ga_robot.py
    ```
 
 2. **Standalone Python Mode (Math & GA Fallback Execution)**:
    ```bash
-   python src/files/isaac_ga_robot.py
+   python3 src/files/isaac_ga_robot.py
    ```
 
 ---
@@ -811,21 +823,20 @@ graph LR
         Pop["Population of Waypoint Chromosomes"]
     end
     
-    subgraph IsaacStage ["NVIDIA Isaac Sim Stage"]
-        Robot["Mobile Robot Prim"]
-        Arena["3D Arena & Obstacles"]
-        Robot --> Arena
+    subgraph Fitness ["NumPy Fitness Evaluation"]
+        Map["Start, Goal & Obstacle Geometry"]
+        FitEval["Path Length & Segment Collisions"]
+        Map --> FitEval
     end
-    
-    Pop -->|"Trajectory (x, y waypoints)"| Robot
-    Arena -->|"Distance to Goal & Collisions"| FitEval["Fitness Evaluator"]
+    Pop -->|"Decoded Waypoints"| FitEval
     FitEval -->|"Fitness Score"| GA
+    GA -->|"Best Trajectory Only"| IsaacStage["Isaac Sim Visualisation Stage"]
 ```
 
 !!! tip "Robotic Trajectory Considerations"
     1. **Continuous Physics vs Discrete Genes**: Standard GA operates on discrete string representations. Converting binary genes to continuous floating-point spatial coordinates requires mapping resolution (e.g. 6-bit mapping to $[-8\text{m}, 8\text{m}]$ bounds).
     2. **Multi-Objective Fitness Trade-offs**: In physical robotics, trajectory planning balances competing objectives: reaching the target quickly, minimizing path length (energy consumption), maintaining safety margins around obstacles, and ensuring smooth motor velocity curves.
-    3. **GPU-Accelerated Parallel Evaluation**: Advanced robotics applications evaluate entire GA populations simultaneously in NVIDIA Isaac Sim by spawning multiple robot instances in parallel physics scenes across GPU threads.
+    3. **Parallel Evaluation Extension**: More advanced applications can evaluate a population across parallel simulator environments. The supplied example evaluates fitness in NumPy and sends only the best trajectory to Isaac Sim for visualisation.
 
 ---
 

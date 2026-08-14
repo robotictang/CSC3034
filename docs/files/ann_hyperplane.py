@@ -6,7 +6,7 @@ This script demonstrates decision boundary / hyperplane visualization for Multi-
 Perceptron (MLP) classifiers on the Iris dataset using scikit-learn and Matplotlib.
 
 Execution Mode:
-`python src/files/ann_hyperplane.py`
+`python3 src/files/ann_hyperplane.py`
 """
 
 import sys

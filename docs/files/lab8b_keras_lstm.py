@@ -11,10 +11,9 @@ This script provides the complete solution for Lab 8b exercises, including:
 6. Sentiment prediction on new sample text reviews
 
 Execution Mode:
-`python src/files/lab8b_keras_lstm.py`
+`python3 src/files/lab8b_keras_lstm.py`
 """
 
-import numpy as np
 import matplotlib.pyplot as plt
 
 try:
@@ -60,13 +59,15 @@ def main():
 
     # 2. Preprocess & Pad Sequences
     print("\n[2] Preprocessing and padding sequences to fixed length = 100...")
-    x_train = pad_sequences(x_train, maxlen=max_length, padding='post', truncating='post')
-    x_test = pad_sequences(x_test, maxlen=max_length, padding='post', truncating='post')
+    raw_test_review = x_test[0]
+    x_train = pad_sequences(x_train, maxlen=max_length, padding='pre', truncating='pre')
+    x_test = pad_sequences(x_test, maxlen=max_length, padding='pre', truncating='pre')
 
     # 3. Build Keras Embedding + LSTM Model
     print("\n[3] Building Sequential Keras model (Embedding -> LSTM -> Dropout -> Dense)...")
     model = Sequential([
-        Embedding(input_dim=vocab_size, output_dim=32, input_length=max_length),
+        tf.keras.layers.Input(shape=(max_length,)),
+        Embedding(input_dim=vocab_size, output_dim=32, mask_zero=True),
         LSTM(64, return_sequences=False),
         Dropout(0.5),
         Dense(64, activation='relu'),
@@ -125,7 +126,7 @@ def main():
     sentiment = "Positive" if prediction[0][0] > 0.5 else "Negative"
     true_sentiment = "Positive" if y_test[0] == 1 else "Negative"
 
-    print(f"    Sample Review Text: '{decode_review(sample_review[0])[:120]}...'")
+    print(f"    Sample Review Text: '{decode_review(raw_test_review)[:120]}...'")
     print(f"    Predicted Sentiment Score: {prediction[0][0]:.4f} ({sentiment})")
     print(f"    Ground Truth Sentiment: {true_sentiment}")
 

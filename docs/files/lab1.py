@@ -10,7 +10,7 @@ This script provides the complete solution for Lab 1 exercises, including:
 5. Random selection & coin tossing simulation (50-50, biased, and 3-option choice)
 
 Execution Mode:
-`python src/files/lab1.py`
+`python3 src/files/lab1.py`
 """
 
 import random

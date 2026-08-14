@@ -6,6 +6,10 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
+        <meta name="description" content="Computational Intelligence teaching materials by Dr Tang Tiong Yew">
+      
+      
+        <meta name="author" content="Dr Tang Tiong Yew">
       
       
       
@@ -2594,24 +2598,24 @@
     Eval --&gt; PBest["3. Update Personal Best p_i (If f(x_i) &lt; f(p_i))"]
     PBest --&gt; GBest["4. Update Global Best p_g (If min(f(p_i)) &lt; f(p_g))"]
     GBest --&gt; Check{"Convergence / Max Iterations Reached?"}
-    Check --&gt;|No| Vel["5. Calculate New Velocity: v_i(t+1) = v_i(t) + alpha1*beta1*(p_i - x_i) + alpha2*beta2*(p_g - x_i)"]
+    Check --&gt;|No| Vel["5. Calculate New Velocity: v_i(t+1) = w*v_i(t) + alpha1*beta1*(p_i - x_i) + alpha2*beta2*(p_g - x_i)"]
     Vel --&gt; Pos["6. Update Position: x_i(t+1) = x_i(t) + v_i(t+1)"]
     Pos --&gt; Eval
-    Check --&gt;|Yes| End["Optimal Solution p_g Found"]</code></pre>
+    Check --&gt;|Yes| End["Return Best Position p_g Found"]</code></pre>
 <h3 id="parameter-definition">Parameter definition<a class="headerlink" href="#parameter-definition" title="Permanent link">&para;</a></h3>
 <ol>
 <li>
-<p>With global best particle swarm optimisaton, the position update function is given by</p>
+<p>With global best particle swarm optimisation, the position update function is given by</p>
 <div class="arithmatex">\[x_i(t+1) = x_i(t) + v_i(t+1)\]</div>
 <p>and the velocity update function is</p>
-<div class="arithmatex">\[v_i(t+1) = v_i(t) + \alpha_1\beta_1(t) \Big( p_i(t) - x_i(t) \Big) + \alpha_2\beta_2(t)\Big(p_g(t) - x_i(t)\Big)\]</div>
+<div class="arithmatex">\[v_i(t+1) = wv_i(t) + \alpha_1\beta_1(t) \Big( p_i(t) - x_i(t) \Big) + \alpha_2\beta_2(t)\Big(p_g(t) - x_i(t)\Big)\]</div>
 </li>
 <li>
-<p>&alpha;<sub>1</sub> and &alpha;<sub>2</sub> are acceleration constants that are fixed throughout the algorithm. Define a small value for &alpha;<sub>1</sub> and &alpha;<sub>2</sub>, for example <code>0.1</code>.</p>
+<p><span class="arithmatex">\(w\)</span> is the inertia weight; values below <code>1</code> damp previous velocity and commonly improve convergence. &alpha;<sub>1</sub> and &alpha;<sub>2</sub> are acceleration constants that remain fixed throughout a run. For this exercise, use <code>w = 0.7</code> and <code>0.1</code> for both acceleration constants.</p>
 </li>
 </ol>
 <pre class="mermaid"><code>graph LR
-    X["Current Position x_i(t)"] --&gt; Inertia["Inertia Component: v_i(t)"]
+    X["Current Position x_i(t)"] --&gt; Inertia["Inertia Component: w*v_i(t)"]
     X --&gt; Cog["Cognitive Vector: alpha1*beta1*(p_i - x_i)"]
     X --&gt; Soc["Social Vector: alpha2*beta2*(p_g - x_i)"]
     Inertia --&gt; Sum["Vector Addition (+)"]
@@ -2620,14 +2624,12 @@
     Sum --&gt; NewV["New Velocity v_i(t+1)"]
     NewV --&gt; NewX["Next Position x_i(t+1)"]</code></pre>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code>```python
-alpha = [0.1, 0.1]
-```
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="n">alpha</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]</span>
+<span class="n">w</span> <span class="o">=</span> <span class="mf">0.7</span>
 </code></pre></div></td></tr></table></div>
 <ol>
 <li>
-<p>&beta;<sub>1</sub>(t) and &beta;<sub>2</sub>(t) are random values between <code>0</code> and <code>1</code> that are regenerated every iteration. Therefore no definition is required.</p>
+<p>&beta;<sub>1</sub>(t) and &beta;<sub>2</sub>(t) are random values between <code>0</code> and <code>1</code>. Standard PSO samples a fresh pair independently for each particle at every update.</p>
 </li>
 <li>
 <p>Also, define the number of particles to run the algorithm with.</p>
@@ -2638,8 +2640,10 @@ alpha = [0.1, 0.1]
 <p>Place the definition of these variables in the <code>__main__</code> block.</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
   <span class="n">alpha</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]</span>
+  <span class="n">w</span> <span class="o">=</span> <span class="mf">0.7</span>
   <span class="n">n_particle</span> <span class="o">=</span> <span class="mi">10</span>
 </code></pre></div></td></tr></table></div>
 </li>
@@ -2775,7 +2779,7 @@ alpha = [0.1, 0.1]
   <span class="k">def</span><span class="w"> </span><span class="nf">update_personal_best</span><span class="p">(</span><span class="o">...</span><span class="p">):</span>
     <span class="o">...</span>
 
-  <span class="k">def</span><span class="w"> </span><span class="nf">update_velocity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">glob_best_pos</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">update_velocity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">glob_best_pos</span><span class="p">,</span> <span class="n">inertia_weight</span><span class="p">):</span>
     <span class="c1"># alpha is a list of two values. we will access alpha_1 and alpha_2 by alpha[0] and alpha[1] respectively. This also applies to beta.</span>
     <span class="c1"># the current position, current velocity, and personal best position of the particle can be accessed by self.position, self.velocity, and self.best_position</span>
     <span class="c1"># assign the particle&#39;s velocity with the updated velocity</span>
@@ -2893,7 +2897,7 @@ alpha = [0.1, 0.1]
   <span class="c1"># termination threshold</span>
   <span class="n">iteration</span> <span class="o">=</span> <span class="mi">0</span>
   <span class="n">max_iter</span> <span class="o">=</span> <span class="mi">200</span>
-  <span class="n">min_avg_fit_diff</span> <span class="o">=</span> <span class="mf">0.1</span>
+  <span class="n">min_avg_fit_diff</span> <span class="o">=</span> <span class="mf">1e-4</span>  <span class="c1"># normalised fitness spread</span>
   <span class="n">min_avg_pos_diff</span> <span class="o">=</span> <span class="mf">0.1</span>
   <span class="c1"># initialise particles</span>
   <span class="n">particles</span> <span class="o">=</span> <span class="n">initialise_particles</span><span class="p">(</span><span class="n">n_particle</span><span class="p">,</span> <span class="n">position_limits</span><span class="p">)</span>
@@ -2907,11 +2911,11 @@ alpha = [0.1, 0.1]
         <span class="n">global_best_position</span> <span class="o">=</span> <span class="n">particle</span><span class="o">.</span><span class="n">position</span>
       <span class="k">else</span><span class="p">:</span>
         <span class="n">global_best_position</span> <span class="o">=</span> <span class="n">compareFitness</span><span class="p">(</span><span class="n">global_best_position</span><span class="p">,</span> <span class="n">particle</span><span class="o">.</span><span class="n">position</span><span class="p">)</span>
-    <span class="c1"># generate beta randomly for current iteration</span>
-    <span class="n">beta</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(),</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()]</span>
     <span class="k">for</span> <span class="n">particle</span> <span class="ow">in</span> <span class="n">particles</span><span class="p">:</span>
+      <span class="c1"># independent random coefficients for this particle update</span>
+      <span class="n">beta</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(),</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()]</span>
       <span class="c1"># update velocity</span>
-      <span class="n">particle</span><span class="o">.</span><span class="n">update_velocity</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">global_best_position</span><span class="p">)</span>
+      <span class="n">particle</span><span class="o">.</span><span class="n">update_velocity</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">global_best_position</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
       <span class="c1"># update position</span>
       <span class="n">particle</span><span class="o">.</span><span class="n">update_position</span><span class="p">(</span><span class="n">position_limits</span><span class="p">)</span>
     <span class="n">iteration</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -3165,7 +3169,7 @@ alpha = [0.1, 0.1]
    $<span class="arithmatex">\(v_{i,y}(t+1) = w \cdot v_{i,y}(t) + \alpha_1 \beta_1(t) \Big(p_{i,y}(t) - y_i(t)\Big) + \alpha_2 \beta_2(t) \Big(p_{g,y}(t) - y_i(t)\Big)\)</span>$</p>
 </li>
 <li>
-<p><strong>Robot Control</strong>: The 2D velocity vector <span class="arithmatex">\((v_{i,x}, v_{i,y})\)</span> is set as physical linear velocity commands for the robot body inside Isaac Sim.</p>
+<p><strong>Particle Motion</strong>: The supplied educational example applies the 2D velocity to dynamic sphere proxies in the physics scene. These proxies are not wheeled mobile robots; a robot extension would translate the vector into wheel commands and enforce its kinematics.</p>
 </li>
 </ol>
 <h3 id="python-implementation-in-nvidia-isaac-sim">Python Implementation in NVIDIA Isaac Sim<a class="headerlink" href="#python-implementation-in-nvidia-isaac-sim" title="Permanent link">&para;</a></h3>
@@ -3446,19 +3450,19 @@ alpha = [0.1, 0.1]
 <span class="normal">273</span>
 <span class="normal">274</span>
 <span class="normal">275</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="c1"># Copyright Author: Dr Tang Tiong Yew</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Particle Swarm Optimisation (PSO) for Robot Swarm Simulation</span>
 <span class="sd">============================================================</span>
 <span class="sd">This script demonstrates multi-robot target localization using Particle Swarm Optimisation.</span>
 
 <span class="sd">Execution Modes:</span>
-<span class="sd">1. NVIDIA Isaac Sim Mode (Full 3D GPU physics simulation):</span>
+<span class="sd">1. NVIDIA Isaac Sim Mode (3D physics with dynamic-sphere particle proxies):</span>
 <span class="sd">   Run with Isaac Sim&#39;s standalone python:</span>
-<span class="sd">   `isaac-sim.standalone.bat python src/files/isaac_pso_swarm.py`</span>
-<span class="sd">   OR `python.bat src/files/isaac_pso_swarm.py`</span>
+<span class="sd">   Windows: `C:\isaacsim\python.bat src\files\isaac_pso_swarm.py`</span>
+<span class="sd">   Linux: `~/isaacsim/python.sh src/files/isaac_pso_swarm.py`</span>
 
 <span class="sd">2. Matplotlib Swarm Fallback Mode (Standard Python 2D/3D simulation):</span>
-<span class="sd">   `python src/files/isaac_pso_swarm.py`</span>
+<span class="sd">   `python3 src/files/isaac_pso_swarm.py`</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
@@ -3603,9 +3607,8 @@ alpha = [0.1, 0.1]
                 <span class="n">global_best_fitness</span> <span class="o">=</span> <span class="n">fitness</span>
                 <span class="n">global_best_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">robot</span><span class="o">.</span><span class="n">position</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
 
-        <span class="n">beta</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()]</span>
-
         <span class="k">for</span> <span class="n">robot</span> <span class="ow">in</span> <span class="n">robots</span><span class="p">:</span>
+            <span class="n">beta</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()]</span>
             <span class="n">robot</span><span class="o">.</span><span class="n">update_motion</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">global_best_pos</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">iteration</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -3619,7 +3622,8 @@ alpha = [0.1, 0.1]
 
         <span class="n">iteration</span> <span class="o">+=</span> <span class="mi">1</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Target Beacon Reached at </span><span class="si">{</span><span class="n">global_best_pos</span><span class="si">}</span><span class="s2"> with distance </span><span class="si">{</span><span class="n">global_best_fitness</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">m&quot;</span><span class="p">)</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;reached&quot;</span> <span class="k">if</span> <span class="n">global_best_fitness</span> <span class="o">&lt;</span> <span class="mf">0.1</span> <span class="k">else</span> <span class="s2">&quot;not reached within the iteration limit&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Target beacon </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">; best position </span><span class="si">{</span><span class="n">global_best_pos</span><span class="si">}</span><span class="s2">, distance </span><span class="si">{</span><span class="n">global_best_fitness</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">m&quot;</span><span class="p">)</span>
     <span class="n">simulation_app</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 
@@ -3684,8 +3688,8 @@ alpha = [0.1, 0.1]
                     <span class="n">global_best_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">positions</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
         <span class="c1"># 2. Velocity &amp; position updates</span>
-        <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_robots</span><span class="p">):</span>
+            <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
             <span class="n">cognitive</span> <span class="o">=</span> <span class="n">alpha</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">r1</span> <span class="o">*</span> <span class="p">(</span><span class="n">personal_bests</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">positions</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
             <span class="n">social</span> <span class="o">=</span> <span class="n">alpha</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">r2</span> <span class="o">*</span> <span class="p">(</span><span class="n">global_best_pos</span> <span class="o">-</span> <span class="n">positions</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
             <span class="n">velocities</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">velocities</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">cognitive</span> <span class="o">+</span> <span class="n">social</span>
@@ -3724,13 +3728,13 @@ alpha = [0.1, 0.1]
 <h3 id="key-differences-mathematical-vs-physical-swarm-pso">Key Differences: Mathematical vs Physical Swarm PSO<a class="headerlink" href="#key-differences-mathematical-vs-physical-swarm-pso" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>graph LR
     subgraph Swarm ["Isaac Sim Multi-Robot Swarm"]
-        R1["Robot 1"]
-        R2["Robot 2"]
-        R3["Robot N"]
+        R1["Dynamic Sphere 1"]
+        R2["Dynamic Sphere 2"]
+        R3["Dynamic Sphere N"]
     end
 
     subgraph PSOAlg ["Swarm Controller"]
-        Sensing["Target Distance Sensing"]
+        Sensing["Distance from Scene Poses"]
         GBestUpdate["Global Best p_g Tracking"]
         MotorDrive["Motor Velocity Commands"]
     end
@@ -3775,6 +3779,10 @@ Copyright Author: Dr Tang Tiong Yew
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
       <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; Dr Tang Tiong Yew
+    </div>
   
   
     Made with
