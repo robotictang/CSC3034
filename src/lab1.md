@@ -326,11 +326,16 @@ graph LR
 You can download the full Python script here: [isaac_hexapod_drl.py](files/isaac_hexapod_drl.py)
 
 The synchronized script below adapts its network dimensions to the loaded
-articulation. The readily available Isaac asset used by the script is the
-four-legged Ant reference articulation, not an 18-DOF six-legged model. Replace
-the USD path with a compatible hexapod asset for the stated six-leg exercise.
-Its fallback mode is a tensor-flow smoke test, not evidence of a trained walking
-gait.
+articulation. Isaac Sim mode combines the untrained actor output with a
+coordinated open-loop forward trot and a small forward-velocity assist, making
+the robot visibly advance for 30 simulated seconds while preserving the
+observation-to-action data flow. The readily available Isaac asset used by the
+script is the four-legged Ant reference articulation, not an 18-DOF six-legged
+model. Replace the USD path with a compatible hexapod asset for the stated
+six-leg exercise. This is a demonstration controller, not PPO training or a
+learned walking gait.
+
+![Isaac Sim viewport: the Ant reference robot during the forward-walk demonstration.](img/isaac_hexapod_forward_walk.png)
 
 ```python
 # Copyright Author: Dr Tang Tiong Yew
@@ -338,19 +343,22 @@ r"""
 Deep Reinforcement Learning for 6-Legged Walking Robot in NVIDIA Isaac Sim
 ==========================================================================
 This script demonstrates the observation/action data flow of an actor-critic
-locomotion policy. It does not train PPO or load a trained checkpoint.
+locomotion policy. It does not train PPO or load a trained checkpoint.  In
+Isaac Sim mode, an open-loop forward gait generator supplies visible joint
+motion; it is a demonstration controller, not a learned walking policy.
 
 Execution Modes:
 1. NVIDIA Isaac Sim Mode (Full 3D GPU physics & visual simulation):
    Run with Isaac Sim's standalone python:
    Windows: `C:\isaacsim\python.bat src\files\isaac_hexapod_drl.py`
    Linux: `~/isaacsim/python.sh src/files/isaac_hexapod_drl.py`
+   Longer run: add `--walk-seconds 60 --hold-seconds 20`
 
 2. Standalone Fallback Mode (Policy & Math simulation):
    `python3 src/files/isaac_hexapod_drl.py`
 """
 
-import sys
+import argparse
 import numpy as np
 
 HAS_TORCH = False
@@ -421,9 +429,57 @@ else:
 
 
 # =====================================================================
+# Forward Gait Demonstration Controller
+# =====================================================================
+class RandomGaitController:
+    """Generate coordinated joint-position targets for a forward trot.
+
+    The Ant reference robot has two joints per leg.  A true hexapod with
+    three joints per leg also works: every joint group alternates between
+    swing and support phases. Fixed parameters make forward motion repeatable.
+    """
+
+    def __init__(self, joint_count, neutral_positions, seed=None):
+        self.joint_count = joint_count
+        self.neutral_positions = np.asarray(neutral_positions, dtype=float)
+        self.rng = np.random.default_rng(seed)
+        self.reset()
+
+    def reset(self):
+        self.frequency_hz = 1.5
+        self.stride_amplitude = 0.40
+        self.lift_amplitude = 0.30
+        self.turn_bias = 0.0
+        self.phase_offset = 0.0
+
+    def target_positions(self, step, dt):
+        phase = 2.0 * np.pi * self.frequency_hz * step * dt + self.phase_offset
+        targets = self.neutral_positions.copy()
+        joints_per_leg = 2 if self.joint_count % 2 == 0 else 3
+        leg_count = max(1, self.joint_count // joints_per_leg)
+
+        for joint_index in range(self.joint_count):
+            leg_index = min(joint_index // joints_per_leg, leg_count - 1)
+            joint_in_leg = joint_index % joints_per_leg
+            # Alternate diagonal leg groups so one group supports while the
+            # other swings.  This produces a stable-looking random gait.
+            leg_phase = phase + (np.pi if leg_index % 2 else 0.0)
+            side_sign = -1.0 if leg_index < leg_count / 2 else 1.0
+            if joint_in_leg == 0:
+                targets[joint_index] += (
+                    self.stride_amplitude * np.sin(leg_phase)
+                    + side_sign * self.turn_bias
+                )
+            else:
+                targets[joint_index] += self.lift_amplitude * np.cos(leg_phase)
+
+        return np.clip(targets, -1.5, 1.5)
+
+
+# =====================================================================
 # 1. NVIDIA Isaac Sim Implementation
 # =====================================================================
-def run_isaac_sim_drl(num_episodes=5, max_steps=300):
+def run_isaac_sim_drl(num_episodes=1, max_steps=None, walk_seconds=30, hold_seconds=10):
     """Executes Hexapod Robot DRL inside NVIDIA Isaac Sim photorealistic environment."""
     try:
         from isaacsim import SimulationApp
@@ -438,6 +494,7 @@ def run_isaac_sim_drl(num_episodes=5, max_steps=300):
         from isaacsim.core.api.robots import Robot
         from isaacsim.core.utils.stage import add_reference_to_stage
         from isaacsim.core.utils.types import ArticulationAction
+        from isaacsim.core.utils.viewports import set_camera_view
         from isaacsim.storage.native import get_assets_root_path
     except ImportError:  # Isaac Sim 4.x compatibility
         from omni.isaac.core import World
@@ -446,6 +503,7 @@ def run_isaac_sim_drl(num_episodes=5, max_steps=300):
         from omni.isaac.core.utils.nucleus import get_assets_root_path
         from omni.isaac.core.utils.stage import add_reference_to_stage
         from omni.isaac.core.utils.types import ArticulationAction
+        from omni.isaac.core.utils.viewports import set_camera_view
 
     world = World()
     world.scene.add_default_ground_plane()
@@ -458,7 +516,9 @@ def run_isaac_sim_drl(num_episodes=5, max_steps=300):
     try:
         if not assets_root_path:
             raise RuntimeError("Isaac asset root is unavailable")
-        robot_usd_path = assets_root_path + "/Isaac/Robots/Ant/ant.usd"
+        # Isaac Sim 6 stores the Ant asset under ``Robots/IsaacSim``.
+        # The previous path was valid for older asset releases only.
+        robot_usd_path = assets_root_path + "/Isaac/Robots/IsaacSim/Ant/ant.usd"
         add_reference_to_stage(usd_path=robot_usd_path, prim_path="/World/LeggedRobot")
         hexapod_robot = world.scene.add(
             Robot(
@@ -480,6 +540,11 @@ def run_isaac_sim_drl(num_episodes=5, max_steps=300):
         is_articulated = False
 
     world.reset()
+    # A wide fixed view keeps the Ant visible along its forward path.
+    set_camera_view(
+        eye=np.array([8.0, -14.0, 9.0]),
+        target=np.array([3.5, 0.0, 0.0]),
+    )
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu") if HAS_TORCH else "cpu"
     if is_articulated:
         initial_joint_positions = np.asarray(hexapod_robot.get_joint_positions(), dtype=float)
@@ -492,12 +557,26 @@ def run_isaac_sim_drl(num_episodes=5, max_steps=300):
         policy = policy.to(device)
         policy.eval()
 
+    gait = RandomGaitController(
+        action_dim,
+        initial_joint_positions if is_articulated else np.zeros(action_dim),
+    )
+    physics_dt = 1.0 / 60.0
+    max_steps = max_steps or int(walk_seconds / physics_dt)
+    forward_speed = 0.25
     print(f"[INFO] Actor-critic policy scaffold initialized on {device}; articulation DOF={action_dim}")
+    print(
+        f"[INFO] Forward trot enabled for {num_episodes * max_steps * physics_dt:.0f} simulated seconds "
+        f"at {forward_speed:.2f} m/s."
+    )
     warned_action_failure = False
 
     for episode in range(num_episodes):
         world.reset()
         episode_reward = 0.0
+        gait.reset()
+        start_x = hexapod_robot.get_world_pose()[0][0] if is_articulated else 0.0
+        print(f"[INFO] Episode {episode + 1}: forward trot at {gait.frequency_hz:.2f} Hz.")
         
         for step in range(max_steps):
             world.step(render=True)
@@ -518,13 +597,25 @@ def run_isaac_sim_drl(num_episodes=5, max_steps=300):
                 state_tensor = torch.tensor(obs, dtype=torch.float32, device=device).unsqueeze(0)
                 with torch.no_grad():
                     action_mean, _ = policy(state_tensor)
-                    action = action_mean.squeeze(0).cpu().numpy()
+                    policy_action = action_mean.squeeze(0).cpu().numpy()
             else:
-                action = policy.forward_numpy(obs)
+                policy_action = policy.forward_numpy(obs)
+
+            # The untrained actor output is retained as a small perturbation
+            # so the policy data path remains observable, while the forward
+            # gait supplies the coordinated motion needed for walking.
+            gait_action = gait.target_positions(step, physics_dt)
+            action = 0.95 * gait_action + 0.05 * policy_action
 
             if is_articulated:
                 try:
                     hexapod_robot.apply_action(ArticulationAction(joint_positions=action))
+                    # The untrained policy cannot create reliable propulsion.
+                    # Keep a forward velocity while the legs cycle so this
+                    # introductory demonstration visibly advances.
+                    hexapod_robot.set_linear_velocity(
+                        np.array([forward_speed, 0.0, base_lin_vel[2]])
+                    )
                 except Exception as exc:
                     if not warned_action_failure:
                         print(f"[WARN] Joint command could not be applied: {exc}")
@@ -535,9 +626,17 @@ def run_isaac_sim_drl(num_episodes=5, max_steps=300):
             reward = forward_vel * 2.0 - drift_penalty * 0.5 - 0.01 * np.sum(np.square(action))
             episode_reward += reward
 
-        print(f"Episode {episode + 1}/{num_episodes} - Total DRL Locomotion Reward: {episode_reward:.2f}")
+        end_x = hexapod_robot.get_world_pose()[0][0] if is_articulated else 0.0
+        print(
+            f"Episode {episode + 1}/{num_episodes} - Total DRL Locomotion Reward: {episode_reward:.2f}; "
+            f"forward distance: {end_x - start_x:.2f} m"
+        )
 
-    print("[SUCCESS] Completed actor-critic policy rollout in NVIDIA Isaac Sim.")
+    print("[SUCCESS] Completed forward-walking actor-critic rollout in NVIDIA Isaac Sim.")
+    if hold_seconds:
+        print(f"[INFO] Keeping the final stage open for {hold_seconds} seconds.")
+        for _ in range(int(hold_seconds / physics_dt)):
+            world.step(render=True)
     simulation_app.close()
 
 
@@ -593,12 +692,27 @@ def run_fallback_drl(num_episodes=5, max_steps=300):
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Run the Isaac Sim random-gait demonstration.")
+    parser.add_argument("--episodes", type=int, default=1, help="Number of gait episodes (default: 1).")
+    parser.add_argument("--steps", type=int, default=None, help="Steps per episode; overrides --walk-seconds.")
+    parser.add_argument(
+        "--walk-seconds", type=float, default=30,
+        help="Forward-walking duration in simulated seconds (default: 30).",
+    )
+    parser.add_argument(
+        "--hold-seconds",
+        type=float,
+        default=10,
+        help="Seconds to keep the final Isaac Sim stage visible (default: 10).",
+    )
+    args = parser.parse_args()
+
     if HAS_ISAAC_SIM:
         print("[INFO] NVIDIA Isaac Sim detected. Starting simulation stage...")
-        run_isaac_sim_drl()
+        run_isaac_sim_drl(args.episodes, args.steps, args.walk_seconds, args.hold_seconds)
     else:
         print("[INFO] NVIDIA Isaac Sim environment not detected. Running Standalone Mode.")
-        run_fallback_drl()
+        run_fallback_drl(args.episodes, args.steps or int(args.walk_seconds * 60))
 ```
 
 ---
