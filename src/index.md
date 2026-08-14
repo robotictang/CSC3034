@@ -212,6 +212,42 @@ The core computational-intelligence exercises remain usable without NVIDIA
 hardware. Sections that depend on physics or sensors should be completed on a
 compatible lab workstation.
 
+## Run Every Standard-Python Example
+
+From the repository root, run these non-Isaac Sim examples with the activated
+course environment. Execute the commands individually; close each plot window
+before starting the next plotting example.
+
+=== "Windows (CMD / PowerShell)"
+
+    ```cmd
+    python src\files\ann_hyperplane.py
+    python src\files\ann_wine_mlp.py
+    python src\files\lab1.py
+    python src\files\lab2_fuzzy.py
+    python src\files\lab3_ga.py
+    python src\files\lab4_pso.py
+    python src\files\lab5_aco.py
+    python src\files\lab8a_keras_cnn.py
+    python src\files\lab8b_keras_lstm.py
+    python src\files\vis.py
+    ```
+
+=== "Linux (Terminal)"
+
+    ```bash
+    python3 src/files/ann_hyperplane.py
+    python3 src/files/ann_wine_mlp.py
+    python3 src/files/lab1.py
+    python3 src/files/lab2_fuzzy.py
+    python3 src/files/lab3_ga.py
+    python3 src/files/lab4_pso.py
+    python3 src/files/lab5_aco.py
+    python3 src/files/lab8a_keras_cnn.py
+    python3 src/files/lab8b_keras_lstm.py
+    python3 src/files/vis.py
+    ```
+
 ---
 
 ## NVIDIA Physical AI Learning Resources
