@@ -169,6 +169,18 @@ html.nvidia-theme .md-typeset svg.course-diagram text {
   fill: #17212b;
 }
 
+/* Give the two Lab 1 spiral section headings an explicit contrast pair. */
+html.nvidia-theme .md-typeset :is(#fibonacci-and-golden-ratio, #additional-plot-arc-to-form-golden-spiral) {
+  color: #17212b;
+  background: #fff;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.25rem;
+}
+
+html.nvidia-theme .md-typeset :is(#fibonacci-and-golden-ratio, #additional-plot-arc-to-form-golden-spiral) a {
+  color: #00695c;
+}
+
 html.nvidia-theme .md-typeset .mermaid {
   --md-mermaid-label-fg-color: #17212b;
   --md-mermaid-label-bg-color: #fff;
