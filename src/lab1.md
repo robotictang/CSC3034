@@ -75,7 +75,7 @@ graph TD
 
     The process will create a spiral in the following manner. The sequence of the signs produce the change in directions, and the fibonacci number provides the distance.
     <div style="text-align:center">
-    <svg viewBox="-350 -250 600 500" style="width:50%;max-width:500px">
+    <svg class="course-diagram" viewBox="-350 -250 600 500" style="width:50%;max-width:500px">
     <defs>
     <marker
     id="triangle"
@@ -144,7 +144,7 @@ def chooseFromThree():
 
 1. The golden spiral can be produced by drawing the arc connecting every consecutive coordinates.
     <div style="text-align:center">
-    <svg viewBox="-350 -250 600 500" style="width:50%;max-width:500px">
+    <svg class="course-diagram" viewBox="-350 -250 600 500" style="width:50%;max-width:500px">
     <defs>
     <marker
     id="triangle"

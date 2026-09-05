@@ -158,19 +158,23 @@ html.nvidia-theme .highlight .linenos {
 
 /* Figures may contain black labels and transparent pixels. */
 html.nvidia-theme .md-typeset img,
+html.nvidia-theme .md-typeset svg.course-diagram,
 html.nvidia-theme .md-typeset .mermaid {
   color: #17212b;
   background: #fff;
   color-scheme: light;
 }
 
+html.nvidia-theme .md-typeset svg.course-diagram text {
+  fill: #17212b;
+}
+
 html.nvidia-theme .md-typeset .mermaid {
   --md-mermaid-label-fg-color: #17212b;
+  --md-mermaid-label-bg-color: #fff;
   --md-mermaid-node-fg-color: #506350;
   --md-mermaid-node-bg-color: #edf4e8;
   --md-mermaid-edge-color: #506350;
-  --md-mermaid-edge-label-fg-color: #17212b;
-  --md-mermaid-edge-label-bg-color: #fff;
   padding: 1rem;
   overflow-x: auto;
 }
