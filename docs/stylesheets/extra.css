@@ -4,15 +4,27 @@ html.nvidia-theme body {
   --nvidia-green: #76b900;
   --nvidia-green-bright: #9be22d;
   --nvidia-ink: #070a08;
-  --nvidia-panel: rgba(7, 12, 9, 0.91);
+  --nvidia-panel: #0b120d;
   --nvidia-line: rgba(118, 185, 0, 0.34);
   --md-default-bg-color: #070a08;
   --md-default-fg-color: #edf3e9;
   --md-default-fg-color--light: rgba(237, 243, 233, 0.72);
   --md-default-fg-color--lighter: rgba(237, 243, 233, 0.38);
   --md-default-fg-color--lightest: rgba(237, 243, 233, 0.12);
-  --md-code-bg-color: rgba(1, 5, 2, 0.72);
+  --md-code-bg-color: #111c15;
   --md-code-fg-color: #e3ecd9;
+  --md-code-hl-number-color: #ffb3a7;
+  --md-code-hl-special-color: #ff9fc3;
+  --md-code-hl-function-color: #e8b4f0;
+  --md-code-hl-constant-color: #c5b8ff;
+  --md-code-hl-keyword-color: #9fc5ff;
+  --md-code-hl-string-color: #a8dc98;
+  --md-code-hl-name-color: #e3ecd9;
+  --md-code-hl-operator-color: #c5d0c8;
+  --md-code-hl-punctuation-color: #c5d0c8;
+  --md-code-hl-comment-color: #acbcb0;
+  --md-code-hl-generic-color: #c5d0c8;
+  --md-code-hl-variable-color: #c5d0c8;
   --md-typeset-color: #e8eee5;
   --md-typeset-a-color: #9be22d;
   --md-primary-fg-color: #76b900;
@@ -39,7 +51,7 @@ html.nvidia-theme .md-tabs {
   background: rgba(3, 7, 4, 0.94);
   border-bottom: 1px solid var(--nvidia-line);
   box-shadow: 0 0.2rem 1rem rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(14px);
+  /* A filter here traps Material's fixed mobile search inside the header. */
 }
 
 html.nvidia-theme .md-header__title,
@@ -82,23 +94,6 @@ html.nvidia-theme .md-content__inner::before {
   z-index: 2;
 }
 
-html.nvidia-theme .md-content__inner::after {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  top: 0;
-  right: 0;
-  left: 0;
-  height: 35rem;
-  pointer-events: none;
-  background-image: url("../img/nvidia-ci-background.png");
-  background-position: center top;
-  background-repeat: no-repeat;
-  background-size: 100% auto;
-  opacity: 0.46;
-  -webkit-mask-image: linear-gradient(#000 0%, rgba(0, 0, 0, 0.9) 55%, transparent 100%);
-  mask-image: linear-gradient(#000 0%, rgba(0, 0, 0, 0.9) 55%, transparent 100%);
-}
 
 html.nvidia-theme .md-typeset,
 html.nvidia-theme .md-typeset h1,
@@ -152,8 +147,32 @@ html.nvidia-theme .md-typeset code {
 }
 
 html.nvidia-theme .md-typeset pre > code {
-  color: inherit;
-  background: transparent;
+  color: var(--md-code-fg-color);
+  background: var(--md-code-bg-color);
+}
+
+html.nvidia-theme .highlight .linenos {
+  color: #acbcb0;
+  background: var(--md-code-bg-color);
+}
+
+/* Figures may contain black labels and transparent pixels. */
+html.nvidia-theme .md-typeset img,
+html.nvidia-theme .md-typeset .mermaid {
+  color: #17212b;
+  background: #fff;
+  color-scheme: light;
+}
+
+html.nvidia-theme .md-typeset .mermaid {
+  --md-mermaid-label-fg-color: #17212b;
+  --md-mermaid-node-fg-color: #506350;
+  --md-mermaid-node-bg-color: #edf4e8;
+  --md-mermaid-edge-color: #506350;
+  --md-mermaid-edge-label-fg-color: #17212b;
+  --md-mermaid-edge-label-bg-color: #fff;
+  padding: 1rem;
+  overflow-x: auto;
 }
 
 html.nvidia-theme .md-typeset table:not([class]) {
@@ -282,10 +301,17 @@ html.nvidia-theme .md-footer {
   display: block;
   width: 100%;
   min-height: 72vh;
-  background: #161a17;
+  color: #17212b;
+  background: #fff;
+  color-scheme: light;
   border: 1px solid rgba(118, 185, 0, 0.55);
   border-radius: 0.5rem;
   box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.5), 0 0 1.5rem rgba(118, 185, 0, 0.08);
+}
+
+.pdf-viewer-frame[hidden],
+.resource-button[hidden] {
+  display: none;
 }
 
 .pdf-viewer-status {
@@ -322,12 +348,6 @@ html.nvidia-theme .md-footer {
     border-radius: 0;
   }
 
-  html.nvidia-theme .md-content__inner::after {
-    height: 25rem;
-    background-position: 58% top;
-    background-size: auto 25rem;
-    opacity: 0.38;
-  }
 
   .resource-grid {
     grid-template-columns: 1fr;
@@ -548,6 +568,8 @@ html.nvidia-theme .container .content a {
 }
 
 .fam-table {
+  color: #17212b;
+  background: #fff;
   margin-bottom: .5em;
   box-shadow: 0 .2rem .5rem rgba(0,0,0,.05),0 0 .05rem rgba(0,0,0,.1);
   border-radius: .1rem;
@@ -574,13 +596,43 @@ html.nvidia-theme .container .content a {
 
 .fam-table tr:first-of-type td:nth-of-type(n+2),
 .fam-table tr:nth-of-type(3) td:first-of-type {
-  background-color: var(--md-default-fg-color--light);
-  color: var(--md-default-bg-color);
+  background-color: #334b3a;
+  color: #fff;
 }
 
 .fam-table tr:nth-of-type(2) td:nth-of-type(n+2),
 .fam-table tr:nth-of-type(3) td:nth-of-type(2),
 .fam-table tr:nth-of-type(n+4) td:nth-of-type(1) {
-  background-color: var(--md-default-fg-color--lighter);
-  color: var(--md-default-bg-color);
+  background-color: #dce8dc;
+  color: #17212b;
+}
+
+/* The archive uses Material's light palette. Its default teal is too pale
+   for small links and white navigation text. */
+html:not(.nvidia-theme) body {
+  --md-primary-fg-color: #00695c;
+  --md-accent-fg-color: #00594e;
+  --md-typeset-a-color: #00695c;
+  --md-code-hl-comment-color: #555;
+  --md-code-hl-operator-color: #555;
+  --md-code-hl-punctuation-color: #555;
+  --md-code-hl-generic-color: #555;
+  --md-code-hl-variable-color: #555;
+}
+
+html:not(.nvidia-theme) .highlight .linenos,
+html:not(.nvidia-theme) .highlight .linenos .normal {
+  color: #555;
+}
+
+.md-tabs__link {
+  opacity: 1;
+}
+
+.md-footer-meta {
+  background: #080d09;
+}
+
+.md-copyright {
+  color: #c5d0c8;
 }

@@ -13,6 +13,13 @@ window.MathJax = {
 
 const lecturerFolder = "E Lecturer’s PowerPoint slides & lecture notes or SIM/";
 
+function isLecturerPdf(file) {
+  return file.startsWith(lecturerFolder)
+    && file.toLowerCase().endsWith(".pdf")
+    && !/[\\\u0000-\u001f\u007f]/.test(file)
+    && file.split("/").every((part) => part && part !== "." && part !== "..");
+}
+
 function routeLecturerPdfsThroughViewer() {
   document.querySelectorAll("a[href*='/blob/main/'][href$='.pdf']").forEach((link) => {
     const source = new URL(link.href);
@@ -20,8 +27,13 @@ function routeLecturerPdfsThroughViewer() {
     const markerIndex = source.pathname.indexOf(marker);
     if (source.hostname !== "github.com" || markerIndex === -1) return;
 
-    const file = decodeURIComponent(source.pathname.slice(markerIndex + marker.length));
-    if (!file.startsWith(lecturerFolder)) return;
+    let file;
+    try {
+      file = decodeURIComponent(source.pathname.slice(markerIndex + marker.length));
+    } catch {
+      return;
+    }
+    if (!isLecturerPdf(file)) return;
 
     const cardTitle = link.closest(".resource-card")?.querySelector("h3")?.textContent.trim();
     const viewer = new URL("pdf-viewer.html", window.location.href);
@@ -46,12 +58,17 @@ function configurePdfViewer() {
   const file = parameters.get("file") || "";
   const title = parameters.get("title") || "Course PDF";
 
-  if (!file.startsWith(lecturerFolder) || !file.toLowerCase().endsWith(".pdf")) {
+  if (!isLecturerPdf(file)) {
+    frame.removeAttribute("src");
     frame.hidden = true;
     status.hidden = false;
+    externalLink.hidden = true;
     return;
   }
 
+  frame.hidden = false;
+  status.hidden = true;
+  externalLink.hidden = false;
   const encodedPath = file.split("/").map(encodeURIComponent).join("/");
   const rawUrl = `https://raw.githubusercontent.com/robotictang/CSC3034/main/${encodedPath}`;
   document.title = `${title} - CSC3034 CI Labs`;
@@ -64,8 +81,18 @@ function configurePdfViewer() {
 routeLecturerPdfsThroughViewer();
 configurePdfViewer();
 
-document$.subscribe(() => {
+function initializeCoursePage() {
   routeLecturerPdfsThroughViewer();
   configurePdfViewer();
-  MathJax.typesetPromise();
-});
+  if (typeof window.MathJax?.typesetPromise === "function") {
+    window.MathJax.typesetPromise().catch((error) => {
+      console.warn("Could not typeset course equations:", error);
+    });
+  }
+}
+
+if (typeof document$ !== "undefined") {
+  document$.subscribe(initializeCoursePage);
+} else {
+  initializeCoursePage();
+}

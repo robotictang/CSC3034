@@ -57,13 +57,31 @@ Set `MPLBACKEND=Agg` when running plotting examples in a headless environment.
 
 ## Quality checks
 
+Install the PDF maintenance dependency before running the full test suite:
+
+```bash
+python -m pip install -r tools/requirements.txt
+```
+
 ```bash
 python -m compileall -q src/files hooks
 python hooks/sync_examples.py --check
 python -m unittest discover -s tests -v
+node --test tests/test_viewer.cjs
 ruff check src/files hooks tools
 mkdocs build --strict --clean
 ```
 
 Source material belongs in `src/`. Do not edit generated files under `docs/`
 directly; rebuild the site after changing the source.
+
+After reimporting lecturer PDFs, restore the readable heading palette with:
+
+```bash
+python tools/fix_pdf_contrast.py "E Lecturer’s PowerPoint slides & lecture notes or SIM"
+```
+
+This changes pale orange/cyan text only, retaining PDF text, fonts, layout,
+images, links and white footer labels. The website uses solid reading surfaces,
+light syntax colours on dark code blocks, and white backgrounds for figures
+with dark labels.

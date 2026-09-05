@@ -7,7 +7,7 @@ hide:
 # <span id="course-pdf-title">Course PDF Viewer</span>
 
 <div class="pdf-viewer-toolbar">
-  <p>The NVIDIA-themed course website remains visible around the slide deck.</p>
+  <p>Slides retain their original page colours. If the preview is unavailable, open the PDF directly.</p>
   <a id="course-pdf-external" class="resource-button" href="lecturer-resources.html">Open PDF directly</a>
 </div>
 

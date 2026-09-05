@@ -9,7 +9,7 @@ hide:
 <p class="resource-intro">
 Course presentation slides, compact handouts, worked calculations, tutorials,
 and lab solutions for CSC3034 Computational Intelligence. Each resource opens
-from the repository in a new tab.
+in the course PDF viewer; other resources open from the repository in a new tab.
 </p>
 
 <div class="resource-grid">
